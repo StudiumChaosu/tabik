@@ -1,0 +1,809 @@
+/* ===================================
+   MODUL: GLOWNY
+   OBSZAR: public/zasoby/css/glowny.css
+   OPIS: Style widokow i wspolnych elementow interfejsu.
+   =================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-glowny);
+    color: var(--kolor-tekst);
+    background: var(--kolor-tla);
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-maly-legacy);
+    background: var(--kolor-powierzchni);
+    color: var(--kolor-tekst);
+    padding: 0.85rem 1rem;
+    outline: none;
+    transition: var(--przejscie-ui);
+    transition-property: border-color, box-shadow, transform;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: rgba(37, 99, 235, .45);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .12);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ===================================
+   LAYOUT GOŚCIA
+   =================================== */
+
+.uklad-gosc {
+    position: relative;
+    overflow-x: hidden;
+}
+
+.tlo-gosc {
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, .18), transparent 28%),
+        radial-gradient(circle at 80% 0%, rgba(14, 165, 233, .18), transparent 24%),
+        linear-gradient(180deg, var(--kolor-tlo-szary-jasny) 0%, var(--kolor-tlo-glowny) 100%);
+    z-index: -1;
+}
+
+.kontener-gosc {
+    max-width: 1080px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: grid;
+    gap: var(--odstep-6);
+    place-content: center;
+    padding: var(--odstep-7) var(--odstep-4);
+}
+
+.naglowek-gosc {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+    width: min(100%, 540px);
+    margin-bottom: var(--odstep-4);
+}
+
+.naglowek-gosc p {
+    margin: 6px 0 0;
+    color: var(--kolor-tekst-2);
+}
+
+.logo-marki {
+    width: 48px;
+    height: 48px;
+    display: block;
+    border-radius: var(--promien-maly);
+    box-shadow: var(--cien-sredni);
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+/* ===================================
+   SYSTEM KART I POWIERZCHNI
+   =================================== */
+
+.powierzchnia-ui,
+.prosta-karta {
+    background: var(--kolor-powierzchni);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    box-shadow: var(--cien-sredni);
+}
+
+.powierzchnia-glass {
+    background: var(--kolor-panel-glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, .5);
+    box-shadow: var(--cien-duzy);
+}
+
+.tekst-etykieta,
+.naglowek-modalny small {
+    color: var(--kolor-tekst-2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .72rem;
+}
+
+.karta,
+.karta-gosc,
+.powierzchnia {
+    background: rgba(255, 255, 255, .9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: var(--promien-duzy);
+    box-shadow: var(--cien-duzy);
+    padding: var(--odstep-6);
+}
+
+.karta-gosc {
+    width: min(100%, 540px);
+    padding: 28px;
+}
+
+.naglowek-karty-gosc h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.8rem, 2.8vw, 2.2rem);
+}
+
+.naglowek-karty-gosc p {
+    margin: 0;
+    color: var(--kolor-tekst-2);
+    line-height: 1.6;
+}
+
+.karta-informacyjna {
+    margin-top: var(--odstep-5);
+    padding: var(--odstep-5);
+    border-radius: var(--promien-duzy);
+    background: var(--kolor-powierzchni-2);
+    border: 1px solid var(--kolor-obramowania);
+    color: var(--kolor-tekst-2);
+    line-height: 1.7;
+}
+
+.karta-informacyjna ul {
+    margin: 0;
+    padding-left: var(--odstep-5);
+}
+
+/* ===================================
+   SYSTEM FORMULARZY
+   =================================== */
+
+.formularz-pionowy {
+    display: grid;
+    gap: var(--odstep-4);
+    margin-top: var(--odstep-5);
+}
+
+.pole-ui {
+    width: 100%;
+    min-height: var(--wysokosc-pola);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-sredni);
+    background: var(--kolor-powierzchni);
+    color: var(--kolor-tekst);
+    padding: 0.85rem 1rem;
+    outline: none;
+    transition: var(--przejscie-ui);
+    transition-property: border-color, box-shadow;
+}
+
+.pole-ui--duze {
+    min-height: var(--wysokosc-pola-duze);
+}
+
+.pole-ui--z-ikona {
+    padding-left: 48px;
+}
+
+.pole-ui--brand:focus {
+    border-color: var(--kolor-brand-logowanie);
+    box-shadow: 0 0 0 3px rgba(var(--kolor-brand-logowanie-rgb), .12);
+}
+
+.pole-formularza {
+    display: grid;
+    gap: var(--odstep-2);
+}
+
+.pole-formularza span {
+    font-weight: 600;
+    font-size: .95rem;
+}
+
+.pole-z-ikona {
+    position: relative;
+}
+
+.ikona-pola {
+    position: absolute;
+    left: var(--odstep-4);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--kolor-tekst-muted-logowanie);
+    font-size: 1.05rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pole-z-ikona input {
+    padding-left: 48px;
+}
+
+.pole-z-przyciskiem {
+    position: relative;
+}
+
+.pole-z-przyciskiem input {
+    padding-right: 52px;
+}
+
+.pole-z-przyciskiem .przycisk-ikona {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.pole-z-przyciskiem.pole-z-ikona input {
+    padding-right: 54px;
+}
+
+.stopka-karty-gosc {
+    margin-top: var(--odstep-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--odstep-3);
+    align-items: center;
+    color: var(--kolor-tekst-2);
+}
+
+.stopka-karty-gosc a {
+    color: var(--kolor-akcent);
+    font-weight: 600;
+}
+
+.pole-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    width: fit-content;
+    color: var(--kolor-tekst-2);
+}
+
+.pole-checkbox input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.blad-pola {
+    color: var(--kolor-blad);
+    font-size: .85rem;
+}
+
+/* ===================================
+   SYSTEM PRZYCISKÓW
+   =================================== */
+
+.przycisk-baza,
+.przycisk-glowny,
+.przycisk-drugorzedny,
+.przycisk-subtelny,
+.przycisk-tekstowy,
+.przycisk-ikona {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--odstep-3);
+    border-radius: var(--promien-maly-legacy);
+    border: 1px solid transparent;
+    transition: var(--przejscie-szybkie);
+    transition-property: transform, box-shadow, background, border-color, color;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.przycisk-baza--primary {
+    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-akcent-ciemny));
+    color: var(--kolor-powierzchni);
+}
+
+.przycisk-baza--secondary {
+    background: var(--kolor-powierzchni);
+    border-color: var(--kolor-obramowania);
+    color: var(--kolor-tekst);
+}
+
+.przycisk-baza--icon {
+    padding: 0;
+}
+
+.przycisk-baza--panel {
+    box-shadow: var(--cien-maly);
+    font-weight: 700;
+}
+
+.przycisk-glowny:hover,
+.przycisk-drugorzedny:hover,
+.przycisk-subtelny:hover,
+.przycisk-tekstowy:hover {
+    transform: translateY(-1px);
+}
+
+.przycisk-glowny {
+    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-akcent-ciemny));
+    color: var(--kolor-powierzchni);
+    border-color: rgba(37, 99, 235, .2);
+    padding: .9rem 1.2rem;
+    box-shadow: 0 14px 24px rgba(37, 99, 235, .18);
+    font-weight: 700;
+}
+
+.przycisk-glowny.szeroki,
+.przycisk-glowny.pelny {
+    width: 100%;
+}
+
+.przycisk-drugorzedny,
+.przycisk-subtelny {
+    background: var(--kolor-powierzchni);
+    border-color: var(--kolor-obramowania);
+    color: var(--kolor-tekst);
+    padding: .8rem 1rem;
+}
+
+.przycisk-tekstowy {
+    background: transparent;
+    color: var(--kolor-tekst-2);
+    padding: .35rem .55rem;
+    border: none;
+}
+
+.przycisk-tekstowy.niebezpieczny {
+    color: var(--kolor-blad);
+}
+
+.przycisk-ikona {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-color: var(--kolor-obramowania);
+    background: var(--kolor-powierzchni);
+    color: var(--kolor-tekst);
+    display: inline-grid;
+    place-items: center;
+}
+
+.przycisk-ikona.maly {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--promien-sredni);
+}
+
+.przycisk-ikona.jest-ulubiona {
+    color: var(--kolor-ostrzezenie);
+    border-color: rgba(245, 158, 11, .3);
+    background: rgba(245, 158, 11, .1);
+}
+
+/* ===================================
+   KOMUNIKATY
+   =================================== */
+
+.komunikat-blad,
+.komunikat-wazny {
+    margin-top: var(--odstep-5);
+    padding: var(--odstep-4);
+    border-radius: var(--promien-maly-legacy);
+    border: 1px solid rgba(220, 38, 38, .18);
+    background: rgba(220, 38, 38, .08);
+    color: var(--kolor-blad-ciemny);
+    line-height: 1.5;
+}
+
+.stos-powiadomien {
+    position: fixed;
+    z-index: 1200;
+    top: var(--odstep-4);
+    right: var(--odstep-4);
+    display: grid;
+    gap: var(--odstep-3);
+    max-width: 360px;
+}
+
+.powiadomienie {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    padding: var(--odstep-4);
+    border-radius: var(--promien-duzy);
+    background: var(--kolor-powierzchni);
+    box-shadow: var(--cien-sredni);
+    border: 1px solid var(--kolor-obramowania);
+    color: var(--kolor-tekst);
+}
+
+.powiadomienie.sukces {
+    border-color: rgba(22, 163, 74, .2);
+}
+
+.powiadomienie.blad {
+    border-color: rgba(220, 38, 38, .2);
+}
+
+/* ===================================
+   MODALNE
+   =================================== */
+
+.warstwa-modalna {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .45);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: center;
+    padding: var(--odstep-5);
+    z-index: 1100;
+}
+
+.warstwa-modalna.ukryta {
+    display: none;
+}
+
+.okno-modalne {
+    width: min(720px, 100%);
+    border-radius: 28px;
+    background: var(--kolor-powierzchni);
+    box-shadow: var(--cien-duzy);
+    border: 1px solid rgba(255, 255, 255, .4);
+    padding: var(--odstep-6);
+}
+
+.okno-modalne.male {
+    width: min(480px, 100%);
+}
+
+.naglowek-modalny,
+.stopka-modalna {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--odstep-4);
+}
+
+.naglowek-modalny h2 {
+    margin: 2px 0 0;
+    font-size: 1.35rem;
+}
+
+.naglowek-modalny small {
+    color: var(--kolor-tekst-2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .72rem;
+}
+
+.stopka-modalna {
+    margin-top: var(--odstep-2);
+}
+
+.formularz-wewnetrzny {
+    gap: var(--odstep-3);
+}
+
+.pelna-szerokosc {
+    grid-column: 1 / -1;
+}
+
+/* ===================================
+   LISTY I KARTY
+   =================================== */
+
+.lista-prostych-kart {
+    display: grid;
+    gap: var(--odstep-4);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.prosta-karta {
+    padding: var(--odstep-5);
+    display: grid;
+    gap: var(--odstep-2);
+}
+
+/* ===================================
+   SYSTEM UWIERZYTELNIANIA
+   =================================== */
+
+.widok-rejestracja .naglowek-gosc {
+    display: none;
+}
+
+.widok-logowania-tabik {
+    font-family: var(--font-glowny);
+    background: var(--kolor-tla-logowanie);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--kolor-tekst-logowanie);
+}
+
+.kontener-logowania-tabik {
+    width: 100%;
+    max-width: 520px;
+    padding: var(--odstep-5);
+}
+
+.panel-logowania-tabik {
+    background-color: var(--kolor-powierzchni);
+    border-radius: var(--promien-duzy);
+    box-shadow: var(--cien-maly);
+    padding: var(--odstep-8);
+    width: 100%;
+}
+
+.sekcja-logo-logowanie-tabik {
+    text-align: center;
+    margin-bottom: 34px;
+}
+
+.logo-glowne-logowania-tabik {
+    max-width: 82px;
+    height: auto;
+    display: inline-block;
+}
+
+.formularz-logowania-tabik {
+    display: flex;
+    flex-direction: column;
+    gap: var(--odstep-6);
+}
+
+.pole-formularza-logowanie-tabik {
+    display: flex;
+    flex-direction: column;
+    gap: var(--odstep-2);
+}
+
+.pole-formularza-logowanie-tabik > span {
+    color: var(--kolor-tekst-logowanie);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.pole-z-ikona-logowanie-tabik {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ikona-pole-logowanie-tabik {
+    position: absolute;
+    left: var(--odstep-4);
+    color: var(--kolor-tekst-muted-logowanie);
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.pole-z-ikona-logowanie-tabik input {
+    width: 100%;
+    min-height: var(--wysokosc-pola-duze);
+    padding: var(--odstep-4) var(--odstep-4) var(--odstep-4) 48px;
+    border: 2px solid var(--kolor-input-border-logowanie);
+    border-radius: var(--promien-maly);
+    font-size: 0.98rem;
+    font-family: var(--font-glowny);
+    transition: var(--przejscie-ui);
+    transition-property: border-color, box-shadow;
+    background-color: var(--kolor-powierzchni);
+    box-shadow: none;
+}
+
+.pole-z-ikona-logowanie-tabik input:focus {
+    outline: none;
+    border-color: var(--kolor-brand-logowanie);
+    box-shadow: 0 0 0 3px rgba(var(--kolor-brand-logowanie-rgb), .12);
+}
+
+.pole-z-ikona-logowanie-tabik input::placeholder {
+    color: var(--kolor-input-placeholder-logowanie);
+}
+
+.pole-z-przyciskiem.pole-z-ikona-logowanie-tabik input {
+    padding-right: 56px;
+}
+
+.przycisk-pokaz-haslo-tabik {
+    position: absolute;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: var(--promien-sredni);
+    background: transparent;
+    color: var(--kolor-tekst-muted-logowanie);
+    box-shadow: none;
+    z-index: 1;
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-pokaz-haslo-tabik:hover {
+    color: var(--kolor-brand-logowanie);
+    background: rgba(var(--kolor-brand-logowanie-rgb), .08);
+}
+
+.opcje-logowania-tabik {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--odstep-4);
+    margin-top: -6px;
+}
+
+.checkbox-pamietaj-tabik {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    cursor: pointer;
+    color: var(--kolor-tekst-2);
+    font-size: 0.95rem;
+}
+
+.checkbox-pamietaj-tabik input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--kolor-brand-logowanie);
+}
+
+.link-akcji-logowania-tabik {
+    color: var(--kolor-brand-logowanie);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.link-akcji-logowania-tabik:hover {
+    text-decoration: underline;
+}
+
+.przycisk-zaloguj-tabik {
+    width: 100%;
+    min-height: var(--wysokosc-pola-duze);
+    padding: var(--odstep-4);
+    background: linear-gradient(135deg, var(--kolor-przycisk-ciemny), var(--kolor-przycisk-ciemny-2));
+    color: var(--kolor-powierzchni);
+    border: none;
+    border-radius: var(--promien-maly);
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-zaloguj-tabik:hover {
+    background: linear-gradient(135deg, var(--kolor-przycisk-ciemny-hover), var(--kolor-przycisk-ciemny-hover-2));
+}
+
+.przycisk-zaloguj-tabik:disabled {
+    opacity: .75;
+    cursor: wait;
+}
+
+.stopka-logowania-tabik {
+    margin-top: var(--odstep-6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--odstep-2);
+    color: var(--kolor-tekst-2);
+    font-size: 0.95rem;
+}
+
+.stopka-logowania-tabik a {
+    color: var(--kolor-brand-logowanie);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.stopka-logowania-tabik a:hover {
+    text-decoration: underline;
+}
+
+.widok-logowania-tabik .powiadomienie {
+    margin-bottom: var(--odstep-4);
+}
+
+/* Warianty autofill dla różnych widoków */
+.wariant-logowanie-tabik {
+    --kolor-autofill: #eaf2ff;
+}
+
+.wariant-rejestracja-tabik {
+    --kolor-autofill: #eefbf1;
+}
+
+.wariant-przypomnij-tabik {
+    --kolor-autofill: #fff3e8;
+}
+
+.pole-z-ikona-logowanie-tabik input:-webkit-autofill,
+.pole-z-ikona-logowanie-tabik input:-webkit-autofill:hover,
+.pole-z-ikona-logowanie-tabik input:-webkit-autofill:focus {
+    background-color: var(--kolor-autofill);
+    -webkit-box-shadow: 0 0 0 1000px var(--kolor-autofill) inset;
+    -webkit-text-fill-color: var(--kolor-tekst-ciemny);
+    caret-color: var(--kolor-tekst-ciemny);
+}
+
+/* ===================================
+   RESPONSYWNOŚĆ
+   =================================== */
+
+/* Breakpointy projektu:
+   1300px - ukrycie prawego panelu
+   980px  - przejście na układ jednokolumnowy
+   700px  - mobile
+*/
+
+
+
+@media (max-width: 700px) {
+    .karta-gosc {
+        padding: var(--odstep-6);
+    }
+
+    .stos-powiadomien {
+        left: var(--odstep-4);
+        right: var(--odstep-4);
+        max-width: none;
+    }
+
+    .okno-modalne {
+        padding: var(--odstep-5);
+        border-radius: 22px;
+    }
+}
+
+@media (max-width: 700px) {
+    .panel-logowania-tabik {
+        padding: 30px var(--odstep-6);
+        border-radius: var(--promien-duzy);
+    }
+
+    .opcje-logowania-tabik,
+    .stopka-logowania-tabik {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .stopka-logowania-tabik {
+        align-items: center;
+    }
+}

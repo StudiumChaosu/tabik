@@ -1,0 +1,182 @@
+:root {
+  /* Kolory - Prymitywy */
+  --kolor-tlo-glowny: #f4f6fb;
+  --kolor-tlo-bialy: #ffffff;
+  --kolor-tlo-szary-jasny: #f8fafc;
+  --kolor-tekst-glowny: #0f172a;
+  --kolor-tekst-szary: #475569;
+  --kolor-tekst-szary-jasny: #94a3b8;
+  --kolor-tekst-szary-ciemny: #111827;
+  --kolor-tekst-szary-sredni: #273142;
+  --kolor-obramowanie-szary: #e2e8f0;
+  --kolor-obramowanie-szary-ciemny: #cbd5e1;
+  --kolor-akcent-niebieski: #2563eb;
+  --kolor-akcent-niebieski-ciemny: #1d4ed8;
+  --kolor-akcent-niebieski-jasny: #3b82f6;
+  --kolor-status-sukces: #16a34a;
+  --kolor-status-blad: #dc2626;
+  --kolor-status-ostrzezenie: #f59e0b;
+  --kolor-status-info: #0ea5e9;
+  --kolor-marka-czerwony: #c3323f;
+  --kolor-marka-szary: #e9eaee;
+  --kolor-marka-czarny: #111111;
+  --kolor-marka-czarny-jasny: #1d1d1d;
+  --kolor-przycisk-ciemny: #111111;
+  --kolor-przycisk-ciemny-2: #1d1d1d;
+  --kolor-przycisk-ciemny-hover: #1b1b1b;
+  --kolor-przycisk-ciemny-hover-2: #262626;
+  --kolor-blad-ciemny: #991b1b;
+  --kolor-brand-logowanie-rgb: 195, 50, 63;
+  --kolor-tekst-muted-logowanie: #7c8799;
+  --kolor-input-border-logowanie: #d8dde7;
+  --kolor-input-placeholder-logowanie: #b7beca;
+  --kolor-panel-glass: rgba(255, 255, 255, .84);
+  --kolor-panel-glass-mocny: rgba(255, 255, 255, .92);
+  --kolor-border-glass: rgba(226, 232, 240, .8);
+  --kolor-autofill: #eaf2ff;
+  --kolor-kropka-czerwona: #ff6b6b;
+  --kolor-kropka-zolta: #ffd166;
+  --kolor-kropka-pomaranczowa: #f4a261;
+
+  /* Czcionki - Prymitywy */
+  --font-glowny: 'Montserrat', sans-serif;
+  --rozmiar-czcionki-xs: 0.72rem;
+  --rozmiar-czcionki-sm: 0.82rem;
+  --rozmiar-czcionki-sm-alt: 0.85rem;
+  --rozmiar-czcionki-base: 0.92rem;
+  --rozmiar-czcionki-md: 0.95rem;
+  --rozmiar-czcionki-md-alt: 0.96rem;
+  --rozmiar-czcionki-lg: 1.1rem;
+  --rozmiar-czcionki-xl: 1.4rem;
+  --rozmiar-czcionki-2xl: 2rem;
+  --rozmiar-czcionki-display-sm: clamp(1.65rem, 3vw, 2.35rem);
+  --rozmiar-czcionki-display-md: clamp(1.8rem, 2.8vw, 2.2rem);
+
+  /* Odstępy - Prymitywy (zachowujemy istniejące) */
+  --odstep-1: 0.25rem;
+  --odstep-2: 0.5rem;
+  --odstep-3: 0.75rem;
+  --odstep-4: 1rem;
+  --odstep-5: 1.25rem;
+  --odstep-6: 1.5rem;
+  --odstep-7: 1.75rem;
+  --odstep-8: 2rem;
+  --odstep-10: 2.5rem;
+  --odstep-mikro: 2px;
+  --odstep-xs: 4px;
+  --odstep-xs-alt: 6px;
+  --odstep-sm-alt: 10px;
+  --odstep-md-alt: 15px;
+  --odstep-lg-alt: 28px;
+  --odstep-pole-prawe: 52px;
+
+  /* Cienie - Prymitywy (zachowujemy istniejące) */
+  --cien-maly: 0 8px 24px rgba(15, 23, 42, .05);
+  --cien-sredni: 0 14px 35px rgba(15, 23, 42, .08);
+  --cien-duzy: 0 24px 60px rgba(15, 23, 42, .08);
+  --cien-akcent-niebieski: 0 14px 22px rgba(37, 99, 235, .18);
+  --cien-ciemny: 0 24px 60px rgba(0, 0, 0, 0.25);
+
+  /* Promienie obramowania - Prymitywy (zachowujemy istniejące) */
+  --promien-maly: 8px;
+  --promien-maly-legacy: 14px;
+  --promien-sredni: 12px;
+  --promien-duzy: 18px;
+  --promien-pelny: 999px;
+  --promien-xs: 3px;
+  --promien-md-alt: 15px;
+  --promien-lg-alt: 22px;
+  --promien-xl: 28px;
+
+  /* Wymiary layoutu - Prymitywy */
+  --szerokosc-sidebar: 280px;
+  --szerokosc-sidebar-zwiniety: 92px;
+  --szerokosc-panel-prawy: 320px;
+  --szerokosc-wyszukiwarka-mini: 300px;
+  --szerokosc-menu: 220px;
+  --wysokosc-zakladka: 44px;
+  --rozmiar-avatar: 46px;
+  --rozmiar-logo: 48px;
+  --rozmiar-przycisk-ikona: 42px;
+  --rozmiar-przycisk-ikona-sm: 34px;
+  --rozmiar-przycisk-akcja: 24px;
+  --rozmiar-ikona: 16px;
+  --rozmiar-ikona-kropka: 10px;
+  --szerokosc-statystyki: 190px;
+  --szerokosc-grupy: 250px;
+
+  /* Punkty przełomowe - Prymitywy */
+  --punkt-przelomowy-desktop-maks: 1300px;
+  --punkt-przelomowy-tablet: 980px;
+  --punkt-przelomowy-mobilny: 700px;
+
+  /* Semantyka - Zastosowania */
+  --tlo-strona: var(--kolor-tlo-glowny);
+  --tlo-karta: var(--kolor-tlo-bialy);
+  --tekst-glowny: var(--kolor-tekst-glowny);
+  --tekst-drugorzedny: var(--kolor-tekst-szary);
+  --tekst-trzeciorzedny: var(--kolor-tekst-szary-jasny);
+  --tekst-aktywny: var(--kolor-tekst-szary-ciemny);
+  --tekst-neutralny: var(--kolor-tekst-szary-sredni);
+  --obramowanie-glowny: var(--kolor-obramowanie-szary);
+  --obramowanie-aktywny: var(--kolor-obramowanie-szary-ciemny);
+  --przycisk-tlo: var(--kolor-akcent-niebieski);
+  --przycisk-tlo-hover: var(--kolor-akcent-niebieski-ciemny);
+  --link-kolor: var(--kolor-akcent-niebieski-jasny);
+  --status-sukces: var(--kolor-status-sukces);
+  --status-blad: var(--kolor-status-blad);
+  --status-ostrzezenie: var(--kolor-status-ostrzezenie);
+  --status-info: var(--kolor-status-info);
+  --marka-glowny: var(--kolor-marka-czerwony);
+  --marka-tlo: var(--kolor-marka-szary);
+  --marka-tekst: var(--kolor-marka-czarny);
+  --marka-tekst-jasny: var(--kolor-marka-czarny-jasny);
+  --kropka-czerwona: var(--kolor-kropka-czerwona);
+  --kropka-zolta: var(--kolor-kropka-zolta);
+  --kropka-pomaranczowa: var(--kolor-kropka-pomaranczowa);
+
+  /* Aliasy dla kompatybilności */
+  --kolor-tla: var(--tlo-strona);
+  --kolor-powierzchni: var(--tlo-karta);
+  --kolor-powierzchni-2: var(--kolor-tlo-szary-jasny);
+  --kolor-tekst: var(--tekst-glowny);
+  --kolor-tekst-2: var(--tekst-drugorzedny);
+  --kolor-tekst-3: var(--tekst-trzeciorzedny);
+  --kolor-obramowania: var(--obramowanie-glowny);
+  --kolor-obramowania-2: var(--obramowanie-aktywny);
+  --kolor-akcent: var(--kolor-akcent-niebieski);
+  --kolor-akcent-ciemny: var(--kolor-akcent-niebieski-ciemny);
+  --kolor-akcent-jasny: var(--kolor-akcent-niebieski-jasny);
+  --kolor-sukces: var(--kolor-status-sukces);
+  --kolor-blad: var(--status-blad);
+  --kolor-ostrzezenie: var(--status-ostrzezenie);
+  --kolor-info: var(--status-info);
+  --kolor-zielony: var(--kolor-status-sukces);
+  --kolor-czerwony: var(--kolor-status-blad);
+  --kolor-zolty: var(--status-ostrzezenie);
+  --kolor-brand-logowanie: var(--marka-glowny);
+  --kolor-brand-logowanie-rgb: 195, 50, 63;
+  --kolor-tekst-ciemny: var(--tekst-aktywny);
+  --kolor-tekst-logowanie: var(--tekst-aktywny);
+  --kolor-tla-logowanie: var(--marka-tlo);
+  --kolor-panel-glass: rgba(255, 255, 255, .84);
+  --kolor-panel-glass-mocny: rgba(255, 255, 255, .92);
+  --kolor-border-glass: rgba(226, 232, 240, .8);
+  --kolor-autofill: #eaf2ff;
+  --kolor-przycisk-ciemny: #111111;
+  --kolor-przycisk-ciemny-2: #1d1d1d;
+  --kolor-przycisk-ciemny-hover: #1b1b1b;
+  --kolor-przycisk-ciemny-hover-2: #262626;
+  --kolor-blad-ciemny: #991b1b;
+
+  /* Dodatkowe wymiary */
+  --wysokosc-pola: 48px;
+  --wysokosc-pola-duze: 58px;
+
+  /* Przejścia */
+  --przejscie-szybkie: .18s ease;
+  --przejscie-ui: .2s ease;
+
+  /* Inne */
+  --kolor-grupy: #d7e3ff;
+}

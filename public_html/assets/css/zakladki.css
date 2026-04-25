@@ -1,0 +1,499 @@
+/* ===================================
+   MODUL: ZAKLADKI
+   OBSZAR: public/zasoby/css/zakladki.css
+   OPIS: Style modulu zakladek.
+   =================================== */
+
+.zakladki-shell {
+    display: grid;
+    gap: var(--odstep-5);
+}
+
+/* ===================================
+   TOOLBAR
+   =================================== */
+
+.zakladki-toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--odstep-4);
+    flex-wrap: wrap;
+}
+
+.zakladki-szukaj-mini {
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    padding: 0 var(--odstep-4);
+    height: var(--wysokosc-pola);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    background: var(--kolor-powierzchni);
+    box-shadow: var(--cien-maly);
+}
+
+.zakladki-szukaj-mini i {
+    color: var(--kolor-tekst-2);
+    flex: 0 0 auto;
+}
+
+.zakladki-szukaj-mini input {
+    width: 100%;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    color: var(--kolor-tekst);
+    font-size: 1rem;
+}
+
+.zakladki-szukaj-mini input::placeholder {
+    color: var(--kolor-tekst-3);
+}
+
+.zakladki-akcje-gorne {
+    display: flex;
+    gap: var(--odstep-3);
+    align-items: center;
+    margin-left: auto;
+}
+
+.przycisk-panelowy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    padding: var(--odstep-3) var(--odstep-5);
+    border-radius: var(--promien-sredni);
+    border: 1px solid var(--kolor-obramowania);
+    background: var(--kolor-powierzchni);
+    color: var(--kolor-tekst);
+    font-weight: 700;
+    box-shadow: var(--cien-maly);
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-panelowy:hover {
+    transform: translateY(-1px);
+}
+
+.przycisk-panelowy.niebieski {
+    background: var(--kolor-akcent);
+    border-color: var(--kolor-akcent);
+    color: var(--kolor-powierzchni);
+}
+
+/* ===================================
+   KATEGORIE
+   =================================== */
+
+.zakladki-kategorie {
+    overflow-x: auto;
+}
+
+.lista-kategorii-top {
+    display: flex;
+    gap: var(--odstep-3);
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.tab-kategorii {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 var(--odstep-5);
+    border-radius: var(--promien-pelny);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--kolor-tekst-2);
+    font-weight: 700;
+    white-space: nowrap;
+    transition: var(--przejscie-szybkie);
+}
+
+.tab-kategorii:hover {
+    background: rgba(255, 255, 255, .7);
+}
+
+.tab-kategorii.jest-aktywna {
+    background: rgba(255, 255, 255, .95);
+    border-color: var(--kolor-obramowania);
+    color: var(--kolor-akcent);
+    box-shadow: var(--cien-maly);
+}
+
+.tab-kategorii.tab-dodaj {
+    width: 44px;
+    padding: 0;
+    font-size: 1rem;
+}
+
+/* ===================================
+   SIATKA GRUP
+   =================================== */
+
+.siatka-grup-kompakt {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--odstep-5);
+    align-items: start;
+    padding: 6px 0 10px;
+    min-height: 320px;
+}
+
+.kolumna-grupy-kompakt,
+.karta-dodaj-grupe {
+    min-width: 0;
+    border-radius: var(--promien-duzy);
+}
+
+.kolumna-grupy-kompakt {
+    border: 1px solid var(--kolor-obramowania);
+    background: var(--kolor-panel-glass-mocny);
+    box-shadow: var(--cien-sredni);
+    overflow: visible;
+}
+
+.naglowek-grupy-kompakt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--odstep-3);
+    padding: var(--odstep-3) var(--odstep-4);
+    background: color-mix(in srgb, var(--kolor-grupy) 24%, white);
+    border-bottom: 1px solid rgba(15, 23, 42, .06);
+    border-radius: var(--promien-duzy) var(--promien-duzy) 0 0;
+    position: relative;
+}
+
+.tytul-grupy-kompakt {
+    min-width: 0;
+}
+
+.tytul-grupy-kompakt h4 {
+    margin: 0;
+    color: color-mix(in srgb, var(--kolor-grupy) 78%, #2b3550);
+    font-size: .96rem;
+    line-height: 1.2;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.akcje-grupy-kompakt {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-2);
+    position: relative;
+}
+
+.kropka-koloru {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--promien-pelny);
+    background: var(--kolor-grupy);
+    box-shadow: 14px 0 0 rgba(0, 0, 0, .08);
+}
+
+.przycisk-menu-grupy {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: var(--promien-pelny);
+    background: transparent;
+    color: var(--kolor-tekst-2);
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-menu-grupy:hover {
+    background: rgba(0, 0, 0, .05);
+}
+
+/* ===================================
+   MENU GRUPY
+   =================================== */
+
+.menu-grupy {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 220px;
+    padding: var(--odstep-3);
+    border-radius: var(--promien-maly);
+    border: 1px solid var(--kolor-tekst);
+    background: var(--kolor-powierzchni);
+    box-shadow: var(--cien-duzy);
+    z-index: 20;
+}
+
+.menu-grupy.ukryte {
+    display: none;
+}
+
+.menu-kropki {
+    display: flex;
+    gap: var(--odstep-3);
+    margin-bottom: var(--odstep-3);
+    padding-left: 2px;
+}
+
+.menu-kropki span {
+    width: 16px;
+    height: 16px;
+    border-radius: var(--promien-pelny);
+}
+
+.menu-kropki span:nth-child(1) { background: var(--kropka-czerwona); }
+.menu-kropki span:nth-child(2) { background: var(--kropka-zolta); }
+.menu-kropki span:nth-child(3) { background: var(--kropka-pomaranczowa); }
+.menu-kropki span:nth-child(4) { background: conic-gradient(#4dabf7, #51cf66, #ffd43b, #ff6b6b, #4dabf7); }
+
+.przycisk-menu-opcja {
+    display: block;
+    width: 100%;
+    padding: var(--odstep-3) 2px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    color: var(--kolor-tekst);
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-menu-opcja:hover {
+    color: var(--kolor-akcent);
+}
+
+.przycisk-menu-opcja.usun {
+    color: var(--kolor-blad);
+}
+
+/* ===================================
+   LISTA LINKÓW
+   =================================== */
+
+.lista-linkow-w-grupie {
+    display: grid;
+    gap: 6px;
+    padding: var(--odstep-2);
+    min-height: 170px;
+    overflow: hidden;
+}
+
+.element-linku {
+    position: relative;
+    display: block;
+    min-width: 0;
+    padding: var(--odstep-2) 72px var(--odstep-2) var(--odstep-3);
+    border-radius: var(--promien-sredni);
+    border: 1px solid transparent;
+    background: rgba(255, 255, 255, .78);
+    overflow: hidden;
+    cursor: grab;
+    transition: var(--przejscie-szybkie);
+    transition-property: background, border-color, box-shadow;
+}
+
+.element-linku:active,
+.element-linku.sortable-chosen {
+    cursor: grabbing;
+}
+
+.element-linku:hover,
+.element-linku:focus-within {
+    background: rgba(77, 137, 245, .07);
+    border-color: rgba(77, 137, 245, .14);
+    box-shadow: var(--cien-maly);
+}
+
+.element-linku.sortable-ghost {
+    opacity: .55;
+}
+
+.link-glowny {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    align-items: center;
+    gap: var(--odstep-2);
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.ikona-linku {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: block;
+    border-radius: 3px;
+    flex: 0 0 16px;
+}
+
+.ikona-linku.zastpcza {
+    display: grid;
+    place-items: center;
+    color: var(--kolor-tekst-3);
+    font-size: .65rem;
+}
+
+.link-tytul {
+    display: block;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--kolor-tekst);
+    font-weight: 500;
+    font-size: .92rem;
+}
+
+.link-akcje {
+    position: absolute;
+    top: 50%;
+    right: var(--odstep-2);
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: calc(100% - 18px);
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--przejscie-szybkie);
+}
+
+.element-linku:hover .link-akcje,
+.element-linku:focus-within .link-akcje {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.przycisk-linku-akcji {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--promien-pelny);
+    border: 1px solid var(--kolor-obramowania);
+    background: var(--kolor-powierzchni);
+    color: var(--kolor-tekst-2);
+    font-size: .65rem;
+    flex: 0 0 24px;
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.przycisk-linku-akcji:hover {
+    color: var(--kolor-akcent);
+}
+
+.przycisk-linku-akcji.jest-ulubiona {
+    color: var(--kolor-ostrzezenie);
+}
+
+/* ===================================
+   PUSTE STANY
+   =================================== */
+
+.puste-grupy {
+    padding: var(--odstep-6) var(--odstep-4);
+    text-align: center;
+    color: var(--kolor-tekst-3);
+    font-size: .95rem;
+    border: 1px dashed var(--kolor-obramowania);
+    border-radius: var(--promien-sredni);
+    background: rgba(248, 250, 252, .7);
+}
+
+.karta-dodaj-grupe {
+    display: grid;
+    place-items: center;
+    gap: var(--odstep-3);
+    min-height: 220px;
+    border: 2px dashed var(--kolor-obramowania);
+    background: rgba(255, 255, 255, .35);
+    color: var(--kolor-tekst-3);
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--przejscie-szybkie);
+}
+
+.karta-dodaj-grupe:hover {
+    background: rgba(255, 255, 255, .5);
+    border-color: var(--kolor-akcent);
+    color: var(--kolor-akcent);
+}
+
+.karta-dodaj-grupe .plus {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--promien-pelny);
+    border: 2px solid currentColor;
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+}
+
+/* ===================================
+   RESPONSYWNOŚĆ
+   =================================== */
+
+/* Breakpointy projektu:
+   1300px - ukrycie prawego panelu
+   980px  - przejście na układ jednokolumnowy
+   700px  - mobile
+*/
+
+@media (max-width: 980px) {
+    .zakladki-szukaj-mini {
+        width: 100%;
+        min-width: 100%;
+        max-width: none;
+    }
+
+    .zakladki-toolbar {
+        align-items: stretch;
+    }
+
+    .zakladki-akcje-gorne {
+        margin-left: 0;
+    }
+
+    .kolumna-grupy-kompakt,
+    .karta-dodaj-grupe {
+        min-width: min(100%, 320px);
+        width: 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .lista-linkow-w-grupie {
+        padding: var(--odstep-3);
+    }
+
+    .element-linku {
+        padding-right: var(--odstep-3);
+    }
+
+    .link-akcje {
+        position: static;
+        transform: none;
+        margin-top: var(--odstep-2);
+        justify-content: flex-end;
+        opacity: 1;
+        pointer-events: auto;
+        max-width: 100%;
+    }
+}
+
+.zakladki-shell--panel {
+    gap: var(--odstep-4);
+}

@@ -1,0 +1,643 @@
+/* ===================================
+   MODUL: PANEL
+   OBSZAR: public/zasoby/css/panel.css
+   OPIS: Style widokow i wspolnych elementow interfejsu.
+   =================================== */
+
+.uklad-panel {
+    background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, .08), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(14, 165, 233, .05), transparent 24%),
+        var(--kolor-tla);
+}
+
+.motyw-kontrast {
+    --kolor-tla: #0f172a;
+    --kolor-powierzchni: #111827;
+    --kolor-powierzchni-2: #1f2937;
+    --kolor-tekst: #f8fafc;
+    --kolor-tekst-2: #cbd5e1;
+    --kolor-obramowania: #334155;
+    --cien-duzy: 0 24px 60px rgba(0, 0, 0, 0.25);
+    --cien-sredni: 0 14px 35px rgba(0, 0, 0, 0.22);
+}
+
+/* ===================================
+   LAYOUT APLIKACJI
+   =================================== */
+
+.powloka-aplikacji {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: var(--szerokosc-sidebar) 1fr var(--szerokosc-panel-prawy);
+    gap: 0;
+}
+
+.obszar-aplikacji {
+    min-width: 0;
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.obszar-glowny {
+    padding: var(--odstep-6);
+    min-width: 0;
+}
+
+/* ===================================
+   PANEL BOCZNY
+   =================================== */
+
+.panel-boczny {
+    padding: var(--odstep-6) var(--odstep-5);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--kolor-panel-glass);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid var(--kolor-border-glass);
+}
+
+.sekcja-marki {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--odstep-4);
+    margin-bottom: 28px;
+}
+
+.sekcja-marki .przycisk-zwin {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.marka {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--odstep-3);
+    min-width: 0;
+}
+
+.panel-boczny .logo-marki {
+    width: 70px;
+    height: 70px;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.opis-marki {
+    display: grid;
+    min-width: 0;
+    text-align: center;
+}
+
+.opis-marki strong {
+    font-size: 1rem;
+}
+
+.nawigacja-glowna {
+    display: grid;
+    gap: var(--odstep-3);
+}
+
+.link-boczny {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+    padding: var(--odstep-4) 15px;
+    border-radius: var(--promien-duzy);
+    color: var(--kolor-tekst-2);
+    border: 1px solid transparent;
+    transition: var(--przejscie-szybkie);
+    transition-property: background, border-color, transform;
+}
+
+.link-boczny:hover {
+    transform: translateY(-1px);
+    border-color: var(--kolor-obramowania);
+    background: rgba(255, 255, 255, .9);
+    color: var(--kolor-tekst);
+}
+
+.link-boczny.jest-aktywny {
+    background: linear-gradient(135deg, rgba(37, 99, 235, .12), rgba(14, 165, 233, .12));
+    border-color: rgba(37, 99, 235, .18);
+    color: var(--kolor-akcent);
+    font-weight: 700;
+}
+
+.przycisk-szybki {
+    margin: var(--odstep-6) 0;
+}
+
+.profil-boczny {
+    margin-top: auto;
+    padding: var(--odstep-4);
+    border-radius: var(--promien-duzy);
+    background: rgba(255, 255, 255, .9);
+    border: 1px solid var(--kolor-obramowania);
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+}
+
+.avatar-profilu {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-info));
+    color: var(--kolor-powierzchni);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    box-shadow: 0 14px 22px rgba(37, 99, 235, .18);
+    flex-shrink: 0;
+}
+
+.profil-boczny small {
+    display: block;
+    color: var(--kolor-tekst-2);
+    margin-top: 2px;
+    overflow-wrap: anywhere;
+}
+
+.link-wyloguj {
+    margin-top: var(--odstep-4);
+    color: var(--kolor-blad);
+}
+
+/* ===================================
+   PANEL KONTEKSTOWY (PRAWY)
+   =================================== */
+
+.panel-kontekstowy {
+    padding: var(--odstep-6) var(--odstep-5);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--kolor-panel-glass);
+    backdrop-filter: blur(12px);
+    border-left: 1px solid var(--kolor-border-glass);
+    display: grid;
+    align-content: start;
+    gap: var(--odstep-5);
+    overflow-y: auto;
+}
+
+.przycisk-zwin-prawy {
+    position: fixed;
+    top: var(--odstep-6);
+    right: var(--odstep-6);
+    z-index: 1100;
+    width: 46px;
+    height: 46px;
+    border-radius: var(--promien-duzy);
+    background: rgba(255, 255, 255, .95);
+    border: 1px solid var(--kolor-obramowania);
+    box-shadow: var(--cien-sredni);
+}
+
+.panel-kontekstowy-naglowek {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--odstep-3);
+}
+
+.panel-kontekstowy-naglowek strong {
+    font-size: .95rem;
+}
+
+.sekcja-kontekstowa {
+    background: var(--kolor-panel-glass-mocny);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    padding: var(--odstep-5);
+    box-shadow: var(--cien-sredni);
+}
+
+.naglowek-sekcji {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: var(--odstep-4);
+    margin-bottom: var(--odstep-4);
+}
+
+.naglowek-sekcji h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.naglowek-sekcji small {
+    color: var(--kolor-tekst-2);
+}
+
+.zegar-cyfrowy {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.lista-wskazowek {
+    margin: 0;
+    padding-left: var(--odstep-5);
+    color: var(--kolor-tekst-2);
+    line-height: 1.7;
+}
+
+/* ===================================
+   GÓRNY PASEK
+   =================================== */
+
+.gorny-pasek {
+    display: grid;
+    grid-template-columns: auto minmax(280px, 1fr) auto;
+    gap: var(--odstep-5);
+    padding: var(--odstep-6) var(--odstep-6) 0;
+    align-items: center;
+}
+
+.naglowek-strony small,
+.karta-statystyki small,
+.lista-danych-konta dt {
+    color: var(--kolor-tekst-2);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .72rem;
+}
+
+.naglowek-strony h1 {
+    margin: 4px 0 0;
+    font-size: clamp(1.65rem, 3vw, 2.35rem);
+}
+
+.pole-szukania {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    border-radius: var(--promien-duzy);
+    padding: var(--odstep-3) var(--odstep-4);
+    background: var(--kolor-panel-glass-mocny);
+    border: 1px solid var(--kolor-obramowania);
+    box-shadow: var(--cien-sredni);
+    color: var(--kolor-tekst-2);
+}
+
+.pole-szukania input {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    color: var(--kolor-tekst);
+}
+
+.pole-szukania input:focus {
+    box-shadow: none;
+}
+
+.pole-szukania.pole-nieaktywne {
+    opacity: .75;
+}
+
+.akcje-gorne {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--odstep-3);
+    align-items: center;
+}
+
+/* ===================================
+   SEKCJE I KARTY PANELU
+   =================================== */
+
+.sekcja-panelowa {
+    background: rgba(255, 255, 255, .84);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, .5);
+    border-radius: 28px;
+    box-shadow: var(--cien-duzy);
+    padding: var(--odstep-6);
+    margin-bottom: var(--odstep-6);
+}
+
+.sekcja-naglowek {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: var(--odstep-5);
+    margin-bottom: var(--odstep-6);
+}
+
+.sekcja-naglowek h2 {
+    margin: 0 0 6px;
+    font-size: 1.4rem;
+}
+
+.sekcja-naglowek p {
+    margin: 0;
+    color: var(--kolor-tekst-2);
+    line-height: 1.7;
+}
+
+.siatka-statystyk {
+    display: grid;
+    gap: var(--odstep-4);
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.karta-statystyki {
+    background: var(--kolor-powierzchni);
+    border-radius: 22px;
+    padding: var(--odstep-5);
+    border: 1px solid var(--kolor-obramowania);
+    box-shadow: var(--cien-sredni);
+    display: grid;
+    gap: 6px;
+}
+
+
+
+.karta-statystyki strong {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.karta-statystyki span {
+    color: var(--kolor-tekst-2);
+    line-height: 1.6;
+}
+
+.lista-ostatnich {
+    display: grid;
+    gap: var(--odstep-4);
+}
+
+.wiersz-ostatni {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--odstep-4);
+    align-items: center;
+    padding: var(--odstep-4) var(--odstep-5);
+    border-radius: var(--promien-duzy);
+    background: var(--kolor-powierzchni);
+    border: 1px solid var(--kolor-obramowania);
+}
+
+.wiersz-ostatni small {
+    display: block;
+    color: var(--kolor-tekst-2);
+    margin-top: 4px;
+}
+
+.wiersz-ostatni a {
+    color: var(--kolor-akcent);
+    font-weight: 700;
+}
+
+.puste-pole {
+    min-height: 180px;
+    border-radius: 22px;
+    border: 1px dashed rgba(148, 163, 184, .8);
+    background: rgba(255, 255, 255, .6);
+    display: grid;
+    place-items: center;
+    text-align: center;
+    gap: var(--odstep-3);
+    color: var(--kolor-tekst-2);
+    padding: var(--odstep-6);
+}
+
+.puste-pole i {
+    font-size: 1.6rem;
+}
+
+.formularz-dwie-kolumny {
+    display: grid;
+    gap: var(--odstep-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* ===================================
+   PROFIL
+   =================================== */
+
+.siatka-profilu-dwie-kolumny {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--odstep-5);
+}
+
+.karta-profilu {
+    background: var(--kolor-powierzchni);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    padding: var(--odstep-6);
+    box-shadow: var(--cien-sredni);
+}
+
+.naglowek-sekcji-profilu {
+    margin-bottom: var(--odstep-5);
+}
+
+.naglowek-sekcji-profilu h3 {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+}
+
+.naglowek-sekcji-profilu p {
+    margin: 0;
+    color: var(--kolor-tekst-2);
+    line-height: 1.6;
+}
+
+.lista-danych-konta {
+    margin: 0;
+    display: grid;
+    gap: var(--odstep-4);
+}
+
+.lista-danych-konta > div {
+    padding: var(--odstep-4);
+    border-radius: var(--promien-duzy);
+    border: 1px solid var(--kolor-obramowania);
+    background: rgba(248, 250, 252, .9);
+}
+
+.lista-danych-konta dt {
+    margin: 0 0 6px;
+    font-size: .82rem;
+}
+
+.lista-danych-konta dd {
+    margin: 0;
+    font-weight: 600;
+    color: var(--kolor-tekst);
+    overflow-wrap: anywhere;
+}
+
+/* ===================================
+   STANY PANELI
+   =================================== */
+
+.panel-boczny.jest-zwiniety {
+    width: 92px;
+    padding-inline: var(--odstep-3);
+}
+
+.panel-boczny.jest-zwiniety .opis-marki,
+.panel-boczny.jest-zwiniety .link-boczny span,
+.panel-boczny.jest-zwiniety .profil-boczny > div,
+.panel-boczny.jest-zwiniety .przycisk-glowny span,
+.panel-boczny.jest-zwiniety .link-wyloguj span {
+    display: none;
+}
+
+.panel-boczny.jest-zwiniety .link-boczny,
+.panel-boczny.jest-zwiniety .przycisk-glowny,
+.panel-boczny.jest-zwiniety .link-wyloguj {
+    justify-content: center;
+}
+
+.panel-boczny.jest-zwiniety .profil-boczny {
+    justify-content: center;
+    padding: var(--odstep-3);
+}
+
+.panel-kontekstowy.jest-ukryty {
+    display: none;
+}
+
+.przycisk-zwin-prawy.jest-ukryty {
+    display: none;
+}
+
+.przycisk-zwin-prawy.jest-widoczny {
+    display: inline-flex;
+}
+
+/* ===================================
+   MODUŁ ZAKŁADKI - SPECYFICZNE STYLE
+   =================================== */
+
+.gorny-pasek--zakladki {
+    grid-template-columns: minmax(320px, 1fr) auto;
+}
+
+.srodkowa-akcja--zakladki {
+    min-width: 0;
+}
+
+.pole-szukania--zakladki {
+    width: 100%;
+}
+
+.akcje-gorne-zakladki {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+/* ===================================
+   RESPONSYWNOŚĆ
+   =================================== */
+
+/* Breakpointy projektu:
+   1300px - ukrycie prawego panelu
+   980px  - przejście na układ jednokolumnowy
+   700px  - mobile
+*/
+
+@media (max-width: 1300px) {
+    .powloka-aplikacji {
+        grid-template-columns: 260px 1fr;
+    }
+
+    .panel-kontekstowy {
+        display: none;
+    }
+
+    .przycisk-zwin-prawy.jest-widoczny {
+        display: inline-flex;
+        top: var(--odstep-4);
+        right: var(--odstep-4);
+    }
+
+    .panel-kontekstowy.jest-widoczny {
+        display: grid;
+        position: fixed;
+        right: var(--odstep-4);
+        top: var(--odstep-4);
+        width: min(340px, calc(100vw - 32px));
+        height: auto;
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+        z-index: 1200;
+        border-radius: 28px;
+        box-shadow: var(--cien-duzy);
+    }
+
+    .przycisk-zwin-prawy.jest-ukryty {
+        display: none;
+    }
+}
+
+@media (max-width: 980px) {
+    .powloka-aplikacji {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-boczny {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--kolor-border-glass);
+    }
+
+    .gorny-pasek {
+        grid-template-columns: 1fr;
+        padding-top: var(--odstep-5);
+    }
+
+    .akcje-gorne {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 980px) {
+    .gorny-pasek--zakladki {
+        grid-template-columns: 1fr;
+    }
+
+    .akcje-gorne-zakladki {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 700px) {
+    .obszar-glowny {
+        padding: var(--odstep-4);
+    }
+
+    .sekcja-panelowa {
+        padding: var(--odstep-5);
+        border-radius: 22px;
+    }
+
+    .formularz-dwie-kolumny {
+        grid-template-columns: 1fr;
+    }
+
+    .sekcja-naglowek {
+        flex-direction: column;
+    }
+
+    .wiersz-ostatni {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
