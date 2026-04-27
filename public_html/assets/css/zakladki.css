@@ -144,7 +144,8 @@
 
 .siatka-grup-kompakt {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, 300px);
+    justify-content: start;
     gap: var(--odstep-5);
     align-items: start;
     padding: 6px 0 10px;
@@ -199,13 +200,6 @@
     position: relative;
 }
 
-.kropka-koloru {
-    width: 10px;
-    height: 10px;
-    border-radius: var(--promien-pelny);
-    background: var(--kolor-grupy);
-    box-shadow: 14px 0 0 rgba(0, 0, 0, .08);
-}
 
 .przycisk-menu-grupy {
     width: 30px;
@@ -250,16 +244,6 @@
     padding-left: 2px;
 }
 
-.menu-kropki span {
-    width: 16px;
-    height: 16px;
-    border-radius: var(--promien-pelny);
-}
-
-.menu-kropki span:nth-child(1) { background: var(--kropka-czerwona); }
-.menu-kropki span:nth-child(2) { background: var(--kropka-zolta); }
-.menu-kropki span:nth-child(3) { background: var(--kropka-pomaranczowa); }
-.menu-kropki span:nth-child(4) { background: conic-gradient(#4dabf7, #51cf66, #ffd43b, #ff6b6b, #4dabf7); }
 
 .przycisk-menu-opcja {
     display: block;
@@ -287,6 +271,9 @@
 
 .lista-linkow-w-grupie {
     display: grid;
+    grid-auto-rows: max-content;
+    align-content: start;
+    align-items: start;
     gap: 6px;
     padding: var(--odstep-2);
     min-height: 170px;
@@ -297,14 +284,14 @@
     position: relative;
     display: block;
     min-width: 0;
-    padding: var(--odstep-2) 72px var(--odstep-2) var(--odstep-3);
+    padding: var(--odstep-2) var(--odstep-3);
     border-radius: var(--promien-sredni);
     border: 1px solid transparent;
     background: rgba(255, 255, 255, .78);
     overflow: hidden;
     cursor: grab;
     transition: var(--przejscie-szybkie);
-    transition-property: background, border-color, box-shadow;
+    transition-property: background, border-color, box-shadow, padding;
 }
 
 .element-linku:active,
@@ -314,6 +301,7 @@
 
 .element-linku:hover,
 .element-linku:focus-within {
+    padding-right: 72px;
     background: rgba(77, 137, 245, .07);
     border-color: rgba(77, 137, 245, .14);
     box-shadow: var(--cien-maly);
@@ -471,6 +459,10 @@
         margin-left: 0;
     }
 
+    .siatka-grup-kompakt {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .kolumna-grupy-kompakt,
     .karta-dodaj-grupe {
         min-width: min(100%, 320px);
@@ -623,4 +615,31 @@ body.przenoszenie-grupy .tab-kategorii[data-drop-kategoria="1"] {
 
 .tab-kategorii-przeciagana {
     opacity: .55;
+}
+
+/* Inline edycja nazwy grupy */
+.tytul-grupy-kompakt h4.jest-edytowany-inline {
+    cursor: text;
+    outline: none;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    min-width: 32px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    caret-color: currentColor;
+}
+
+.tytul-grupy-kompakt h4.jest-edytowany-inline::selection {
+    background: color-mix(in srgb, var(--kolor-grupy) 28%, transparent);
+}
+
+.tytul-grupy-kompakt h4.jest-zapisywany {
+    opacity: .7;
+}
+
+.naglowek-grupy-kompakt.jest-edytowany-inline {
+    cursor: text;
 }

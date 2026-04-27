@@ -18,6 +18,7 @@
         aktywneMenu: null,
         kolorPicker: null,
         timerKoloru: null,
+        edycjaNazwyGrupyInline: null,
         przeciaganaGrupa: null,
         przeniesionoGrupeDoKategorii: false,
     };
@@ -170,13 +171,12 @@
             const maId = Number(grupa.id) > 0;
             return `
                 <article class="kolumna-grupy-kompakt ${maId ? '' : 'kolumna-bez-grupy'}" data-id-grupy="${Number(grupa.id || 0)}" style="--kolor-grupy:${esc(kolor)};">
-                    <header class="naglowek-grupy-kompakt">
+                    <header class="naglowek-grupy-kompakt" data-edytuj-grupe-prawym="1">
                         <div class="tytul-grupy-kompakt">
-                            <h4>${esc(grupa.nazwa || 'Bez grupy')}</h4>
+                            <h4 class="nazwa-grupy-kompakt" title="Kliknij prawym, aby zmienic nazwe">${esc(grupa.nazwa || 'Bez grupy')}</h4>
                         </div>
                         ${maId ? `
                             <div class="akcje-grupy-kompakt">
-                                <span class="kropka-koloru"></span>
                                 <button type="button" class="przycisk-menu-grupy" data-akcja="przelacz-menu-grupy" data-id-grupy="${Number(grupa.id)}" title="Opcje grupy">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
@@ -283,6 +283,10 @@
         els.poleNazwaGrupy.value = grupa?.nazwa || '';
         els.tytulModaluGrupy.textContent = grupa ? 'Zmien nazwe grupy' : 'Dodaj grupe';
         pokazModal(els.modalGrupa);
+        window.setTimeout(() => {
+            els.poleNazwaGrupy?.focus();
+            if (grupa) els.poleNazwaGrupy?.select();
+        }, 0);
     };
 
     const zapiszZakladke = async (e) => {
@@ -326,6 +330,159 @@
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Zapisano grupe.');
         ukryjModal(els.modalGrupa);
         await pobierzListe();
+    };
+
+    const zapiszNazweGrupyInline = async (idGrupy, nazwa) => {
+        const czystaNazwa = String(nazwa || '').trim();
+        if (Number(idGrupy) <= 0 || czystaNazwa.length < 2) {
+            throw new Error('Nazwa grupy musi miec minimum 2 znaki.');
+        }
+
+        const grupa = znajdzGrupe(idGrupy);
+        if (grupa && String(grupa.nazwa || '').trim() === czystaNazwa) return false;
+
+        const fd = new FormData();
+        fd.set('id', String(Number(idGrupy)));
+        fd.set('nazwa', czystaNazwa);
+        await api.pobierzJson('api/zakladki/grupy/edytuj.php', { method: 'POST', body: fd });
+        if (grupa) grupa.nazwa = czystaNazwa;
+        await pobierzListe();
+        return true;
+    };
+
+    const zaznaczTekstElementu = (element) => {
+        if (!element) return;
+        const zakres = document.createRange();
+        zakres.selectNodeContents(element);
+        const wybor = window.getSelection();
+        wybor?.removeAllRanges();
+        wybor?.addRange(zakres);
+    };
+
+    const ustawTrybEdycjiNaglowka = (h4, czyEdytowany) => {
+        if (!h4) return;
+        h4.contentEditable = czyEdytowany ? 'true' : 'false';
+        h4.spellcheck = false;
+        h4.classList.toggle('jest-edytowany-inline', Boolean(czyEdytowany));
+        if (czyEdytowany) {
+            h4.setAttribute('role', 'textbox');
+            h4.setAttribute('aria-label', 'Nazwa grupy');
+        } else {
+            h4.removeAttribute('role');
+            h4.removeAttribute('aria-label');
+        }
+    };
+
+    const rozpocznijEdycjeNazwyGrupy = (idGrupy) => {
+        const id = Number(idGrupy || 0);
+        if (id <= 0) return;
+
+        const grupa = znajdzGrupe(id);
+        const kolumna = els.obszarKolumn?.querySelector(`.kolumna-grupy-kompakt[data-id-grupy="${id}"]`);
+        const naglowek = kolumna?.querySelector('.naglowek-grupy-kompakt');
+        const h4 = kolumna?.querySelector('.tytul-grupy-kompakt h4');
+        if (!grupa || !kolumna || !naglowek || !h4) return;
+
+        if (h4.isContentEditable) {
+            h4.focus();
+            zaznaczTekstElementu(h4);
+            return;
+        }
+
+        zamknijMenu();
+        stan.edycjaNazwyGrupyInline = id;
+        naglowek.classList.add('jest-edytowany-inline');
+
+        const staraNazwa = String(grupa.nazwa || '').trim() || 'Bez grupy';
+        h4.dataset.staraNazwa = staraNazwa;
+        h4.textContent = staraNazwa;
+        ustawTrybEdycjiNaglowka(h4, true);
+
+        let zakonczone = false;
+
+        function wyczyscObslugeEdycji() {
+            h4.removeEventListener('keydown', obsluzKlawisze);
+            h4.removeEventListener('paste', obsluzWklejanie);
+            h4.removeEventListener('blur', obsluzBlur);
+        }
+
+        function przywroc(nazwa) {
+            h4.textContent = nazwa || staraNazwa;
+            h4.classList.remove('jest-zapisywany');
+            ustawTrybEdycjiNaglowka(h4, false);
+            delete h4.dataset.staraNazwa;
+            naglowek.classList.remove('jest-edytowany-inline');
+            stan.edycjaNazwyGrupyInline = null;
+            wyczyscObslugeEdycji();
+        }
+
+        const zakoncz = async (czyAnulowac = false) => {
+            if (zakonczone) return;
+            zakonczone = true;
+            const nowaNazwa = h4.textContent.trim().replace(/\s+/g, ' ');
+
+            if (czyAnulowac) {
+                przywroc(staraNazwa);
+                return;
+            }
+
+            if (!nowaNazwa || nowaNazwa.length < 2) {
+                zakonczone = false;
+                api.pokazPowiadomienie('blad', 'Nazwa grupy musi miec minimum 2 znaki.');
+                h4.textContent = staraNazwa;
+                h4.focus();
+                zaznaczTekstElementu(h4);
+                return;
+            }
+
+            if (nowaNazwa === staraNazwa) {
+                przywroc(staraNazwa);
+                return;
+            }
+
+            h4.classList.add('jest-zapisywany');
+            try {
+                await zapiszNazweGrupyInline(id, nowaNazwa);
+            } catch (blad) {
+                h4.classList.remove('jest-zapisywany');
+                zakonczone = false;
+                api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac nazwy grupy.');
+                h4.textContent = staraNazwa;
+                h4.focus();
+                zaznaczTekstElementu(h4);
+                return;
+            }
+            przywroc(nowaNazwa);
+        };
+
+        function obsluzKlawisze(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                h4.blur();
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                zakoncz(true);
+            }
+        }
+
+        function obsluzWklejanie(e) {
+            e.preventDefault();
+            const tekst = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+            document.execCommand('insertText', false, tekst.replace(/\s+/g, ' ').trim());
+        }
+
+        function obsluzBlur() {
+            zakoncz(false);
+        }
+
+        h4.addEventListener('keydown', obsluzKlawisze);
+        h4.addEventListener('paste', obsluzWklejanie);
+        h4.addEventListener('blur', obsluzBlur);
+
+        window.setTimeout(() => {
+            h4.focus();
+            zaznaczTekstElementu(h4);
+        }, 0);
     };
 
     const zapiszKategorie = async (e) => {
@@ -382,11 +539,10 @@
     const zapiszKolorGrupy = async (idGrupy, kolor, czyCicho = false) => {
         const kolorHex = normalizujKolor(kolor);
         zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
-        const odpowiedz = await api.pobierzJson('api/zakladki/grupy/kolor.php', {
+        await api.pobierzJson('api/zakladki/grupy/kolor.php', {
             method: 'POST',
             body: JSON.stringify({ id: Number(idGrupy), kolor: kolorHex }),
         });
-        if (!czyCicho) api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Kolor grupy zostal zapisany.');
     };
 
     const zapiszKolorGrupyZDebounce = (idGrupy, kolor) => {
@@ -574,7 +730,8 @@
         new window.Sortable(els.obszarKolumn, {
             animation: 150,
             draggable: '.kolumna-grupy-kompakt[data-id-grupy]:not(.kolumna-bez-grupy)',
-            filter: '.karta-dodaj-grupe',
+            filter: '.karta-dodaj-grupe, input, textarea, select, button, a, [contenteditable="true"]',
+            preventOnFilter: false,
             onStart: (evt) => {
                 stan.przeniesionoGrupeDoKategorii = false;
                 stan.przeciaganaGrupa = Number(evt.item.dataset.idGrupy || 0);
@@ -695,7 +852,7 @@
                     zamknijMenu();
                     break;
                 case 'edytuj-grupe':
-                    otworzModalGrupy(znajdzGrupe(Number(przycisk.dataset.idGrupy)));
+                    rozpocznijEdycjeNazwyGrupy(Number(przycisk.dataset.idGrupy));
                     zamknijMenu();
                     break;
                 case 'przesun-grupe':
@@ -725,6 +882,24 @@
         }
     };
 
+
+    const obsluzPrawyKlikNaglowkaGrupy = (e) => {
+        const naglowek = e.target.closest('.naglowek-grupy-kompakt[data-edytuj-grupe-prawym="1"]');
+        if (!naglowek || !els.obszarKolumn?.contains(naglowek)) return;
+        if (e.target.closest('.akcje-grupy-kompakt, .menu-grupy, button, a, input, textarea, select, [contenteditable="true"]')) return;
+
+        const kolumna = naglowek.closest('.kolumna-grupy-kompakt[data-id-grupy]');
+        const idGrupy = Number(kolumna?.dataset.idGrupy || 0);
+        if (!idGrupy) return;
+
+        const grupa = znajdzGrupe(idGrupy);
+        if (!grupa) return;
+
+        e.preventDefault();
+        zamknijMenu();
+        rozpocznijEdycjeNazwyGrupy(idGrupy);
+    };
+
     const podpinijSzukaj = () => {
         const handler = debounce(async (wartosc) => {
             try {
@@ -747,6 +922,8 @@
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.akcje-grupy-kompakt')) zamknijMenu();
     });
+
+    els.obszarKolumn?.addEventListener('contextmenu', obsluzPrawyKlikNaglowkaGrupy);
 
 
     document.getElementById('przycisk-importu-zakladek')?.addEventListener('click', () => {

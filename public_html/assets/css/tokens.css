@@ -34,10 +34,6 @@
   --kolor-panel-glass-mocny: rgba(255, 255, 255, .92);
   --kolor-border-glass: rgba(226, 232, 240, .8);
   --kolor-autofill: #eaf2ff;
-  --kolor-kropka-czerwona: #ff6b6b;
-  --kolor-kropka-zolta: #ffd166;
-  --kolor-kropka-pomaranczowa: #f4a261;
-
   /* Czcionki - Prymitywy */
   --font-glowny: 'Montserrat', sans-serif;
 
@@ -82,10 +78,6 @@
   --status-info: var(--kolor-status-info);
   --marka-glowny: var(--kolor-marka-czerwony);
   --marka-tlo: var(--kolor-marka-szary);
-  --kropka-czerwona: var(--kolor-kropka-czerwona);
-  --kropka-zolta: var(--kolor-kropka-zolta);
-  --kropka-pomaranczowa: var(--kolor-kropka-pomaranczowa);
-
   /* Aliasy dla kompatybilności */
   --kolor-tla: var(--tlo-strona);
   --kolor-powierzchni: var(--tlo-karta);
