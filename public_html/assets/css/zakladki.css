@@ -497,3 +497,104 @@
 .zakladki-shell--panel {
     gap: var(--odstep-4);
 }
+
+/* ===================================
+   ODŚWIEŻENIE WIZUALNE MODUŁU ZAKŁADEK
+   Lżejsze karty, mniejsze rogi i spokojniejsze ramki.
+   =================================== */
+.zakladki-szukaj-mini,
+.przycisk-panelowy,
+.tab-kategorii.jest-aktywna,
+.kolumna-grupy-kompakt {
+    border-color: rgba(217, 226, 239, .86);
+}
+
+.zakladki-szukaj-mini,
+.przycisk-panelowy,
+.tab-kategorii.jest-aktywna {
+    background: rgba(255, 255, 255, .94);
+}
+
+.kolumna-grupy-kompakt {
+    background: var(--kolor-panel-glass-mocny);
+    box-shadow: var(--cien-sredni);
+}
+
+.naglowek-grupy-kompakt {
+    background: color-mix(in srgb, var(--kolor-grupy) 18%, white);
+    border-bottom-color: rgba(217, 226, 239, .7);
+}
+
+.element-linku {
+    border-radius: var(--promien-maly);
+    background: rgba(255, 255, 255, .74);
+}
+
+.element-linku:hover,
+.element-linku:focus-within {
+    background: rgba(37, 99, 235, .055);
+    border-color: rgba(37, 99, 235, .12);
+}
+
+.karta-dodaj-grupe {
+    border: 1px dashed rgba(148, 163, 184, .42);
+    background: rgba(255, 255, 255, .28);
+}
+
+.karta-dodaj-grupe:hover {
+    background: rgba(255, 255, 255, .42);
+}
+
+/* ===================================
+   WYBOR KOLORU NAGLOWKA GRUPY
+   =================================== */
+
+.menu-kropki {
+    align-items: center;
+}
+
+.przycisk-koloru-grupy {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--promien-pelny);
+    background: var(--kolor-opcji);
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .08);
+    transition: transform .14s ease, box-shadow .14s ease;
+}
+
+.przycisk-koloru-grupy:hover,
+.przycisk-koloru-grupy:focus-visible {
+    transform: translateY(-1px) scale(1.08);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, .16), inset 0 0 0 1px rgba(15, 23, 42, .12);
+    outline: none;
+}
+
+.przycisk-koloru-wlasny {
+    background: conic-gradient(#4dabf7, #51cf66, #ffd43b, #ff6b6b, #4dabf7);
+}
+
+.kolor-picker-grupy {
+    margin: 2px 0 var(--odstep-3);
+    padding: var(--odstep-3) 0 var(--odstep-2);
+    border-top: 1px solid rgba(15, 23, 42, .08);
+    border-bottom: 1px solid rgba(15, 23, 42, .08);
+}
+
+.kolor-picker-grupy.ukryte {
+    display: none;
+}
+
+.kolor-picker-grupy-widget {
+    display: flex;
+    justify-content: center;
+}
+
+.kolor-picker-grupy-info {
+    margin-top: var(--odstep-2);
+    color: var(--kolor-tekst-3);
+    font-size: .72rem;
+    text-align: center;
+}

@@ -242,13 +242,34 @@ function grupy_maja_id_kategorii(): bool
     return czy_kolumna_istnieje('grupy_zakladek', 'id_kategorii');
 }
 
+function grupy_maja_kolor(): bool
+{
+    return czy_kolumna_istnieje('grupy_zakladek', 'kolor');
+}
+
+function upewnij_kolumne_koloru_grupy(): bool
+{
+    if (grupy_maja_kolor()) {
+        return true;
+    }
+
+    try {
+        baza()->exec("ALTER TABLE grupy_zakladek ADD COLUMN kolor VARCHAR(7) NULL DEFAULT NULL AFTER czy_zwinieta");
+        return true;
+    } catch (Throwable $e) {
+        return grupy_maja_kolor();
+    }
+}
+
 function pobierz_grupy(int $idUzytkownika): array
 {
     $czyPowiazaneZKategoria = grupy_maja_id_kategorii();
+    $czyKolorGrupy = grupy_maja_kolor();
     $kolumnaKategorii = $czyPowiazaneZKategoria ? 'g.id_kategorii' : 'NULL AS id_kategorii';
+    $kolumnaKoloru = $czyKolorGrupy ? 'g.kolor' : 'NULL AS kolor';
 
     $stmt = baza()->prepare(
-        'SELECT g.id, g.nazwa, g.kolejnosc, g.czy_zwinieta, ' . $kolumnaKategorii . ', COUNT(z.id) AS licznik
+        'SELECT g.id, g.nazwa, g.kolejnosc, g.czy_zwinieta, ' . $kolumnaKategorii . ', ' . $kolumnaKoloru . ', COUNT(z.id) AS licznik
          FROM grupy_zakladek g
          LEFT JOIN zakladki z ON z.id_grupy = g.id AND z.id_uzytkownika = g.id_uzytkownika
          WHERE g.id_uzytkownika = :id
@@ -320,11 +341,12 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
             'kolejnosc' => (int) $grupa['kolejnosc'],
             'czy_zwinieta' => (int) ($grupa['czy_zwinieta'] ?? 0),
             'id_kategorii' => $idKategoriiGrupy,
+            'kolor' => preg_match('/^#[0-9a-fA-F]{6}$/', (string) ($grupa['kolor'] ?? '')) ? (string) $grupa['kolor'] : '#d7e3ff',
             'licznik' => 0,
             'zakladki' => [],
         ];
     }
-    $grupy[0] = ['id' => 0, 'nazwa' => 'Bez grupy', 'kolejnosc' => 999999, 'czy_zwinieta' => 0, 'licznik' => 0, 'zakladki' => []];
+    $grupy[0] = ['id' => 0, 'nazwa' => 'Bez grupy', 'kolejnosc' => 999999, 'czy_zwinieta' => 0, 'kolor' => '#d7e3ff', 'licznik' => 0, 'zakladki' => []];
 
     /* DANE - POBRANIE PELNEJ LISTY */
     $stmt = baza()->prepare(
@@ -377,6 +399,7 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
                 'nazwa' => (string) ($wiersz['nazwa_grupy'] ?: 'Bez grupy'),
                 'kolejnosc' => 999999,
                 'czy_zwinieta' => 0,
+                'kolor' => '#d7e3ff',
                 'licznik' => 0,
                 'zakladki' => [],
             ];

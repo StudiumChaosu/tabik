@@ -4,10 +4,12 @@ $cfg = require __DIR__ . '/../../config/baza.php';
 $u = uzytkownik();
 $bazowy_url = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
 $bazowy_url = $bazowy_url === '.' ? '' : $bazowy_url;
-$wersja_assetow = (string) @filemtime(__DIR__ . '/../assets/js/zakladki.js');
-if ($wersja_assetow === '' || $wersja_assetow === '0') {
-    $wersja_assetow = (string) time();
-}
+$pliki_assetow = [
+    __DIR__ . '/../assets/js/zakladki.js',
+    __DIR__ . '/../assets/js/glowny.js',
+    __DIR__ . '/../assets/css/panel.css',
+];
+$wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (int) filemtime($plik) : 0, $pliki_assetow));
 ?>
 <!doctype html>
 <html lang="pl" data-bazowy-url="<?= esc($bazowy_url) ?>" data-token-csrf="<?= esc(token_csrf()) ?>">
@@ -19,7 +21,6 @@ if ($wersja_assetow === '' || $wersja_assetow === '0') {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.css">
     <link rel="stylesheet" href="assets/css/tokens.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/glowny.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/panel.css?v=<?= esc($wersja_assetow) ?>">
@@ -30,8 +31,7 @@ if ($wersja_assetow === '' || $wersja_assetow === '0') {
     <script defer src="assets/js/formularze.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php if (($strona_js ?? '') === 'zakladki'): ?>
         <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.min.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/locale/pl.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
         <script defer src="assets/js/zakladki.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php endif; ?>
 </head>

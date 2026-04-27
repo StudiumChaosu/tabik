@@ -16,6 +16,8 @@
     const stan = {
         dane: poczatkowe,
         aktywneMenu: null,
+        kolorPicker: null,
+        timerKoloru: null,
     };
 
     const els = {
@@ -56,7 +58,9 @@
     const pokazModal = (m) => m?.classList.remove('ukryta');
     const ukryjModal = (m) => m?.classList.add('ukryta');
 
-    const kolorGrupy = (grupa) => grupa.kolor || '#d7e3ff';
+    const normalizujKolor = (kolor) => /^#[0-9a-fA-F]{6}$/.test(String(kolor || '').trim()) ? String(kolor).trim().toLowerCase() : '#d7e3ff';
+    const kolorGrupy = (grupa) => normalizujKolor(grupa.kolor || '#d7e3ff');
+    const paletaGrupy = ['#ff6b6b', '#ffd166', '#f4a261'];
     const liczba = (v) => Number(v || 0);
 
     const faviconFallbacki = (adresUrl, favIconUrl = '') => {
@@ -173,7 +177,16 @@
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
                                 <div class="menu-grupy ukryte" id="menu-grupy-${Number(grupa.id)}">
-                                    <div class="menu-kropki"><span></span><span></span><span></span><span></span></div>
+                                    <div class="menu-kropki" aria-label="Kolor naglowka grupy">
+                                        ${paletaGrupy.map((kolorPalety) => `
+                                            <button type="button" class="przycisk-koloru-grupy" data-akcja="ustaw-kolor-grupy" data-id-grupy="${Number(grupa.id)}" data-kolor="${kolorPalety}" style="--kolor-opcji:${kolorPalety};" title="Ustaw kolor ${kolorPalety}"></button>
+                                        `).join('')}
+                                        <button type="button" class="przycisk-koloru-grupy przycisk-koloru-wlasny" data-akcja="pokaz-picker-koloru-grupy" data-id-grupy="${Number(grupa.id)}" title="Wybierz wlasny kolor"></button>
+                                    </div>
+                                    <div class="kolor-picker-grupy ukryte" id="kolor-picker-grupy-${Number(grupa.id)}">
+                                        <div class="kolor-picker-grupy-widget" data-iro-picker></div>
+                                        <div class="kolor-picker-grupy-info">Przesun, aby zmienic kolor naglowka</div>
+                                    </div>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-zakladke-do-grupy" data-id-grupy="${Number(grupa.id)}">+ Zakladke</button>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-grupe">+ Grupe</button>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="otworz-wszystkie" data-id-grupy="${Number(grupa.id)}">Otworz wszystkie</button>
@@ -353,6 +366,72 @@
         (grupa?.zakladki || []).forEach((zakladka) => window.open(zakladka.adres_url, '_blank', 'noopener'));
     };
 
+    const zastosujKolorGrupyLokalnie = (idGrupy, kolor) => {
+        const kolorHex = normalizujKolor(kolor);
+        const grupa = znajdzGrupe(idGrupy);
+        if (grupa) grupa.kolor = kolorHex;
+
+        const kolumna = document.querySelector(`.kolumna-grupy-kompakt[data-id-grupy="${Number(idGrupy)}"]`);
+        if (kolumna) kolumna.style.setProperty('--kolor-grupy', kolorHex);
+    };
+
+    const zapiszKolorGrupy = async (idGrupy, kolor, czyCicho = false) => {
+        const kolorHex = normalizujKolor(kolor);
+        zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
+        const odpowiedz = await api.pobierzJson('api/zakladki/grupy/kolor.php', {
+            method: 'POST',
+            body: JSON.stringify({ id: Number(idGrupy), kolor: kolorHex }),
+        });
+        if (!czyCicho) api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Kolor grupy zostal zapisany.');
+    };
+
+    const zapiszKolorGrupyZDebounce = (idGrupy, kolor) => {
+        window.clearTimeout(stan.timerKoloru);
+        stan.timerKoloru = window.setTimeout(() => {
+            zapiszKolorGrupy(idGrupy, kolor, true).catch((blad) => {
+                api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
+            });
+        }, 220);
+    };
+
+    const pokazPickerKoloruGrupy = (idGrupy) => {
+        const panel = document.getElementById(`kolor-picker-grupy-${Number(idGrupy)}`);
+        if (!panel) return;
+
+        const toSamo = stan.kolorPicker?.idGrupy === Number(idGrupy) && !panel.classList.contains('ukryte');
+        document.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
+        if (toSamo) return;
+
+        panel.classList.remove('ukryte');
+        const kontener = panel.querySelector('[data-iro-picker]');
+        const kolor = kolorGrupy(znajdzGrupe(idGrupy));
+
+        if (!window.iro || !kontener) {
+            api.pokazPowiadomienie('blad', 'Nie zaladowano biblioteki wyboru koloru iro.js.');
+            return;
+        }
+
+        kontener.innerHTML = '';
+        const picker = new window.iro.ColorPicker(kontener, {
+            width: 168,
+            color: kolor,
+            borderWidth: 1,
+            borderColor: '#d9e2ef',
+            layout: [
+                { component: window.iro.ui.Wheel },
+                { component: window.iro.ui.Slider },
+            ],
+        });
+
+        picker.on('color:change', (wybranyKolor) => {
+            const kolorHex = normalizujKolor(wybranyKolor.hexString);
+            zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
+            zapiszKolorGrupyZDebounce(idGrupy, kolorHex);
+        });
+
+        stan.kolorPicker = { idGrupy: Number(idGrupy), picker };
+    };
+
     const przesunGrupe = async (idGrupy, kierunek) => {
         const grupy = (stan.dane.grupy || []).filter((g) => Number(g.id) > 0).map((g) => Number(g.id));
         const idx = grupy.indexOf(Number(idGrupy));
@@ -495,6 +574,12 @@
                     }
                     break;
                 }
+                case 'ustaw-kolor-grupy':
+                    await zapiszKolorGrupy(Number(przycisk.dataset.idGrupy), przycisk.dataset.kolor);
+                    break;
+                case 'pokaz-picker-koloru-grupy':
+                    pokazPickerKoloruGrupy(Number(przycisk.dataset.idGrupy));
+                    break;
                 case 'otworz-wszystkie':
                     otworzWszystkie(Number(przycisk.dataset.idGrupy));
                     zamknijMenu();

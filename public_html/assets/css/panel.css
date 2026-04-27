@@ -27,10 +27,21 @@
    =================================== */
 
 .powloka-aplikacji {
+    --aktualna-szerokosc-sidebar: var(--szerokosc-sidebar);
+    --aktualna-szerokosc-panel-prawy: var(--szerokosc-panel-prawy);
     min-height: 100vh;
     display: grid;
-    grid-template-columns: var(--szerokosc-sidebar) 1fr var(--szerokosc-panel-prawy);
+    grid-template-columns: var(--aktualna-szerokosc-sidebar) minmax(0, 1fr) var(--aktualna-szerokosc-panel-prawy);
     gap: 0;
+    transition: grid-template-columns var(--przejscie-szybkie);
+}
+
+.powloka-aplikacji.panel-lewy-zwiniety {
+    --aktualna-szerokosc-sidebar: 92px;
+}
+
+.powloka-aplikacji.panel-prawy-ukryty {
+    --aktualna-szerokosc-panel-prawy: 0px;
 }
 
 .obszar-aplikacji {
@@ -129,10 +140,6 @@
     border-color: rgba(37, 99, 235, .18);
     color: var(--kolor-akcent);
     font-weight: 700;
-}
-
-.przycisk-szybki {
-    margin: var(--odstep-6) 0;
 }
 
 .profil-boczny {
@@ -251,58 +258,11 @@
     line-height: 1.7;
 }
 
-/* ===================================
-   GÓRNY PASEK
-   =================================== */
-
-.gorny-pasek {
-    display: grid;
-    grid-template-columns: auto minmax(280px, 1fr) auto;
-    gap: var(--odstep-5);
-    padding: var(--odstep-6) var(--odstep-6) 0;
-    align-items: center;
-}
-
-.naglowek-strony small,
-.karta-statystyki small,
 .lista-danych-konta dt {
     color: var(--kolor-tekst-2);
     text-transform: uppercase;
     letter-spacing: .08em;
     font-size: .72rem;
-}
-
-.naglowek-strony h1 {
-    margin: 4px 0 0;
-    font-size: clamp(1.65rem, 3vw, 2.35rem);
-}
-
-.pole-szukania {
-    display: flex;
-    align-items: center;
-    gap: var(--odstep-3);
-    border-radius: var(--promien-duzy);
-    padding: var(--odstep-3) var(--odstep-4);
-    background: var(--kolor-panel-glass-mocny);
-    border: 1px solid var(--kolor-obramowania);
-    box-shadow: var(--cien-sredni);
-    color: var(--kolor-tekst-2);
-}
-
-.pole-szukania input {
-    border: none;
-    background: transparent;
-    box-shadow: none;
-    padding: 0;
-    color: var(--kolor-tekst);
-}
-
-.pole-szukania input:focus {
-    box-shadow: none;
-}
-
-.pole-szukania.pole-nieaktywne {
-    opacity: .75;
 }
 
 .akcje-gorne {
@@ -343,78 +303,6 @@
     margin: 0;
     color: var(--kolor-tekst-2);
     line-height: 1.7;
-}
-
-.siatka-statystyk {
-    display: grid;
-    gap: var(--odstep-4);
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-}
-
-.karta-statystyki {
-    background: var(--kolor-powierzchni);
-    border-radius: 22px;
-    padding: var(--odstep-5);
-    border: 1px solid var(--kolor-obramowania);
-    box-shadow: var(--cien-sredni);
-    display: grid;
-    gap: 6px;
-}
-
-
-
-.karta-statystyki strong {
-    font-size: 2rem;
-    line-height: 1;
-}
-
-.karta-statystyki span {
-    color: var(--kolor-tekst-2);
-    line-height: 1.6;
-}
-
-.lista-ostatnich {
-    display: grid;
-    gap: var(--odstep-4);
-}
-
-.wiersz-ostatni {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--odstep-4);
-    align-items: center;
-    padding: var(--odstep-4) var(--odstep-5);
-    border-radius: var(--promien-duzy);
-    background: var(--kolor-powierzchni);
-    border: 1px solid var(--kolor-obramowania);
-}
-
-.wiersz-ostatni small {
-    display: block;
-    color: var(--kolor-tekst-2);
-    margin-top: 4px;
-}
-
-.wiersz-ostatni a {
-    color: var(--kolor-akcent);
-    font-weight: 700;
-}
-
-.puste-pole {
-    min-height: 180px;
-    border-radius: 22px;
-    border: 1px dashed rgba(148, 163, 184, .8);
-    background: rgba(255, 255, 255, .6);
-    display: grid;
-    place-items: center;
-    text-align: center;
-    gap: var(--odstep-3);
-    color: var(--kolor-tekst-2);
-    padding: var(--odstep-6);
-}
-
-.puste-pole i {
-    font-size: 1.6rem;
 }
 
 .formularz-dwie-kolumny {
@@ -522,27 +410,6 @@
 }
 
 /* ===================================
-   MODUŁ ZAKŁADKI - SPECYFICZNE STYLE
-   =================================== */
-
-.gorny-pasek--zakladki {
-    grid-template-columns: minmax(320px, 1fr) auto;
-}
-
-.srodkowa-akcja--zakladki {
-    min-width: 0;
-}
-
-.pole-szukania--zakladki {
-    width: 100%;
-}
-
-.akcje-gorne-zakladki {
-    justify-content: flex-end;
-    flex-wrap: wrap;
-}
-
-/* ===================================
    RESPONSYWNOŚĆ
    =================================== */
 
@@ -554,7 +421,13 @@
 
 @media (max-width: 1300px) {
     .powloka-aplikacji {
-        grid-template-columns: 260px 1fr;
+        --aktualna-szerokosc-sidebar: 260px;
+        --aktualna-szerokosc-panel-prawy: 0px;
+        grid-template-columns: var(--aktualna-szerokosc-sidebar) minmax(0, 1fr);
+    }
+
+    .powloka-aplikacji.panel-lewy-zwiniety {
+        --aktualna-szerokosc-sidebar: 92px;
     }
 
     .panel-kontekstowy {
@@ -587,7 +460,11 @@
 }
 
 @media (max-width: 980px) {
-    .powloka-aplikacji {
+    .powloka-aplikacji,
+    .powloka-aplikacji.panel-lewy-zwiniety,
+    .powloka-aplikacji.panel-prawy-ukryty {
+        --aktualna-szerokosc-sidebar: 1fr;
+        --aktualna-szerokosc-panel-prawy: 0px;
         grid-template-columns: 1fr;
     }
 
@@ -598,22 +475,7 @@
         border-bottom: 1px solid var(--kolor-border-glass);
     }
 
-    .gorny-pasek {
-        grid-template-columns: 1fr;
-        padding-top: var(--odstep-5);
-    }
-
     .akcje-gorne {
-        justify-content: flex-start;
-    }
-}
-
-@media (max-width: 980px) {
-    .gorny-pasek--zakladki {
-        grid-template-columns: 1fr;
-    }
-
-    .akcje-gorne-zakladki {
         justify-content: flex-start;
     }
 }
@@ -635,9 +497,196 @@
     .sekcja-naglowek {
         flex-direction: column;
     }
+}
 
-    .wiersz-ostatni {
-        flex-direction: column;
-        align-items: flex-start;
+/* Air Datepicker w prawym panelu */
+#kalendarz-panelu {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#kalendarz-panelu .air-datepicker {
+    width: 100%;
+    max-width: 236px;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    font-family: inherit;
+}
+
+#kalendarz-panelu .air-datepicker.-inline- {
+    border: 0;
+}
+
+#kalendarz-panelu .air-datepicker--navigation {
+    padding: 0 0 var(--odstep-2);
+}
+
+#kalendarz-panelu .air-datepicker--content {
+    padding: 0;
+}
+
+#kalendarz-panelu .air-datepicker-cell {
+    border-radius: 10px;
+}
+
+#kalendarz-panelu .air-datepicker-cell.-selected-,
+#kalendarz-panelu .air-datepicker-cell.-selected-.-current- {
+    background: var(--kolor-akcentu, #2563eb);
+    color: #fff;
+}
+
+#kalendarz-panelu .air-datepicker-cell.-current- {
+    color: var(--kolor-akcentu, #2563eb);
+    font-weight: 700;
+}
+
+#kalendarz-panelu .komunikat-kalendarza {
+    margin: 0;
+    color: var(--kolor-tekst-drugorzedny);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* ===================================
+   ODŚWIEŻENIE WIZUALNE LAYOUTU
+   Bez zmiany układu elementów.
+   =================================== */
+.uklad-panel {
+    background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, .06), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(14, 165, 233, .035), transparent 24%),
+        var(--kolor-tla);
+}
+
+.panel-boczny {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .86), rgba(248, 251, 255, .72));
+    border-right: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.link-boczny {
+    border: 0;
+    border-radius: var(--promien-sredni);
+    transition-property: background, color, transform;
+}
+
+.link-boczny:hover {
+    background: rgba(241, 245, 249, .86);
+    color: var(--kolor-tekst);
+}
+
+.link-boczny.jest-aktywny {
+    background: linear-gradient(135deg, rgba(37, 99, 235, .11), rgba(14, 165, 233, .08));
+    border-color: transparent;
+}
+
+.profil-boczny {
+    margin-top: auto;
+    padding: var(--odstep-3) 0 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.avatar-profilu {
+    border-radius: var(--promien-sredni);
+}
+
+.link-wyloguj {
+    margin-top: var(--odstep-3);
+}
+
+.panel-kontekstowy {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .84), rgba(248, 251, 255, .74));
+    border-left: 0;
+}
+
+.przycisk-zwin-prawy,
+.sekcja-kontekstowa,
+.sekcja-panelowa,
+.karta-profilu,
+.lista-danych-konta > div {
+    border-color: rgba(217, 226, 239, .82);
+    border-radius: var(--promien-duzy);
+}
+
+.sekcja-panelowa {
+    background: rgba(255, 255, 255, .9);
+}
+
+@media (max-width: 980px) {
+    .panel-boczny {
+        border-bottom: 0;
+    }
+}
+
+/* ===================================
+   PRZYCISKI ZWIJANIA PANELI NA DOLE
+   Lewy przycisk nie zaslania logo, prawy zachowuje symetrie.
+   =================================== */
+.sekcja-marki .przycisk-zwin {
+    position: fixed;
+    top: auto;
+    right: auto;
+    bottom: var(--odstep-6);
+    left: calc(var(--szerokosc-sidebar) - 70px);
+    transform: none;
+    z-index: 1100;
+}
+
+.panel-boczny.jest-zwiniety .sekcja-marki .przycisk-zwin {
+    left: 23px;
+}
+
+.panel-boczny.jest-zwiniety .link-wyloguj {
+    margin-bottom: calc(46px + var(--odstep-4));
+}
+
+.panel-kontekstowy .panel-kontekstowy-naglowek .przycisk-zwin,
+.przycisk-zwin-prawy,
+.przycisk-zwin-prawy.jest-widoczny {
+    position: fixed;
+    top: auto;
+    right: var(--odstep-6);
+    bottom: var(--odstep-6);
+    z-index: 1100;
+}
+
+.panel-kontekstowy .panel-kontekstowy-naglowek .przycisk-zwin {
+    width: 46px;
+    height: 46px;
+    border-radius: var(--promien-duzy);
+    background: rgba(255, 255, 255, .95);
+    border: 1px solid var(--kolor-obramowania);
+    box-shadow: var(--cien-sredni);
+}
+
+@media (max-width: 1300px) {
+    .przycisk-zwin-prawy.jest-widoczny {
+        top: auto;
+        right: var(--odstep-4);
+        bottom: var(--odstep-4);
+    }
+
+    .panel-kontekstowy.jest-widoczny .panel-kontekstowy-naglowek .przycisk-zwin {
+        right: var(--odstep-4);
+        bottom: var(--odstep-4);
+    }
+}
+
+@media (max-width: 980px) {
+    .sekcja-marki .przycisk-zwin,
+    .panel-boczny.jest-zwiniety .sekcja-marki .przycisk-zwin {
+        left: var(--odstep-4);
+        bottom: var(--odstep-4);
+    }
+
+    .panel-boczny .link-wyloguj,
+    .panel-boczny.jest-zwiniety .link-wyloguj {
+        margin-bottom: calc(46px + var(--odstep-4));
     }
 }
