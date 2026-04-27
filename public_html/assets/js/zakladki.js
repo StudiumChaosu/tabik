@@ -18,6 +18,8 @@
         aktywneMenu: null,
         kolorPicker: null,
         timerKoloru: null,
+        przeciaganaGrupa: null,
+        przeniesionoGrupeDoKategorii: false,
     };
 
     const els = {
@@ -144,12 +146,14 @@
         const kategorie = stan.dane.kategorie || [];
         els.pasekKategorii.innerHTML = `
             <div class="lista-kategorii-top">
-                ${kategorie.map((kategoria) => `
-                    <button type="button" class="tab-kategorii ${Number(aktywna) === Number(kategoria.id) ? 'jest-aktywna' : ''}" data-akcja="filtr-kategoria" data-id-kategorii="${Number(kategoria.id)}">
-                        ${esc(kategoria.nazwa)}
-                    </button>
-                `).join('')}
-                <button type="button" class="tab-kategorii ${String(aktywna) === '0' ? 'jest-aktywna' : ''}" data-akcja="filtr-kategoria" data-id-kategorii="0">Bez kategorii</button>
+                <div class="lista-kategorii-sortowalna" data-sort-kategorie="1">
+                    ${kategorie.map((kategoria) => `
+                        <button type="button" class="tab-kategorii ${Number(aktywna) === Number(kategoria.id) ? 'jest-aktywna' : ''}" data-akcja="filtr-kategoria" data-id-kategorii="${Number(kategoria.id)}" data-drop-kategoria="1" title="Przeciagnij, aby zmienic kolejnosc kategorii">
+                            ${esc(kategoria.nazwa)}
+                        </button>
+                    `).join('')}
+                </div>
+                <button type="button" class="tab-kategorii ${String(aktywna) === '0' ? 'jest-aktywna' : ''}" data-akcja="filtr-kategoria" data-id-kategorii="0" data-drop-kategoria="1">Bez kategorii</button>
                 <button type="button" class="tab-kategorii tab-dodaj" data-akcja="dodaj-kategorie" title="Dodaj kategorie">
                     <i class="fa-solid fa-plus"></i>
                 </button>
@@ -470,13 +474,119 @@
         await pobierzListe();
     };
 
+    const wyczyscDropKategorie = () => {
+        document.body.classList.remove('przenoszenie-grupy');
+        document.querySelectorAll('.tab-kategorii.jest-celem-upuszczenia').forEach((el) => el.classList.remove('jest-celem-upuszczenia'));
+        stan.przeciaganaGrupa = null;
+    };
+
+    const przeniesGrupeDoKategorii = async (idGrupy, idKategorii) => {
+        if (!idGrupy || idGrupy <= 0) return;
+        stan.przeniesionoGrupeDoKategorii = true;
+        await api.pobierzJson('api/zakladki/grupy/przenies-kategoria.php', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: idGrupy,
+                id_kategorii: idKategorii > 0 ? idKategorii : null,
+            }),
+        });
+        await pobierzListe({ id_kategorii: idKategorii > 0 ? idKategorii : null });
+    };
+
+    const zapiszKolejnoscKategorii = async (kontener) => {
+        const ids = [...kontener.querySelectorAll('.tab-kategorii[data-id-kategorii]')]
+            .map((el) => Number(el.dataset.idKategorii))
+            .filter((id) => id > 0);
+
+        if (ids.length < 2) return;
+
+        await api.pobierzJson('api/zakladki/kategorie/kolejnosc.php', {
+            method: 'POST',
+            body: JSON.stringify({ ids }),
+        });
+        await pobierzListe();
+    };
+
+    const uruchomSortowanieKategorii = () => {
+        const kontener = els.pasekKategorii?.querySelector('[data-sort-kategorie="1"]');
+        if (!kontener || kontener.children.length < 2) return;
+
+        new window.Sortable(kontener, {
+            animation: 150,
+            draggable: '.tab-kategorii[data-id-kategorii]:not([data-id-kategorii="0"])',
+            ghostClass: 'tab-kategorii-przeciagana',
+            chosenClass: 'tab-kategorii-wybrana',
+            onEnd: async (evt) => {
+                if (evt.oldIndex === evt.newIndex) return;
+                try {
+                    await zapiszKolejnoscKategorii(kontener);
+                } catch (blad) {
+                    api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac kolejnosci kategorii.');
+                    await pobierzListe();
+                }
+            },
+        });
+    };
+
+    const podepnijDropNaKategorie = () => {
+        if (!els.pasekKategorii || els.pasekKategorii.dataset.dropGrup === '1') return;
+        els.pasekKategorii.dataset.dropGrup = '1';
+
+        els.pasekKategorii.addEventListener('dragover', (e) => {
+            if (!stan.przeciaganaGrupa) return;
+            const cel = e.target.closest('[data-drop-kategoria="1"]');
+            if (!cel) return;
+            e.preventDefault();
+            document.querySelectorAll('.tab-kategorii.jest-celem-upuszczenia').forEach((el) => {
+                if (el !== cel) el.classList.remove('jest-celem-upuszczenia');
+            });
+            cel.classList.add('jest-celem-upuszczenia');
+        });
+
+        els.pasekKategorii.addEventListener('dragleave', (e) => {
+            const cel = e.target.closest('[data-drop-kategoria="1"]');
+            if (cel && !cel.contains(e.relatedTarget)) cel.classList.remove('jest-celem-upuszczenia');
+        });
+
+        els.pasekKategorii.addEventListener('drop', async (e) => {
+            if (!stan.przeciaganaGrupa) return;
+            const cel = e.target.closest('[data-drop-kategoria="1"]');
+            if (!cel) return;
+            e.preventDefault();
+            const idGrupy = Number(stan.przeciaganaGrupa);
+            const idKategorii = Number(cel.dataset.idKategorii || 0);
+            wyczyscDropKategorie();
+
+            try {
+                await przeniesGrupeDoKategorii(idGrupy, idKategorii);
+            } catch (blad) {
+                stan.przeniesionoGrupeDoKategorii = false;
+                api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie przeniesc grupy.');
+                await pobierzListe();
+            }
+        });
+    };
+
     const uruchomSortowanie = () => {
         if (typeof window.Sortable === 'undefined') return;
+        podepnijDropNaKategorie();
+        uruchomSortowanieKategorii();
         new window.Sortable(els.obszarKolumn, {
             animation: 150,
             draggable: '.kolumna-grupy-kompakt[data-id-grupy]:not(.kolumna-bez-grupy)',
             filter: '.karta-dodaj-grupe',
+            onStart: (evt) => {
+                stan.przeniesionoGrupeDoKategorii = false;
+                stan.przeciaganaGrupa = Number(evt.item.dataset.idGrupy || 0);
+                document.body.classList.add('przenoszenie-grupy');
+            },
             onEnd: async () => {
+                const przeniesionoDoKategorii = stan.przeniesionoGrupeDoKategorii;
+                window.setTimeout(wyczyscDropKategorie, 0);
+                if (przeniesionoDoKategorii) {
+                    stan.przeniesionoGrupeDoKategorii = false;
+                    return;
+                }
                 const ids = [...els.obszarKolumn.querySelectorAll('.kolumna-grupy-kompakt[data-id-grupy]:not(.kolumna-bez-grupy)')]
                     .map((el) => Number(el.dataset.idGrupy))
                     .filter((id) => id > 0);

@@ -94,11 +94,16 @@
     overflow-x: auto;
 }
 
-.lista-kategorii-top {
+.lista-kategorii-top,
+.lista-kategorii-sortowalna {
     display: flex;
     gap: var(--odstep-3);
     flex-wrap: wrap;
     align-items: center;
+}
+
+.lista-kategorii-sortowalna {
+    min-width: 0;
 }
 
 .tab-kategorii {
@@ -597,4 +602,25 @@
     color: var(--kolor-tekst-3);
     font-size: .72rem;
     text-align: center;
+}
+
+/* DRAG&DROP - PRZENOSZENIE GRUPY NA KATEGORIE */
+body.przenoszenie-grupy .tab-kategorii[data-drop-kategoria="1"] {
+    border-color: var(--kolor-obramowania);
+    background: rgba(255, 255, 255, .72);
+}
+
+.tab-kategorii.jest-celem-upuszczenia {
+    border-color: var(--kolor-akcent);
+    color: var(--kolor-akcent);
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .16), var(--cien-maly);
+}
+
+.tab-kategorii-wybrana {
+    cursor: grabbing;
+}
+
+.tab-kategorii-przeciagana {
+    opacity: .55;
 }
