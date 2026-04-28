@@ -52,10 +52,10 @@
   --cien-duzy: 0 24px 60px rgba(15, 23, 42, .08);
 
   /* Promienie obramowania - Prymitywy (zachowujemy istniejące) */
-  --promien-maly: 8px;
-  --promien-maly-legacy: 14px;
-  --promien-sredni: 12px;
-  --promien-duzy: 18px;
+  --promien-maly: 1px;
+  --promien-maly-legacy: 2px;
+  --promien-sredni: 3px;
+  --promien-duzy: 4px;
   --promien-pelny: 999px;
 
   /* Wymiary layoutu - Prymitywy */
