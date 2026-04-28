@@ -643,3 +643,174 @@ body.przenoszenie-grupy .tab-kategorii[data-drop-kategoria="1"] {
 .naglowek-grupy-kompakt.jest-edytowany-inline {
     cursor: text;
 }
+
+/* ===================================
+   SKALA MODULU ZAKLADEK 75%
+   Mniejsze karty, czcionki, ikony i odstepy zgodne z widokiem referencyjnym.
+   =================================== */
+body.uklad-panel .zakladki-shell {
+    gap: 15px;
+}
+
+body.uklad-panel .zakladki-toolbar {
+    gap: 12px;
+}
+
+body.uklad-panel .zakladki-szukaj-mini {
+    width: 225px;
+    min-width: 225px;
+    max-width: 225px;
+    height: 36px;
+    padding: 0 12px;
+    gap: 9px;
+}
+
+body.uklad-panel .zakladki-szukaj-mini input {
+    font-size: 1rem;
+}
+
+body.uklad-panel .zakladki-akcje-gorne {
+    gap: 9px;
+}
+
+body.uklad-panel .przycisk-panelowy {
+    min-height: 36px;
+    padding: 0 15px;
+    gap: 9px;
+    font-size: 1rem;
+}
+
+body.uklad-panel .lista-kategorii-top,
+body.uklad-panel .lista-kategorii-sortowalna {
+    gap: 9px;
+}
+
+body.uklad-panel .tab-kategorii {
+    min-height: 33px;
+    padding: 0 15px;
+    font-size: 1rem;
+}
+
+body.uklad-panel .tab-kategorii.tab-dodaj {
+    width: 33px;
+    font-size: 1rem;
+}
+
+body.uklad-panel .siatka-grup-kompakt {
+    grid-template-columns: repeat(auto-fill, 225px);
+    gap: 15px;
+    padding: 5px 0 8px;
+    min-height: 240px;
+}
+
+body.uklad-panel .naglowek-grupy-kompakt {
+    gap: 9px;
+    padding: 9px 12px;
+}
+
+body.uklad-panel .tytul-grupy-kompakt h4 {
+    font-size: .96rem;
+}
+
+body.uklad-panel .akcje-grupy-kompakt {
+    gap: 6px;
+}
+
+body.uklad-panel .przycisk-menu-grupy {
+    width: 23px;
+    height: 23px;
+    font-size: .9rem;
+}
+
+body.uklad-panel .lista-linkow-w-grupie {
+    gap: 5px;
+    padding: 6px;
+    min-height: 128px;
+}
+
+body.uklad-panel .element-linku {
+    padding: 6px 9px;
+}
+
+body.uklad-panel .element-linku:hover,
+body.uklad-panel .element-linku:focus-within {
+    padding-right: 54px;
+}
+
+body.uklad-panel .link-glowny {
+    grid-template-columns: 12px minmax(0, 1fr);
+    gap: 6px;
+}
+
+body.uklad-panel .ikona-linku {
+    width: 12px;
+    height: 12px;
+    flex-basis: 12px;
+    border-radius: 2px;
+}
+
+body.uklad-panel .ikona-linku.zastpcza {
+    font-size: .55rem;
+}
+
+body.uklad-panel .link-tytul {
+    font-size: .92rem;
+    line-height: 1.35;
+}
+
+body.uklad-panel .link-akcje {
+    right: 6px;
+    gap: 3px;
+}
+
+body.uklad-panel .przycisk-linku-akcji {
+    width: 18px;
+    height: 18px;
+    flex-basis: 18px;
+    font-size: .55rem;
+}
+
+body.uklad-panel .menu-grupy {
+    top: calc(100% + 8px);
+    width: 165px;
+    padding: 9px;
+}
+
+body.uklad-panel .przycisk-menu-opcja {
+    padding: 9px 2px;
+    font-size: .92rem;
+}
+
+body.uklad-panel .karta-dodaj-grupe {
+    min-height: 165px;
+    gap: 9px;
+    font-size: .9rem;
+}
+
+body.uklad-panel .karta-dodaj-grupe .plus {
+    width: 35px;
+    height: 35px;
+}
+
+body.uklad-panel .puste-grupy {
+    font-size: .9rem;
+}
+
+@media (max-width: 980px) {
+    body.uklad-panel .zakladki-szukaj-mini {
+        width: 100%;
+        min-width: 100%;
+        max-width: none;
+    }
+
+    body.uklad-panel .siatka-grup-kompakt {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    body.uklad-panel .kolumna-grupy-kompakt,
+    body.uklad-panel .karta-dodaj-grupe {
+        min-width: min(100%, 320px);
+        width: 100%;
+        max-width: none;
+    }
+}

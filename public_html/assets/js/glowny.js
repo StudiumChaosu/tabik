@@ -122,6 +122,8 @@
         przycisk.addEventListener('click', () => ustawStan(!panel.classList.contains('jest-zwiniety')));
     };
 
+
+
     const initPanelPrawy = () => {
         const panel = document.querySelector('[data-panel-kontekstowy]');
         const przyciski = document.querySelectorAll('[data-przelacz-prawy-panel]');
@@ -269,7 +271,6 @@
     };
     document.addEventListener('DOMContentLoaded', () => {
         initZegar();
-        initPanelBoczny();
         initPanelPrawy();
         initModale();
         initDatepicker();

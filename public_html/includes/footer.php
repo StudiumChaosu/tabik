@@ -29,6 +29,7 @@
         </ul>
     </div>
 </aside>
+</div>
 <button type="button" class="przycisk-ikona przycisk-zwin przycisk-zwin-prawy jest-ukryty" data-przelacz-prawy-panel aria-label="Przelacz panel kontekstowy">
     <i class="fa-solid fa-angle-left"></i>
 </button>

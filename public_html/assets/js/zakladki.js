@@ -192,12 +192,7 @@
                                         <div class="kolor-picker-grupy-info">Przesun, aby zmienic kolor naglowka</div>
                                     </div>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-zakladke-do-grupy" data-id-grupy="${Number(grupa.id)}">+ Zakladke</button>
-                                    <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-grupe">+ Grupe</button>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="otworz-wszystkie" data-id-grupy="${Number(grupa.id)}">Otworz wszystkie</button>
-                                    <button type="button" class="przycisk-menu-opcja" data-akcja="edytuj-grupe" data-id-grupy="${Number(grupa.id)}">Zmien nazwe</button>
-                                    <button type="button" class="przycisk-menu-opcja" data-akcja="przesun-grupe" data-kierunek="lewo" data-id-grupy="${Number(grupa.id)}">Zmien miejsce ←</button>
-                                    <button type="button" class="przycisk-menu-opcja" data-akcja="przesun-grupe" data-kierunek="prawo" data-id-grupy="${Number(grupa.id)}">Zmien miejsce →</button>
-                                    <button type="button" class="przycisk-menu-opcja" data-akcja="duplikuj-grupe" data-id-grupy="${Number(grupa.id)}">Duplikat</button>
                                     <button type="button" class="przycisk-menu-opcja usun" data-akcja="usun-grupe" data-id-grupy="${Number(grupa.id)}">Usun</button>
                                 </div>
                             </div>
@@ -592,23 +587,6 @@
         stan.kolorPicker = { idGrupy: Number(idGrupy), picker };
     };
 
-    const przesunGrupe = async (idGrupy, kierunek) => {
-        const grupy = (stan.dane.grupy || []).filter((g) => Number(g.id) > 0).map((g) => Number(g.id));
-        const idx = grupy.indexOf(Number(idGrupy));
-        if (idx < 0) return;
-        const nowy = kierunek === 'lewo' ? idx - 1 : idx + 1;
-        if (nowy < 0 || nowy >= grupy.length) return;
-        [grupy[idx], grupy[nowy]] = [grupy[nowy], grupy[idx]];
-        await api.pobierzJson('api/zakladki/grupy/kolejnosc.php', { method: 'POST', body: JSON.stringify({ ids: grupy }) });
-        await pobierzListe();
-    };
-
-    const duplikujGrupe = async (idGrupy) => {
-        const odpowiedz = await api.pobierzJson('api/zakladki/grupy/duplikuj.php', { method: 'POST', body: JSON.stringify({ id: idGrupy }) });
-        api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Zduplikowano grupe.');
-        await pobierzListe();
-    };
-
     const usunGrupe = async (idGrupy) => {
         if (!window.confirm('Usunac grupe? Zakladki zostana przeniesione do sekcji Bez grupy.')) return;
         const odpowiedz = await api.pobierzJson('api/zakladki/grupy/usun.php', { method: 'POST', body: JSON.stringify({ id: idGrupy }) });
@@ -849,18 +827,6 @@
                     break;
                 case 'otworz-wszystkie':
                     otworzWszystkie(Number(przycisk.dataset.idGrupy));
-                    zamknijMenu();
-                    break;
-                case 'edytuj-grupe':
-                    rozpocznijEdycjeNazwyGrupy(Number(przycisk.dataset.idGrupy));
-                    zamknijMenu();
-                    break;
-                case 'przesun-grupe':
-                    await przesunGrupe(Number(przycisk.dataset.idGrupy), przycisk.dataset.kierunek);
-                    zamknijMenu();
-                    break;
-                case 'duplikuj-grupe':
-                    await duplikujGrupe(Number(przycisk.dataset.idGrupy));
                     zamknijMenu();
                     break;
                 case 'usun-grupe':

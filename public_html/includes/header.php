@@ -7,7 +7,10 @@ $bazowy_url = $bazowy_url === '.' ? '' : $bazowy_url;
 $pliki_assetow = [
     __DIR__ . '/../assets/js/zakladki.js',
     __DIR__ . '/../assets/js/glowny.js',
+    __DIR__ . '/../assets/css/tokens.css',
+    __DIR__ . '/../assets/css/glowny.css',
     __DIR__ . '/../assets/css/panel.css',
+    __DIR__ . '/../assets/css/zakladki.css',
 ];
 $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (int) filemtime($plik) : 0, $pliki_assetow));
 ?>

@@ -690,3 +690,416 @@
         margin-bottom: calc(46px + var(--odstep-4));
     }
 }
+
+/* ===================================
+   UKLAD Z GORNA BELKA
+   Zastepuje staly lewy panel boczny.
+   =================================== */
+
+.powloka-aplikacji {
+    --aktualna-szerokosc-panel-prawy: var(--szerokosc-panel-prawy);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    transition: none;
+}
+
+.powloka-aplikacji.panel-lewy-zwiniety {
+    --aktualna-szerokosc-sidebar: 0px;
+}
+
+.powloka-aplikacji.panel-prawy-ukryty {
+    --aktualna-szerokosc-panel-prawy: 0px;
+}
+
+.uklad-roboczy {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--aktualna-szerokosc-panel-prawy);
+    transition: grid-template-columns var(--przejscie-szybkie);
+}
+
+.obszar-aplikacji {
+    min-width: 0;
+    display: block;
+}
+
+.obszar-glowny {
+    padding: var(--odstep-5) var(--odstep-6) var(--odstep-6);
+    min-width: 0;
+}
+
+.gorna-belka {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    min-width: 0;
+    padding: 10px var(--odstep-6);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .90), rgba(248, 251, 255, .78));
+    border-bottom: 1px solid rgba(217, 226, 239, .72);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, .04);
+}
+
+.gorna-belka-glowna {
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+}
+
+.marka-gorna {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    min-width: 0;
+    color: var(--kolor-tekst);
+    font-weight: 800;
+    flex: 0 0 auto;
+}
+
+.gorna-belka .logo-marki {
+    width: 56px;
+    height: 56px;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    display: block;
+}
+
+.gorna-belka .opis-marki {
+    display: grid;
+    text-align: left;
+}
+
+.gorna-belka .nawigacja-glowna {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-2);
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.gorna-belka .link-boczny {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 0 var(--odstep-4);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--kolor-tekst-2);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: none;
+}
+
+.gorna-belka .link-boczny:hover {
+    transform: none;
+    background: transparent;
+    color: var(--kolor-akcent);
+    box-shadow: none;
+}
+
+.gorna-belka .link-boczny.jest-aktywny {
+    background: transparent;
+    color: var(--kolor-akcent);
+    box-shadow: none;
+}
+
+.profil-gorny {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--odstep-3);
+    min-width: 0;
+    padding-left: var(--odstep-2);
+    flex: 0 1 auto;
+}
+
+.profil-gorny .avatar-profilu {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--promien-sredni);
+}
+
+.dane-profilu-gorne {
+    display: grid;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.dane-profilu-gorne strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .9rem;
+}
+
+.dane-profilu-gorne small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--kolor-tekst-2);
+    font-size: .78rem;
+}
+
+.link-profil-gorny {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--odstep-2);
+    min-height: 42px;
+    padding: 0 var(--odstep-4);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--kolor-tekst-2);
+    font-weight: 700;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    box-shadow: none;
+}
+
+.link-profil-gorny:hover {
+    transform: none;
+    background: transparent;
+    color: var(--kolor-akcent);
+    box-shadow: none;
+}
+
+.link-profil-gorny.jest-aktywny {
+    background: transparent;
+    color: var(--kolor-akcent);
+    box-shadow: none;
+}
+
+.link-wyloguj-gorny {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--odstep-2);
+    min-height: 42px;
+    padding: 0 var(--odstep-4);
+    border-radius: var(--promien-sredni);
+    color: var(--kolor-blad);
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.link-wyloguj-gorny:hover {
+    background: rgba(239, 68, 68, .08);
+}
+
+
+.panel-kontekstowy {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+}
+
+@media (max-width: 1300px) {
+    .powloka-aplikacji,
+    .powloka-aplikacji.panel-lewy-zwiniety,
+    .powloka-aplikacji.panel-prawy-ukryty {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .uklad-roboczy,
+    .powloka-aplikacji.panel-prawy-ukryty .uklad-roboczy {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .panel-kontekstowy {
+        top: var(--odstep-4);
+        height: auto;
+    }
+
+    .panel-kontekstowy.jest-widoczny {
+        top: var(--odstep-4);
+    }
+}
+
+@media (max-width: 980px) {
+    .gorna-belka {
+        padding-inline: var(--odstep-4);
+    }
+
+    .gorna-belka-glowna {
+        flex-wrap: wrap;
+    }
+
+    .gorna-belka .nawigacja-glowna {
+        order: 5;
+        flex-basis: 100%;
+    }
+
+    .profil-gorny {
+        margin-left: auto;
+        flex: 0 1 220px;
+    }
+}
+
+@media (max-width: 700px) {
+    .gorna-belka {
+        padding: var(--odstep-3) var(--odstep-4);
+    }
+
+    .gorna-belka .logo-marki {
+        width: 46px;
+        height: 46px;
+    }
+
+    .gorna-belka .opis-marki,
+    .dane-profilu-gorne,
+    .link-wyloguj-gorny span {
+        display: none;
+    }
+
+    .profil-gorny {
+        flex: 0 0 auto;
+        padding-left: 0;
+        margin-left: auto;
+    }
+
+    .gorna-belka .link-boczny {
+        padding-inline: var(--odstep-3);
+    }
+
+    .obszar-glowny {
+        padding: var(--odstep-4);
+    }
+}
+
+/* ===================================
+   SKALA PANELU 75%
+   Widok aplikacji po zalogowaniu ma odpowiadac pomniejszeniu przegladarki do ok. 75%.
+   =================================== */
+html:has(body.uklad-panel) {
+    font-size: 75%;
+}
+
+body.uklad-panel {
+    font-size: 1rem;
+}
+
+body.uklad-panel .powloka-aplikacji {
+    --szerokosc-panel-prawy: 240px;
+}
+
+body.uklad-panel .gorna-belka {
+    padding: 7px 18px;
+}
+
+body.uklad-panel .gorna-belka-glowna {
+    min-height: 44px;
+    gap: 12px;
+}
+
+body.uklad-panel .gorna-belka .logo-marki {
+    width: 42px;
+    height: 42px;
+}
+
+body.uklad-panel .gorna-belka .link-boczny,
+body.uklad-panel .link-profil-gorny,
+body.uklad-panel .link-wyloguj-gorny {
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 1rem;
+}
+
+body.uklad-panel .profil-gorny {
+    gap: 9px;
+}
+
+body.uklad-panel .profil-gorny .avatar-profilu {
+    width: 33px;
+    height: 33px;
+}
+
+body.uklad-panel .dane-profilu-gorne strong {
+    font-size: .9rem;
+}
+
+body.uklad-panel .dane-profilu-gorne small {
+    font-size: .78rem;
+}
+
+body.uklad-panel .obszar-glowny {
+    padding: 15px 18px 18px;
+}
+
+body.uklad-panel .panel-kontekstowy {
+    top: 60px;
+    height: calc(100vh - 60px);
+    padding: 15px 12px;
+    gap: 15px;
+}
+
+body.uklad-panel .panel-kontekstowy-naglowek strong {
+    font-size: 1rem;
+}
+
+body.uklad-panel .sekcja-kontekstowa {
+    padding: 15px;
+}
+
+body.uklad-panel .naglowek-sekcji {
+    margin-bottom: 12px;
+}
+
+body.uklad-panel .naglowek-sekcji h2 {
+    font-size: 1rem;
+}
+
+body.uklad-panel .naglowek-sekcji small,
+body.uklad-panel .lista-wskazowek {
+    font-size: .82rem;
+}
+
+body.uklad-panel .zegar-cyfrowy {
+    font-size: clamp(2.2rem, 3.2vw, 3.1rem);
+}
+
+body.uklad-panel #kalendarz-panelu .air-datepicker {
+    max-width: 177px;
+    font-size: .82rem;
+}
+
+body.uklad-panel #kalendarz-panelu .air-datepicker--navigation {
+    padding-bottom: 6px;
+}
+
+body.uklad-panel #kalendarz-panelu .air-datepicker-cell {
+    border-radius: 7px;
+}
+
+body.uklad-panel .panel-kontekstowy .panel-kontekstowy-naglowek .przycisk-zwin,
+body.uklad-panel .przycisk-zwin-prawy,
+body.uklad-panel .przycisk-zwin-prawy.jest-widoczny {
+    width: 35px;
+    height: 35px;
+    right: 18px;
+    bottom: 18px;
+}
+
+@media (max-width: 1300px) {
+    body.uklad-panel .panel-kontekstowy.jest-widoczny {
+        width: min(255px, calc(100vw - 24px));
+        max-height: calc(100vh - 24px);
+        border-radius: 21px;
+    }
+}
+
+@media (max-width: 700px) {
+    html:has(body.uklad-panel) {
+        font-size: 87.5%;
+    }
+
+    body.uklad-panel .gorna-belka .logo-marki {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -18,6 +18,7 @@ $strona_js = $aktywny_modul === 'zakladki' ? 'zakladki' : '';
 include __DIR__ . '/includes/header.php';
 include __DIR__ . '/menu.php';
 ?>
+<div class="uklad-roboczy">
 <div class="obszar-aplikacji">
     <main class="obszar-glowny">
         <?php include __DIR__ . '/modules/' . $aktywny_modul . '.php'; ?>
