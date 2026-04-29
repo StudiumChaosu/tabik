@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/funkcje.php';
 if (czy_zalogowany()) {
-    przekieruj('panel.php');
+    przekieruj(url('panel'));
 }
+$wersjaFormularzy = is_file(__DIR__ . '/assets/js/formularze.js') ? (string) filemtime(__DIR__ . '/assets/js/formularze.js') : '1';
 ?>
 <!doctype html>
 <html lang="pl">
@@ -17,6 +18,8 @@ if (czy_zalogowany()) {
     <link rel="stylesheet" href="assets/css/tokens.css">
     <link rel="stylesheet" href="assets/css/glowny.css">
     <link rel="stylesheet" href="assets/css/panel.css">
+    <?= tabik_config_script() ?>
+    <script defer src="assets/js/formularze.js?v=<?= esc($wersjaFormularzy) ?>"></script>
 </head>
 <body class="uklad-gosc widok-logowania-tabik wariant-przypomnij-tabik">
     <div class="kontener-logowania-tabik">
@@ -27,7 +30,7 @@ if (czy_zalogowany()) {
 
             <div id="powiadomienie-resetu" class="powiadomienie" style="display:none"></div>
 
-            <form id="formularz-resetu" class="formularz-logowania-tabik" novalidate>
+            <form id="formularz-resetu" class="formularz-logowania-tabik" data-ajax-form data-endpoint="<?= esc(url('api.przypomnij_haslo')) ?>" data-powiadomienie="#powiadomienie-resetu" data-tekst-ladowania="Wysylanie..." method="post" novalidate>
                 <input type="hidden" name="token_csrf" value="<?= esc(token_csrf()) ?>">
 
                 <label class="pole-formularza pole-formularza-logowanie-tabik">
@@ -42,35 +45,11 @@ if (czy_zalogowany()) {
             </form>
 
             <div class="stopka-logowania-tabik">
-                <a href="index.php">Wroc do logowania</a>
+                <a href="<?= esc(url('logowanie')) ?>">Wroc do logowania</a>
                 <span>|</span>
-                <a href="rejestracja.php">Rejestracja</a>
+                <a href="<?= esc(url('rejestracja')) ?>">Rejestracja</a>
             </div>
         </section>
     </div>
-<script>
-document.getElementById('formularz-resetu').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const box = document.getElementById('powiadomienie-resetu');
-    box.className = 'powiadomienie';
-    box.style.display = 'none';
-    const przycisk = this.querySelector('button[type="submit"]');
-    const pierwotnaEtykieta = przycisk.textContent;
-    przycisk.disabled = true;
-    przycisk.textContent = 'Wysylanie...';
-
-    try {
-        const fd = new FormData(this);
-        const res = await fetch('api/przypomnij-haslo.php', { method: 'POST', body: fd, credentials: 'same-origin' });
-        const dane = await res.json().catch(() => ({ sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.' }));
-        box.textContent = dane.komunikat || 'Wystapil blad.';
-        box.classList.add(dane.sukces ? 'sukces' : 'blad');
-        box.style.display = 'block';
-    } finally {
-        przycisk.disabled = false;
-        przycisk.textContent = pierwotnaEtykieta;
-    }
-});
-</script>
 </body>
 </html>

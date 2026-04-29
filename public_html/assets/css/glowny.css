@@ -71,39 +71,6 @@ textarea {
     overflow-x: hidden;
 }
 
-.tlo-gosc {
-    position: fixed;
-    inset: 0;
-    background:
-        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, .18), transparent 28%),
-        radial-gradient(circle at 80% 0%, rgba(14, 165, 233, .18), transparent 24%),
-        linear-gradient(180deg, var(--kolor-tlo-szary-jasny) 0%, var(--kolor-tlo-glowny) 100%);
-    z-index: -1;
-}
-
-.kontener-gosc {
-    max-width: 1080px;
-    margin: 0 auto;
-    min-height: 100vh;
-    display: grid;
-    gap: var(--odstep-6);
-    place-content: center;
-    padding: var(--odstep-7) var(--odstep-4);
-}
-
-.naglowek-gosc {
-    display: flex;
-    align-items: center;
-    gap: var(--odstep-4);
-    width: min(100%, 540px);
-    margin-bottom: var(--odstep-4);
-}
-
-.naglowek-gosc p {
-    margin: 6px 0 0;
-    color: var(--kolor-tekst-2);
-}
-
 .logo-marki {
     width: 48px;
     height: 48px;
@@ -118,69 +85,11 @@ textarea {
    SYSTEM KART I POWIERZCHNI
    =================================== */
 
-.powierzchnia-ui,
-.prosta-karta {
-    background: var(--kolor-powierzchni);
-    border: 1px solid var(--kolor-obramowania);
-    border-radius: var(--promien-duzy);
-    box-shadow: var(--cien-sredni);
-}
-
-.powierzchnia-glass {
-    background: var(--kolor-panel-glass);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, .5);
-    box-shadow: var(--cien-duzy);
-}
-
-.tekst-etykieta,
 .naglowek-modalny small {
     color: var(--kolor-tekst-2);
     text-transform: uppercase;
     letter-spacing: .08em;
     font-size: .72rem;
-}
-
-.karta,
-.karta-gosc,
-.powierzchnia {
-    background: rgba(255, 255, 255, .9);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, .5);
-    border-radius: var(--promien-duzy);
-    box-shadow: var(--cien-duzy);
-    padding: var(--odstep-6);
-}
-
-.karta-gosc {
-    width: min(100%, 540px);
-    padding: 28px;
-}
-
-.naglowek-karty-gosc h1 {
-    margin: 0 0 8px;
-    font-size: clamp(1.8rem, 2.8vw, 2.2rem);
-}
-
-.naglowek-karty-gosc p {
-    margin: 0;
-    color: var(--kolor-tekst-2);
-    line-height: 1.6;
-}
-
-.karta-informacyjna {
-    margin-top: var(--odstep-5);
-    padding: var(--odstep-5);
-    border-radius: var(--promien-duzy);
-    background: var(--kolor-powierzchni-2);
-    border: 1px solid var(--kolor-obramowania);
-    color: var(--kolor-tekst-2);
-    line-height: 1.7;
-}
-
-.karta-informacyjna ul {
-    margin: 0;
-    padding-left: var(--odstep-5);
 }
 
 /* ===================================
@@ -233,17 +142,6 @@ textarea {
     position: relative;
 }
 
-.ikona-pola {
-    position: absolute;
-    left: var(--odstep-4);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--kolor-tekst-muted-logowanie);
-    font-size: 1.05rem;
-    pointer-events: none;
-    z-index: 1;
-}
-
 .pole-z-ikona input {
     padding-left: 48px;
 }
@@ -267,20 +165,6 @@ textarea {
     padding-right: 54px;
 }
 
-.stopka-karty-gosc {
-    margin-top: var(--odstep-5);
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--odstep-3);
-    align-items: center;
-    color: var(--kolor-tekst-2);
-}
-
-.stopka-karty-gosc a {
-    color: var(--kolor-akcent);
-    font-weight: 600;
-}
-
 .pole-checkbox {
     display: inline-flex;
     align-items: center;
@@ -295,20 +179,12 @@ textarea {
     margin: 0;
 }
 
-.blad-pola {
-    color: var(--kolor-blad);
-    font-size: .85rem;
-}
-
 /* ===================================
    SYSTEM PRZYCISKÓW
    =================================== */
 
-.przycisk-baza,
 .przycisk-glowny,
-.przycisk-drugorzedny,
 .przycisk-subtelny,
-.przycisk-tekstowy,
 .przycisk-ikona {
     display: inline-flex;
     align-items: center;
@@ -322,30 +198,9 @@ textarea {
     cursor: pointer;
 }
 
-.przycisk-baza--primary {
-    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-akcent-ciemny));
-    color: var(--kolor-powierzchni);
-}
-
-.przycisk-baza--secondary {
-    background: var(--kolor-powierzchni);
-    border-color: var(--kolor-obramowania);
-    color: var(--kolor-tekst);
-}
-
-.przycisk-baza--icon {
-    padding: 0;
-}
-
-.przycisk-baza--panel {
-    box-shadow: var(--cien-maly);
-    font-weight: 700;
-}
 
 .przycisk-glowny:hover,
-.przycisk-drugorzedny:hover,
-.przycisk-subtelny:hover,
-.przycisk-tekstowy:hover {
+.przycisk-subtelny:hover {
     transform: translateY(-1px);
 }
 
@@ -363,7 +218,6 @@ textarea {
     width: 100%;
 }
 
-.przycisk-drugorzedny,
 .przycisk-subtelny {
     background: var(--kolor-powierzchni);
     border-color: var(--kolor-obramowania);
@@ -371,16 +225,6 @@ textarea {
     padding: .8rem 1rem;
 }
 
-.przycisk-tekstowy {
-    background: transparent;
-    color: var(--kolor-tekst-2);
-    padding: .35rem .55rem;
-    border: none;
-}
-
-.przycisk-tekstowy.niebezpieczny {
-    color: var(--kolor-blad);
-}
 
 .przycisk-ikona {
     width: 42px;
@@ -409,18 +253,8 @@ textarea {
    KOMUNIKATY
    =================================== */
 
-.komunikat-blad,
-.komunikat-wazny {
-    margin-top: var(--odstep-5);
-    padding: var(--odstep-4);
-    border-radius: var(--promien-maly-legacy);
-    border: 1px solid rgba(220, 38, 38, .18);
-    background: rgba(220, 38, 38, .08);
-    color: var(--kolor-blad-ciemny);
-    line-height: 1.5;
-}
 
-.stos-powiadomien {
+#stos-powiadomien {
     position: fixed;
     z-index: 1200;
     top: var(--odstep-4);
@@ -510,33 +344,13 @@ textarea {
     gap: var(--odstep-3);
 }
 
-.pelna-szerokosc {
-    grid-column: 1 / -1;
-}
-
 /* ===================================
    LISTY I KARTY
    =================================== */
 
-.lista-prostych-kart {
-    display: grid;
-    gap: var(--odstep-4);
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-}
-
-.prosta-karta {
-    padding: var(--odstep-5);
-    display: grid;
-    gap: var(--odstep-2);
-}
-
 /* ===================================
    SYSTEM UWIERZYTELNIANIA
    =================================== */
-
-.widok-rejestracja .naglowek-gosc {
-    display: none;
-}
 
 .widok-logowania-tabik {
     font-family: var(--font-glowny);
@@ -775,11 +589,7 @@ textarea {
 
 
 @media (max-width: 700px) {
-    .karta-gosc {
-        padding: var(--odstep-6);
-    }
-
-    .stos-powiadomien {
+    #stos-powiadomien {
         left: var(--odstep-4);
         right: var(--odstep-4);
         max-width: none;

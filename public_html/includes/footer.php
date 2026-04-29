@@ -24,7 +24,7 @@
         <div class="naglowek-sekcji"><h2>Szybkie wskazowki</h2></div>
         <ul class="lista-wskazowek">
             <li>PRZECIAGNIJ KARTY MIEDZY KOLUMNAMI, ABY ZMIENIC GRUPY.</li>
-            <li>UZYJ EKSPORTU JSON LUB HTML DO ARCHIWIZACJI DANYCH.</li>
+            <li>UZYJ EKSPORTU JSON DO ARCHIWIZACJI DANYCH.</li>
             <li>W MODULE ZAKLADKI MOZESZ IMPORTOWAC PLIKI Z POPRZEDNICH EKSPORTOW.</li>
         </ul>
     </div>

@@ -6,7 +6,7 @@ $akcja = $_GET['akcja'] ?? '';
 if ($akcja === 'wyloguj') {
     session_destroy();
     session_start();
-    header('Location: ../index.php');
+    header('Location: ' . url('logowanie'));
     exit;
 }
 
@@ -32,4 +32,4 @@ if (!$uzytkownik || !password_verify($haslo, (string) $uzytkownik['haslo_hash'])
 
 $_SESSION['uzytkownik'] = $uzytkownik;
 baza()->prepare('UPDATE uzytkownicy SET ostatnie_logowanie = NOW() WHERE id = :id')->execute(['id' => (int) $uzytkownik['id']]);
-odpowiedz_json(['sukces' => true, 'komunikat' => 'Zalogowano.', 'przekierowanie' => 'panel.php']);
+odpowiedz_json(['sukces' => true, 'komunikat' => 'Zalogowano.', 'przekierowanie' => url('panel')]);

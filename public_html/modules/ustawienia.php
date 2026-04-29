@@ -1,1 +1,1 @@
-<?php przekieruj('panel.php?modul=profil');
+<?php przekieruj(url('panel.modul', ['modul' => 'profil']));

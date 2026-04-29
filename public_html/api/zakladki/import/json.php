@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../wspolne.php';
-sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($_POST['token_csrf'] ?? null)); $plik = pobierz_plik_importu('plik'); $zaw = file_get_contents($plik['tmp_name']) ?: ''; $json = json_decode($zaw, true);
+sprawdz_csrf_api($_POST); $plik = pobierz_plik_importu('plik'); $zaw = file_get_contents($plik['tmp_name']) ?: ''; $json = json_decode($zaw, true);
 if (!is_array($json)) odpowiedz_json(['sukces'=>false,'komunikat'=>'Niepoprawny plik JSON.'],422);
 $zakladki = $json['zakladki'] ?? $json; if (!is_array($zakladki)) odpowiedz_json(['sukces'=>false,'komunikat'=>'Brak danych do importu.'],422);
 $importowane = 0; $pominiete = 0; $ins = baza()->prepare('INSERT INTO zakladki (id_uzytkownika,id_grupy,id_kategorii,tytul,adres_url,opis,czy_ulubiona,kolejnosc) VALUES (:u,:g,:k,:t,:a,:o,:c,:kol)');

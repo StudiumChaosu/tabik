@@ -9,7 +9,7 @@ $inicjaly = inicjaly_uzytkownika($u);
 $avatar = sciezka_awatara($u['avatar'] ?? '');
 ?>
 <section class="profil-nowy" aria-label="Profil uzytkownika">
-    <form method="post" action="api/uzytkownicy.php?akcja=ustawienia" class="profil-nowy-powloka" enctype="multipart/form-data" novalidate>
+    <form method="post" action="<?= esc(url('api.uzytkownicy.ustawienia')) ?>" class="profil-nowy-powloka" enctype="multipart/form-data" novalidate>
         <input type="hidden" name="token_csrf" value="<?= esc(token_csrf()) ?>">
 
         <div class="profil-nowy-siatka">

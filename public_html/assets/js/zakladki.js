@@ -28,7 +28,6 @@
         obszarKolumn: document.getElementById('obszar-kolumn'),
         fileInput: document.getElementById('pole-importu-json'),
         searchTop: document.getElementById('pole-szukania-zakladek'),
-        searchPanel: document.getElementById('pole-szukania-zakladek-panel'),
         modalZakladka: document.getElementById('modal-zakladka'),
         modalGrupa: document.getElementById('modal-grupa'),
         modalKategoria: document.getElementById('modal-kategoria'),
@@ -61,14 +60,17 @@
     const pokazModal = (m) => m?.classList.remove('ukryta');
     const ukryjModal = (m) => m?.classList.add('ukryta');
 
-    const DOMYSLNY_KOLOR_GRUPY = '#d8b50030';
     const DOMYSLNA_ALFA_GRUPY = '30';
-    const normalizujKolor = (kolor, domyslny = DOMYSLNY_KOLOR_GRUPY) => {
-        const wartosc = String(kolor || '').trim().toLowerCase();
-        if (/^#[0-9a-f]{6}$/.test(wartosc)) return `${wartosc}${DOMYSLNA_ALFA_GRUPY}`;
-        if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
-        return domyslny;
-    };
+    const DOMYSLNY_KOLOR_GRUPY = api.normalizujHex(api.config?.koloryUzytkownika?.idkolor_gru || '#d8b500', {
+        domyslny: '#d8b500',
+        dopuszczajAlfe: true,
+        dopiszAlfe: DOMYSLNA_ALFA_GRUPY,
+    });
+    const normalizujKolor = (kolor, domyslny = DOMYSLNY_KOLOR_GRUPY) => api.normalizujHex(kolor, {
+        domyslny,
+        dopuszczajAlfe: true,
+        dopiszAlfe: DOMYSLNA_ALFA_GRUPY,
+    });
     const kolorTekstuDlaTla = (kolor) => {
         const hex = normalizujKolor(kolor).slice(1);
         const r = parseInt(hex.slice(0, 2), 16);
@@ -82,18 +84,6 @@
         return jasnosc >= 150 ? '#0f172a' : '#ffffff';
     };
     const kolorGrupy = (grupa) => normalizujKolor(grupa?.kolor || DOMYSLNY_KOLOR_GRUPY);
-    const paletaPickrGrupy = [
-        'rgba(244, 67, 54, 1)',
-        'rgba(233, 30, 99, 0.95)',
-        'rgba(156, 39, 176, 0.9)',
-        'rgba(103, 58, 183, 0.85)',
-        'rgba(63, 81, 181, 0.8)',
-        'rgba(33, 150, 243, 0.75)',
-        'rgba(3, 169, 244, 0.7)',
-        'rgba(0, 188, 212, 0.7)'
-    ];
-    const liczba = (v) => Number(v || 0);
-
     const faviconFallbacki = (adresUrl, favIconUrl = '') => {
         const fav = String(favIconUrl || '').trim();
         const adres = String(adresUrl || '').trim();
@@ -128,9 +118,7 @@
     };
 
     const aktualizujPolaSzukania = (wartosc) => {
-        [els.searchTop, els.searchPanel].forEach((pole) => {
-            if (pole && pole.value !== wartosc) pole.value = wartosc;
-        });
+        if (els.searchTop && els.searchTop.value !== wartosc) els.searchTop.value = wartosc;
     };
 
     const znajdzZakladke = (id) => {
@@ -264,13 +252,25 @@
         aktualizujPolaSzukania(stan.dane.filtry?.q || '');
     };
 
+    const initKolorZakladek = () => {
+        root.querySelectorAll('[data-zakladki-kolor-pickr]').forEach((przycisk) => {
+            api.utworzPickrKoloruUzytkownika?.(przycisk, {
+                obszar: 'idkolor_zak',
+                cssVar: '--kolor-tla-zakladki',
+                domyslny: '#f5f7fb',
+                appClass: 'tabik-pickr-tlo',
+                komunikatSukces: 'Kolor zakladek zostal zapisany.',
+            });
+        });
+    };
+
     const pobierzListe = async (nadpisania = {}) => {
         const aktywne = { ...filtry(), ...nadpisania };
         const params = new URLSearchParams();
         Object.entries(aktywne).forEach(([klucz, wartosc]) => {
             if (wartosc !== null && wartosc !== undefined && wartosc !== '') params.set(klucz, String(wartosc));
         });
-        const odpowiedz = await api.pobierzJson(`api/zakladki/lista.php?${params.toString()}`);
+        const odpowiedz = await api.pobierzJson(api.url('api.zakladki.lista', Object.fromEntries(params)));
         stan.dane = odpowiedz.dane || {};
         renderuj();
     };
@@ -322,21 +322,9 @@
         e.preventDefault();
         const formData = new FormData(els.formZakladka);
         const czyEdycja = Number(els.poleIdZakladki.value) > 0;
-        const url = czyEdycja ? 'api/zakladki/edytuj.php' : 'api/zakladki/dodaj.php';
-        const odpowiedz = await fetch(api.adres(url), {
-            method: 'POST',
-            headers: { 'X-CSRF-Token': api.tokenCsrf, 'X-Requested-With': 'XMLHttpRequest' },
-            body: formData,
-            credentials: 'same-origin',
-        });
-        const tekst = await odpowiedz.text();
-        let dane = {};
-        try {
-            dane = tekst ? JSON.parse(tekst) : {};
-        } catch (e) {
-            dane = { sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.' };
-        }
-        if (!odpowiedz.ok || dane.sukces === false) throw new Error(dane.komunikat || 'Nie udalo sie zapisac zakladki.');
+        const trasa = czyEdycja ? 'api.zakladki.edytuj' : 'api.zakladki.dodaj';
+        const dane = await api.pobierzJson(trasa, { method: 'POST', body: formData });
+        if (dane.sukces === false) throw new Error(dane.komunikat || 'Nie udalo sie zapisac zakladki.');
         api.pokazPowiadomienie('sukces', dane.komunikat || 'Zapisano.');
         ukryjModal(els.modalZakladka);
         await pobierzListe();
@@ -355,7 +343,7 @@
         fd.set('nazwa', nazwa);
         if (id > 0) fd.set('id', String(id));
         fd.set('id_kategorii', String(idKategorii));
-        const odpowiedz = await api.pobierzJson(id > 0 ? 'api/zakladki/grupy/edytuj.php' : 'api/zakladki/grupy/dodaj.php', { method: 'POST', body: fd });
+        const odpowiedz = await api.pobierzJson(id > 0 ? 'api.zakladki.grupy.edytuj' : 'api.zakladki.grupy.dodaj', { method: 'POST', body: fd });
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Zapisano grupe.');
         ukryjModal(els.modalGrupa);
         await pobierzListe();
@@ -373,7 +361,7 @@
         const fd = new FormData();
         fd.set('id', String(Number(idGrupy)));
         fd.set('nazwa', czystaNazwa);
-        await api.pobierzJson('api/zakladki/grupy/edytuj.php', { method: 'POST', body: fd });
+        await api.pobierzJson('api.zakladki.grupy.edytuj', { method: 'POST', body: fd });
         if (grupa) grupa.nazwa = czystaNazwa;
         await pobierzListe();
         return true;
@@ -520,7 +508,7 @@
         if (!nazwa) return;
         const fd = new FormData();
         fd.set('nazwa', nazwa);
-        const odpowiedz = await api.pobierzJson('api/zakladki/kategorie/dodaj.php', { method: 'POST', body: fd });
+        const odpowiedz = await api.pobierzJson('api.zakladki.kategorie.dodaj', { method: 'POST', body: fd });
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Dodano kategorie.');
         ukryjModal(els.modalKategoria);
         els.formKategoria.reset();
@@ -529,19 +517,19 @@
 
     const usunZakladke = async (id) => {
         if (!window.confirm('Usunac te zakladke?')) return;
-        const odpowiedz = await api.pobierzJson('api/zakladki/usun.php', { method: 'POST', body: JSON.stringify({ id }) });
+        const odpowiedz = await api.pobierzJson('api.zakladki.usun', { method: 'POST', body: JSON.stringify({ id }) });
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Usunieto zakladke.');
         await pobierzListe();
     };
 
     const przelaczUlubiona = async (id) => {
-        await api.pobierzJson('api/zakladki/ulubiona/przelacz.php', { method: 'POST', body: JSON.stringify({ id }) });
+        await api.pobierzJson('api.zakladki.ulubiona.przelacz', { method: 'POST', body: JSON.stringify({ id }) });
         await pobierzListe();
     };
 
     const zapamietajOstaniąKategorię = async (idKategorii) => {
         try {
-            await api.pobierzJson('api/zakladki/zapisz-ostatnia-kategorie.php', {
+            await api.pobierzJson('api.zakladki.ostatnia_kategoria', {
                 method: 'POST',
                 body: JSON.stringify({ id_kategorii: idKategorii })
             });
@@ -568,19 +556,20 @@
         }
     };
 
-    const zapiszKolorGrupy = async (idGrupy, kolor, czyCicho = false) => {
+    const zapiszKolorGrupy = async (idGrupy, kolor) => {
         const kolorHex = normalizujKolor(kolor);
         zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
-        await api.pobierzJson('api/zakladki/grupy/kolor.php', {
+        await api.pobierzJson('api.zakladki.grupy.kolor', {
             method: 'POST',
             body: JSON.stringify({ id: Number(idGrupy), kolor: kolorHex }),
         });
+        await api.zapiszKolorUzytkownika?.(kolorHex.slice(0, 7), 'idkolor_gru');
     };
 
     const zapiszKolorGrupyZDebounce = (idGrupy, kolor) => {
         window.clearTimeout(stan.timerKoloru);
         stan.timerKoloru = window.setTimeout(() => {
-            zapiszKolorGrupy(idGrupy, kolor, true).catch((blad) => {
+            zapiszKolorGrupy(idGrupy, kolor).catch((blad) => {
                 api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
             });
         }, 220);
@@ -612,7 +601,7 @@
             comparison: true,
             closeOnScroll: true,
             autoReposition: true,
-            swatches: paletaPickrGrupy,
+            swatches: api.paletaKolorow || [],
             components: {
                 palette: true,
                 preview: true,
@@ -653,7 +642,7 @@
                 const kolorCss = wybranyKolor ? normalizujKolor(wybranyKolor.toHEXA().toString()) : DOMYSLNY_KOLOR_GRUPY;
                 przycisk.style.setProperty('--kolor-wybrany', kolorCss);
                 zastosujKolorGrupyLokalnie(idGrupy, kolorCss);
-                zapiszKolorGrupy(idGrupy, kolorCss, true).catch((blad) => {
+                zapiszKolorGrupy(idGrupy, kolorCss).catch((blad) => {
                     api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
                 });
                 picker.hide();
@@ -661,7 +650,7 @@
             .on('clear', () => {
                 przycisk.style.setProperty('--kolor-wybrany', DOMYSLNY_KOLOR_GRUPY);
                 zastosujKolorGrupyLokalnie(idGrupy, DOMYSLNY_KOLOR_GRUPY);
-                zapiszKolorGrupy(idGrupy, DOMYSLNY_KOLOR_GRUPY, true).catch((blad) => {
+                zapiszKolorGrupy(idGrupy, DOMYSLNY_KOLOR_GRUPY).catch((blad) => {
                     api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
                 });
             });
@@ -671,7 +660,7 @@
 
     const usunGrupe = async (idGrupy) => {
         if (!window.confirm('Usunac grupe? Zakladki zostana przeniesione do sekcji Bez grupy.')) return;
-        const odpowiedz = await api.pobierzJson('api/zakladki/grupy/usun.php', { method: 'POST', body: JSON.stringify({ id: idGrupy }) });
+        const odpowiedz = await api.pobierzJson('api.zakladki.grupy.usun', { method: 'POST', body: JSON.stringify({ id: idGrupy }) });
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Usunieto grupe.');
         await pobierzListe();
     };
@@ -683,7 +672,7 @@
         const nazwa = (plik?.name || '').toLowerCase();
         const typ = (plik?.type || '').toLowerCase();
         const czyHtml = nazwa.endsWith('.html') || nazwa.endsWith('.htm') || typ.includes('text/html');
-        const endpoint = czyHtml ? 'api/zakladki/import/html.php' : 'api/zakladki/import/json.php';
+        const endpoint = czyHtml ? 'api.zakladki.import.html' : 'api.zakladki.import.json';
 
         const odpowiedz = await api.pobierzJson(endpoint, { method: 'POST', body: fd });
         api.pokazPowiadomienie('sukces', odpowiedz.komunikat || 'Zaimportowano backup.');
@@ -699,7 +688,7 @@
     const przeniesGrupeDoKategorii = async (idGrupy, idKategorii) => {
         if (!idGrupy || idGrupy <= 0) return;
         stan.przeniesionoGrupeDoKategorii = true;
-        await api.pobierzJson('api/zakladki/grupy/przenies-kategoria.php', {
+        await api.pobierzJson('api.zakladki.grupy.przenies_kategoria', {
             method: 'POST',
             body: JSON.stringify({
                 id: idGrupy,
@@ -716,7 +705,7 @@
 
         if (ids.length < 2) return;
 
-        await api.pobierzJson('api/zakladki/kategorie/kolejnosc.php', {
+        await api.pobierzJson('api.zakladki.kategorie.kolejnosc', {
             method: 'POST',
             body: JSON.stringify({ ids }),
         });
@@ -808,7 +797,7 @@
                     .map((el) => Number(el.dataset.idGrupy))
                     .filter((id) => id > 0);
                 if (ids.length) {
-                    await api.pobierzJson('api/zakladki/grupy/kolejnosc.php', { method: 'POST', body: JSON.stringify({ ids }) });
+                    await api.pobierzJson('api.zakladki.grupy.kolejnosc', { method: 'POST', body: JSON.stringify({ ids }) });
                     await pobierzListe();
                 }
             },
@@ -830,7 +819,7 @@
                     const idZrodlowej = Number(staraLista.dataset.idGrupy || 0);
                     const kolejnoscDocelowa = [...nowaLista.querySelectorAll('.element-linku')].map((el) => Number(el.dataset.idZakladki));
                     const kolejnoscZrodlowa = [...staraLista.querySelectorAll('.element-linku')].map((el) => Number(el.dataset.idZakladki));
-                    await api.pobierzJson('api/zakladki/przenies.php', {
+                    await api.pobierzJson('api.zakladki.przenies', {
                         method: 'POST',
                         body: JSON.stringify({
                             id,
@@ -860,9 +849,6 @@
         const akcja = przycisk.dataset.akcja;
         try {
             switch (akcja) {
-                case 'dodaj-zakladke':
-                    otworzModalZakladki();
-                    break;
                 case 'dodaj-zakladke-do-grupy':
                     otworzModalZakladki('dodaj', null, przycisk.dataset.idGrupy);
                     zamknijMenu();
@@ -952,13 +938,10 @@
             }
         }, 260);
 
-        [els.searchTop, els.searchPanel].forEach((pole) => {
-            if (!pole) return;
-            pole.addEventListener('input', (e) => {
-                const wartosc = e.target.value;
-                aktualizujPolaSzukania(wartosc);
-                handler(wartosc);
-            });
+        els.searchTop?.addEventListener('input', (e) => {
+            const wartosc = e.target.value;
+            aktualizujPolaSzukania(wartosc);
+            handler(wartosc);
         });
     };
 
@@ -968,14 +951,6 @@
 
     els.obszarKolumn?.addEventListener('contextmenu', obsluzPrawyKlikNaglowkaGrupy);
 
-
-    document.getElementById('przycisk-importu-zakladek')?.addEventListener('click', () => {
-        if (!els.fileInput) {
-            api.pokazPowiadomienie('blad', 'Brak pola importu pliku.');
-            return;
-        }
-        els.fileInput.click();
-    });
 
     document.addEventListener('click', obsluzAkcje);
     els.formZakladka?.addEventListener('submit', (e) => zapiszZakladke(e).catch((blad) => api.pokazPowiadomienie('blad', blad.message || 'Blad zapisu.')));
@@ -989,6 +964,7 @@
             .finally(() => { e.target.value = ''; });
     });
 
+    initKolorZakladek();
     podpinijSzukaj();
     renderuj();
 })();

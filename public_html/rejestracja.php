@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/funkcje.php';
 if (czy_zalogowany()) {
-    przekieruj('panel.php');
+    przekieruj(url('panel'));
 }
+$wersjaFormularzy = is_file(__DIR__ . '/assets/js/formularze.js') ? (string) filemtime(__DIR__ . '/assets/js/formularze.js') : '1';
 ?>
 <!doctype html>
 <html lang="pl">
@@ -17,6 +18,8 @@ if (czy_zalogowany()) {
     <link rel="stylesheet" href="assets/css/tokens.css">
     <link rel="stylesheet" href="assets/css/glowny.css">
     <link rel="stylesheet" href="assets/css/panel.css">
+    <?= tabik_config_script() ?>
+    <script defer src="assets/js/formularze.js?v=<?= esc($wersjaFormularzy) ?>"></script>
 </head>
 <body class="uklad-gosc widok-logowania-tabik wariant-rejestracja-tabik">
     <div class="kontener-logowania-tabik">
@@ -27,7 +30,7 @@ if (czy_zalogowany()) {
 
             <div id="powiadomienie-rejestracji" class="powiadomienie" style="display:none"></div>
 
-            <form id="formularz-rejestracji" class="formularz-logowania-tabik" novalidate>
+            <form id="formularz-rejestracji" class="formularz-logowania-tabik" data-ajax-form data-endpoint="<?= esc(url('api.rejestracja')) ?>" data-powiadomienie="#powiadomienie-rejestracji" data-tekst-ladowania="Tworzenie konta..." data-redirect-delay="1200" method="post" novalidate>
                 <input type="hidden" name="token_csrf" value="<?= esc(token_csrf()) ?>">
 
                 <label class="pole-formularza pole-formularza-logowanie-tabik">
@@ -55,7 +58,8 @@ if (czy_zalogowany()) {
                         <span class="ikona-pole-logowanie-tabik"><i class="fa-solid fa-lock"></i></span>
                         <input class="pole-ui pole-ui--duze pole-ui--z-ikona pole-ui--brand" type="password" name="haslo_powtorz" id="pole-haslo-rejestracja-2" placeholder="Powtorz haslo" autocomplete="new-password" required>
                         <button type="button" class="przycisk-pokaz-haslo-tabik" data-przelacz-haslo="#pole-haslo-rejestracja-2" aria-label="Pokaz lub ukryj haslo">
-                            <i class="fa-solid fa-eye"></i></button>
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </div>
                 </label>
 
@@ -64,50 +68,9 @@ if (czy_zalogowany()) {
 
             <div class="stopka-logowania-tabik">
                 <span>Masz juz konto?</span>
-                <a href="index.php">Wroc do logowania</a>
+                <a href="<?= esc(url('logowanie')) ?>">Wroc do logowania</a>
             </div>
         </section>
     </div>
-<script>
-document.querySelectorAll('[data-przelacz-haslo]').forEach(function (przycisk) {
-    przycisk.addEventListener('click', function () {
-        const pole = document.querySelector(this.getAttribute('data-przelacz-haslo'));
-        if (!pole) return;
-        const ikona = this.querySelector('i');
-        const czyHaslo = pole.getAttribute('type') === 'password';
-        pole.setAttribute('type', czyHaslo ? 'text' : 'password');
-        if (ikona) {
-            ikona.classList.toggle('fa-eye', !czyHaslo);
-            ikona.classList.toggle('fa-eye-slash', czyHaslo);
-        }
-    });
-});
-
-document.getElementById('formularz-rejestracji').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const box = document.getElementById('powiadomienie-rejestracji');
-    box.className = 'powiadomienie';
-    box.style.display = 'none';
-    const przycisk = this.querySelector('button[type="submit"]');
-    const pierwotnaEtykieta = przycisk.textContent;
-    przycisk.disabled = true;
-    przycisk.textContent = 'Tworzenie konta...';
-
-    try {
-        const fd = new FormData(this);
-        const res = await fetch('api/rejestracja.php', { method: 'POST', body: fd, credentials: 'same-origin' });
-        const dane = await res.json().catch(() => ({ sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.' }));
-        box.textContent = dane.komunikat || 'Wystapil blad.';
-        box.classList.add(dane.sukces ? 'sukces' : 'blad');
-        box.style.display = 'block';
-        if (dane.sukces && dane.przekierowanie) {
-            setTimeout(function () { window.location.href = dane.przekierowanie; }, 1200);
-        }
-    } finally {
-        przycisk.disabled = false;
-        przycisk.textContent = pierwotnaEtykieta;
-    }
-});
-</script>
 </body>
 </html>

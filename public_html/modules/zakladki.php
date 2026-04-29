@@ -6,16 +6,14 @@ $stanPoczatkowy = [
     'kategorie' => $dane_startowe['kategorie'],
     'liczniki' => $dane_startowe['liczniki'],
 ];
-?>
-<?php
 $u = uzytkownik();
-$kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f5f7fb');
+$kolorTlaZakladki = kolor_hex_rgb_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
 ?>
 <section class="zakladki-shell zakladki-shell--panel" data-zakladki-app>
     <script type="application/json" id="zakladki-dane-startowe"><?= json_encode($stanPoczatkowy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
     <div class="zakladki-toolbar">
         <div class="zakladki-toolbar-lewa">
-            <button type="button" class="przycisk-tla-modulu" data-tlo-modulu-pickr data-tlo-modulu-pole="kolor_tla_zakladki" data-tlo-modulu-css="--kolor-tla-zakladki" data-tlo-modulu-domyslny="#f5f7fb" style="--kolor-tla-modulu: <?= esc($kolorTlaZakladki) ?>" aria-label="Zmien tlo zakladek" title="Zmien tlo zakladek"></button>
+            <button type="button" class="przycisk-tla-modulu" data-kolor-uzytkownika-pickr data-zakladki-kolor-pickr data-kolor-uzytkownika-obszar="idkolor_zak" data-kolor-uzytkownika-css="--kolor-tla-zakladki" data-kolor-uzytkownika-domyslny="#f5f7fb" style="--kolor-tla-modulu: <?= esc($kolorTlaZakladki) ?>" aria-label="Zmien tlo zakladek" title="Zmien tlo zakladek"></button>
         </div>
         <div class="zakladki-toolbar-srodek">
             <label class="zakladki-szukaj-mini" for="pole-szukania-zakladek">
@@ -24,11 +22,11 @@ $kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f
             </label>
         </div>
         <div class="zakladki-akcje-gorne">
-            <button type="button" class="przycisk-panelowy" id="przycisk-importu-zakladek" data-akcja="import-json">
+            <button type="button" class="przycisk-panelowy" data-akcja="import-json">
                 <i class="fa-solid fa-file-import" aria-hidden="true"></i>
                 <span>Import</span>
             </button>
-            <a href="api/rekordy.php?akcja=eksport_json" class="przycisk-panelowy niebieski" id="przycisk-eksportu-zakladek">
+            <a href="<?= esc(url('api.rekordy.eksport_json')) ?>" class="przycisk-panelowy niebieski">
                 <i class="fa-solid fa-file-export" aria-hidden="true"></i>
                 <span>Eksport</span>
             </a>

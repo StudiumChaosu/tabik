@@ -7,6 +7,18 @@ function dane_wejscia_api(): array
     return str_contains(strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? '')), 'application/json') ? pobierz_json_wejscia() : $_POST;
 }
 
+function sprawdz_csrf_api(array $dane = []): void
+{
+    sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($dane['token_csrf'] ?? null));
+}
+
+function dane_wejscia_api_z_csrf(): array
+{
+    $dane = dane_wejscia_api();
+    sprawdz_csrf_api($dane);
+    return $dane;
+}
+
 function znajdz_zakladke(int $id, int $idUzytkownika): ?array
 {
     $stmt = baza()->prepare('SELECT * FROM zakladki WHERE id = :id AND id_uzytkownika = :u LIMIT 1');

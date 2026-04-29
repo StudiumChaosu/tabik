@@ -1,1 +1,1 @@
-<?php przekieruj('panel.php?modul=zakladki');
+<?php przekieruj(url('panel.modul', ['modul' => 'zakladki']));

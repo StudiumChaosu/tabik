@@ -7,14 +7,14 @@ $dozwolone = ['zakladki', 'profil', 'widok2'];
 $aliasy = ['panel' => 'zakladki', 'ustawienia' => 'profil'];
 
 if ($modulZQuery !== null && isset($aliasy[$modulZQuery])) {
-    przekieruj('panel.php?modul=' . $aliasy[$modulZQuery]);
+    przekieruj(url('panel.modul', ['modul' => $aliasy[$modulZQuery]]));
 }
 
 $domyslnyModul = domyslny_modul_uzytkownika(uzytkownik());
 $aktywny_modul = in_array((string) $modulZQuery, $dozwolone, true) ? (string) $modulZQuery : $domyslnyModul;
 $tytul = etykieta_modulu($aktywny_modul);
 $strona_css = $aktywny_modul === 'zakladki' ? 'zakladki' : '';
-$strona_js = $aktywny_modul === 'zakladki' ? 'zakladki' : '';
+$strona_js = in_array($aktywny_modul, ['zakladki', 'widok2'], true) ? $aktywny_modul : '';
 include __DIR__ . '/includes/header.php';
 include __DIR__ . '/menu.php';
 ?>

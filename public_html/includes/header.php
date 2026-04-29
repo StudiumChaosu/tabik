@@ -3,13 +3,15 @@ require_once __DIR__ . '/funkcje.php';
 $cfg = require __DIR__ . '/../../config/baza.php';
 ensure_uzytkownicy_profil_columns();
 $u = uzytkownik();
-$kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f5f7fb');
-$kolorTlaWidok2 = kolor_hex_lub_domyslny($u['kolor_tla_widok2'] ?? null, '#f5f7fb');
-$bazowy_url = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
-$bazowy_url = $bazowy_url === '.' ? '' : $bazowy_url;
+$kolorTlaZakladki = kolor_hex_rgb_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
+$kolorGrupGlowny = kolor_hex_rgb_lub_domyslny($u['idkolor_gru'] ?? null, '#d8b500');
+$kolorTlaWidok2 = kolor_hex_rgb_lub_domyslny($u['idkolor_prom'] ?? null, '#f5f7fb');
+$bazowy_url = bazowy_url_aplikacji();
 $pliki_assetow = [
-    __DIR__ . '/../assets/js/zakladki.js',
     __DIR__ . '/../assets/js/glowny.js',
+    __DIR__ . '/../assets/js/formularze.js',
+    __DIR__ . '/../assets/js/zakladki.js',
+    __DIR__ . '/../assets/js/widok2.js',
     __DIR__ . '/../assets/css/tokens.css',
     __DIR__ . '/../assets/css/glowny.css',
     __DIR__ . '/../assets/css/panel.css',
@@ -34,6 +36,13 @@ $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (i
     <?php if (($strona_css ?? '') === 'zakladki'): ?>
         <link rel="stylesheet" href="assets/css/zakladki.css?v=<?= esc($wersja_assetow) ?>">
     <?php endif; ?>
+    <?= tabik_config_script([
+        'koloryUzytkownika' => [
+            'idkolor_zak' => $kolorTlaZakladki,
+            'idkolor_gru' => $kolorGrupGlowny,
+            'idkolor_prom' => $kolorTlaWidok2,
+        ],
+    ]) ?>
     <script defer src="assets/js/glowny.js?v=<?= esc($wersja_assetow) ?>"></script>
     <script defer src="assets/js/formularze.js?v=<?= esc($wersja_assetow) ?>"></script>
     <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/pickr.min.js"></script>
@@ -41,8 +50,11 @@ $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (i
         <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
         <script defer src="assets/js/zakladki.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php endif; ?>
+    <?php if (($strona_js ?? '') === 'widok2'): ?>
+        <script defer src="assets/js/widok2.js?v=<?= esc($wersja_assetow) ?>"></script>
+    <?php endif; ?>
 </head>
-<body class="uklad-panel uklad-panelu modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>" style="--kolor-tla-zakladki: <?= esc($kolorTlaZakladki) ?>; --kolor-tla-widok2: <?= esc($kolorTlaWidok2) ?>;">
+<body class="uklad-panel modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>" style="--kolor-tla-zakladki: <?= esc($kolorTlaZakladki) ?>; --kolor-grup-glowny: <?= esc($kolorGrupGlowny) ?>; --kolor-tla-widok2: <?= esc($kolorTlaWidok2) ?>;">
 <div id="stos-powiadomien">
     <?php foreach (['sukces', 'blad'] as $typ): $tekst = pobierz_flash($typ); if ($tekst !== ''): ?>
         <div class="powiadomienie <?= $typ === 'blad' ? 'blad' : 'sukces' ?>"><?= esc($tekst) ?></div>

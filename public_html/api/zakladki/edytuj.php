@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/wspolne.php';
-$dane = dane_wejscia_api();
-sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($dane['token_csrf'] ?? null));
+$dane = dane_wejscia_api_z_csrf();
 $id = (int) ($dane['id'] ?? 0); $aktualna = znajdz_zakladke($id, id_uzytkownika());
 if (!$aktualna) { odpowiedz_json(['sukces' => false, 'komunikat' => 'Nie znaleziono zakladki.'], 404); }
 $tytul = trim((string) ($dane['tytul'] ?? ''));

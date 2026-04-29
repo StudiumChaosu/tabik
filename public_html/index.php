@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/includes/funkcje.php';
 if (czy_zalogowany()) {
-    przekieruj('panel.php');
+    przekieruj(url('panel'));
 }
+$wersjaFormularzy = is_file(__DIR__ . '/assets/js/formularze.js') ? (string) filemtime(__DIR__ . '/assets/js/formularze.js') : '1';
 ?>
 <!doctype html>
 <html lang="pl">
@@ -17,6 +18,8 @@ if (czy_zalogowany()) {
     <link rel="stylesheet" href="assets/css/tokens.css">
     <link rel="stylesheet" href="assets/css/glowny.css">
     <link rel="stylesheet" href="assets/css/panel.css">
+    <?= tabik_config_script() ?>
+    <script defer src="assets/js/formularze.js?v=<?= esc($wersjaFormularzy) ?>"></script>
 </head>
 <body class="uklad-gosc widok-logowania-tabik wariant-logowanie-tabik">
     <div class="kontener-logowania-tabik">
@@ -27,7 +30,7 @@ if (czy_zalogowany()) {
 
             <div id="blad-logowania" class="powiadomienie blad" style="display:none"></div>
 
-            <form id="formularz-logowania" class="formularz-logowania-tabik" novalidate>
+            <form id="formularz-logowania" class="formularz-logowania-tabik" data-ajax-form data-endpoint="<?= esc(url('api.logowanie')) ?>" data-powiadomienie="#blad-logowania" data-tekst-ladowania="Logowanie..." data-redirect-default="<?= esc(url('panel')) ?>" method="post" novalidate>
                 <input type="hidden" name="token_csrf" value="<?= esc(token_csrf()) ?>">
 
                 <label class="pole-formularza pole-formularza-logowanie-tabik">
@@ -54,7 +57,7 @@ if (czy_zalogowany()) {
                         <input type="checkbox" name="pamietaj" value="1">
                         <span>Pamietaj mnie</span>
                     </label>
-                    <a href="przypomnij-haslo.php" class="link-akcji-logowania-tabik">Przypomnij haslo</a>
+                    <a href="<?= esc(url('przypomnij_haslo')) ?>" class="link-akcji-logowania-tabik">Przypomnij haslo</a>
                 </div>
 
                 <button type="submit" class="przycisk-zaloguj-tabik">Zaloguj</button>
@@ -62,49 +65,9 @@ if (czy_zalogowany()) {
 
             <div class="stopka-logowania-tabik">
                 <span>Nie masz konta?</span>
-                <a href="rejestracja.php">Rejestracja</a>
+                <a href="<?= esc(url('rejestracja')) ?>">Rejestracja</a>
             </div>
         </section>
     </div>
-<script>
-document.querySelectorAll('[data-przelacz-haslo]').forEach(function (przycisk) {
-    przycisk.addEventListener('click', function () {
-        const pole = document.querySelector(this.getAttribute('data-przelacz-haslo'));
-        if (!pole) return;
-        const ikona = this.querySelector('i');
-        const czyHaslo = pole.getAttribute('type') === 'password';
-        pole.setAttribute('type', czyHaslo ? 'text' : 'password');
-        if (ikona) {
-            ikona.classList.toggle('fa-eye', !czyHaslo);
-            ikona.classList.toggle('fa-eye-slash', czyHaslo);
-        }
-    });
-});
-
-document.getElementById('formularz-logowania').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const blad = document.getElementById('blad-logowania');
-    blad.style.display = 'none';
-    const przycisk = this.querySelector('button[type="submit"]');
-    const pierwotnaEtykieta = przycisk.textContent;
-    przycisk.disabled = true;
-    przycisk.textContent = 'Logowanie...';
-
-    try {
-        const fd = new FormData(this);
-        const res = await fetch('api/logowanie.php', { method: 'POST', body: fd, credentials: 'same-origin' });
-        const dane = await res.json().catch(() => ({ sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.' }));
-        if (!res.ok || !dane.sukces) {
-            blad.textContent = dane.komunikat || 'Nie udalo sie zalogowac.';
-            blad.style.display = 'block';
-            return;
-        }
-        window.location.href = dane.przekierowanie || 'panel.php';
-    } finally {
-        przycisk.disabled = false;
-        przycisk.textContent = pierwotnaEtykieta;
-    }
-});
-</script>
 </body>
 </html>

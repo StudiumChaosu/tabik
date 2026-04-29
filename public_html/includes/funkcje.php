@@ -33,10 +33,91 @@ function esc(?string $tekst): string
     return htmlspecialchars((string) $tekst, ENT_QUOTES, 'UTF-8');
 }
 
-/* POMOC - ADRES */
-function url(string $sciezka = ''): string
+/* POMOC - ROUTING */
+function tabik_trasy(): array
 {
-    return $sciezka === '' ? './' : $sciezka;
+    return [
+        'logowanie' => 'index.php',
+        'rejestracja' => 'rejestracja.php',
+        'przypomnij_haslo' => 'przypomnij-haslo.php',
+        'panel' => 'panel.php',
+        'panel.modul' => 'panel.php?modul=:modul',
+        'api.logowanie' => 'api/logowanie.php',
+        'api.wyloguj' => 'api/logowanie.php?akcja=wyloguj',
+        'api.rejestracja' => 'api/rejestracja.php',
+        'api.przypomnij_haslo' => 'api/przypomnij-haslo.php',
+        'api.uzytkownicy.ustawienia' => 'api/uzytkownicy.php?akcja=ustawienia',
+        'api.ustawienia_kolorow' => 'api/ustawienia_kolorow.php',
+        'api.rekordy.eksport_json' => 'api/rekordy.php?akcja=eksport_json',
+        'api.zakladki.lista' => 'api/zakladki/lista.php',
+        'api.zakladki.dodaj' => 'api/zakladki/dodaj.php',
+        'api.zakladki.edytuj' => 'api/zakladki/edytuj.php',
+        'api.zakladki.usun' => 'api/zakladki/usun.php',
+        'api.zakladki.przenies' => 'api/zakladki/przenies.php',
+        'api.zakladki.ulubiona.przelacz' => 'api/zakladki/ulubiona/przelacz.php',
+        'api.zakladki.ostatnia_kategoria' => 'api/zakladki/zapisz-ostatnia-kategorie.php',
+        'api.zakladki.grupy.dodaj' => 'api/zakladki/grupy/dodaj.php',
+        'api.zakladki.grupy.edytuj' => 'api/zakladki/grupy/edytuj.php',
+        'api.zakladki.grupy.usun' => 'api/zakladki/grupy/usun.php',
+        'api.zakladki.grupy.kolor' => 'api/zakladki/grupy/kolor.php',
+        'api.zakladki.grupy.kolejnosc' => 'api/zakladki/grupy/kolejnosc.php',
+        'api.zakladki.grupy.przenies_kategoria' => 'api/zakladki/grupy/przenies-kategoria.php',
+        'api.zakladki.kategorie.dodaj' => 'api/zakladki/kategorie/dodaj.php',
+        'api.zakladki.kategorie.kolejnosc' => 'api/zakladki/kategorie/kolejnosc.php',
+        'api.zakladki.import.json' => 'api/zakladki/import/json.php',
+        'api.zakladki.import.html' => 'api/zakladki/import/html.php',
+    ];
+}
+
+function bazowy_url_aplikacji(): string
+{
+    $katalog = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
+    if ($katalog === '' || $katalog === '.' || $katalog === '/') {
+        return '';
+    }
+
+    $katalog = preg_replace('~/api(?:/.*)?$~', '', $katalog) ?: '';
+    return rtrim($katalog, '/');
+}
+
+function url(string $nazwa = '', array $parametry = []): string
+{
+    $trasy = tabik_trasy();
+    $sciezka = $nazwa === '' ? '' : ($trasy[$nazwa] ?? ltrim($nazwa, '/'));
+    $uzyteParametry = [];
+
+    $sciezka = preg_replace_callback('/\:([a-zA-Z_][a-zA-Z0-9_]*)/', static function (array $trafienie) use ($parametry, &$uzyteParametry): string {
+        $klucz = $trafienie[1];
+        if (!array_key_exists($klucz, $parametry)) {
+            throw new InvalidArgumentException('Brak parametru trasy: ' . $klucz);
+        }
+
+        $uzyteParametry[$klucz] = true;
+        return rawurlencode((string) $parametry[$klucz]);
+    }, $sciezka);
+
+    $nadmiarowe = array_diff_key($parametry, $uzyteParametry);
+    if (!empty($nadmiarowe)) {
+        $sciezka .= (str_contains($sciezka, '?') ? '&' : '?') . http_build_query($nadmiarowe);
+    }
+
+    $bazowy = bazowy_url_aplikacji();
+    return ($bazowy === '' ? '' : $bazowy) . '/' . ltrim($sciezka, '/');
+}
+
+function tabik_konfiguracja_js(array $dodatkowa = []): array
+{
+    return array_replace_recursive([
+        'bazowyUrl' => bazowy_url_aplikacji(),
+        'tokenCsrf' => token_csrf(),
+        'routes' => tabik_trasy(),
+    ], $dodatkowa);
+}
+
+function tabik_config_script(array $dodatkowa = []): string
+{
+    $json = json_encode(tabik_konfiguracja_js($dodatkowa), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    return '<script>window.tabik=window.tabik||{};window.tabik.config=' . $json . ';</script>';
 }
 
 /* POMOC - PRZEKIEROWANIE */
@@ -90,7 +171,7 @@ function czy_zalogowany(): bool
 function wymagaj_logowania(): void
 {
     if (!czy_zalogowany()) {
-        przekieruj('index.php');
+        przekieruj(url('logowanie'));
     }
 }
 
@@ -285,21 +366,6 @@ function pobierz_grupy(int $idUzytkownika): array
     return $stmt->fetchAll() ?: [];
 }
 
-/* DANE - OSTATNIE ZAKLADKI */
-function pobierz_ostatnie_zakladki(int $idUzytkownika, int $limit = 6): array
-{
-    $stmt = baza()->prepare(
-        'SELECT z.id, z.tytul, z.adres_url, g.nazwa AS nazwa_grupy
-         FROM zakladki z
-         LEFT JOIN grupy_zakladek g ON g.id = z.id_grupy AND g.id_uzytkownika = z.id_uzytkownika
-         WHERE z.id_uzytkownika = :id
-         ORDER BY z.data_utworzenia DESC
-         LIMIT ' . max(1, $limit)
-    );
-    $stmt->execute(['id' => $idUzytkownika]);
-    return $stmt->fetchAll() ?: [];
-}
-
 /* DANE - FILTRY */
 function pobierz_filtry_zakladek(array $wejscie, array $uzytkownik, int $idUzytkownika): array
 {
@@ -331,6 +397,7 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
     $grupyBazowe = pobierz_grupy($idUzytkownika);
     $kategorie = pobierz_kategorie($idUzytkownika);
     $liczniki = pobierz_liczniki_zakladek($idUzytkownika);
+    $domyslnyKolorGrupy = kolor_hex_rgb_lub_domyslny($uzytkownik['idkolor_gru'] ?? null, '#d8b500') . '30';
 
     $grupy = [];
     foreach ($grupyBazowe as $grupa) {
@@ -346,12 +413,12 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
             'kolejnosc' => (int) $grupa['kolejnosc'],
             'czy_zwinieta' => (int) ($grupa['czy_zwinieta'] ?? 0),
             'id_kategorii' => $idKategoriiGrupy,
-            'kolor' => preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', (string) ($grupa['kolor'] ?? '')) ? strtolower((string) $grupa['kolor']) : '#d8b50030',
+            'kolor' => preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', (string) ($grupa['kolor'] ?? '')) ? strtolower((string) $grupa['kolor']) : $domyslnyKolorGrupy,
             'licznik' => 0,
             'zakladki' => [],
         ];
     }
-    $grupy[0] = ['id' => 0, 'nazwa' => 'Bez grupy', 'kolejnosc' => 999999, 'czy_zwinieta' => 0, 'kolor' => '#d7e3ff', 'licznik' => 0, 'zakladki' => []];
+    $grupy[0] = ['id' => 0, 'nazwa' => 'Bez grupy', 'kolejnosc' => 999999, 'czy_zwinieta' => 0, 'kolor' => $domyslnyKolorGrupy, 'licznik' => 0, 'zakladki' => []];
 
     /* DANE - POBRANIE PELNEJ LISTY */
     $stmt = baza()->prepare(
@@ -404,7 +471,7 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
                 'nazwa' => (string) ($wiersz['nazwa_grupy'] ?: 'Bez grupy'),
                 'kolejnosc' => 999999,
                 'czy_zwinieta' => 0,
-                'kolor' => '#d7e3ff',
+                'kolor' => $domyslnyKolorGrupy,
                 'licznik' => 0,
                 'zakladki' => [],
             ];
@@ -475,8 +542,9 @@ function ensure_uzytkownicy_profil_columns(): void
     ensure_uzytkownicy_domyslny_modul_column();
     $kolumny = [
         'avatar' => "ALTER TABLE uzytkownicy ADD COLUMN avatar VARCHAR(255) NULL DEFAULT NULL AFTER email",
-        'kolor_tla_zakladki' => "ALTER TABLE uzytkownicy ADD COLUMN kolor_tla_zakladki VARCHAR(9) NULL DEFAULT NULL AFTER domyslny_modul",
-        'kolor_tla_widok2' => "ALTER TABLE uzytkownicy ADD COLUMN kolor_tla_widok2 VARCHAR(9) NULL DEFAULT NULL AFTER kolor_tla_zakladki",
+        'idkolor_zak' => "ALTER TABLE uzytkownicy ADD COLUMN idkolor_zak VARCHAR(7) NULL DEFAULT NULL AFTER domyslny_modul",
+        'idkolor_gru' => "ALTER TABLE uzytkownicy ADD COLUMN idkolor_gru VARCHAR(7) NULL DEFAULT NULL AFTER idkolor_zak",
+        'idkolor_prom' => "ALTER TABLE uzytkownicy ADD COLUMN idkolor_prom VARCHAR(7) NULL DEFAULT NULL AFTER idkolor_gru",
     ];
 
     foreach ($kolumny as $kolumna => $sql) {
@@ -490,20 +558,18 @@ function ensure_uzytkownicy_profil_columns(): void
             // Kolumna mogla zostac dodana rownolegle albo baza nie pozwala na ALTER.
         }
     }
-
-    foreach (['kolor_tla_zakladki', 'kolor_tla_widok2'] as $kolumnaKoloru) {
-        try {
-            baza()->exec("ALTER TABLE uzytkownicy MODIFY COLUMN {$kolumnaKoloru} VARCHAR(9) NULL DEFAULT NULL");
-        } catch (Throwable $e) {
-            // Brak MODIFY nie powinien przerywac dzialania aplikacji.
-        }
-    }
 }
 
 function kolor_hex_lub_domyslny(mixed $kolor, string $domyslny): string
 {
     $wartosc = strtolower(trim((string) $kolor));
     return preg_match('/^#[0-9a-f]{6}([0-9a-f]{2})?$/', $wartosc) ? $wartosc : $domyslny;
+}
+
+function kolor_hex_rgb_lub_domyslny(mixed $kolor, string $domyslny): string
+{
+    $wartosc = strtolower(trim((string) $kolor));
+    return preg_match('/^#[0-9a-f]{6}$/', $wartosc) ? $wartosc : $domyslny;
 }
 
 function nazwa_wyswietlana_uzytkownika(array $uzytkownik): string

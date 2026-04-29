@@ -14,11 +14,27 @@
    =================================== */
 
 .zakladki-toolbar {
+    display: grid;
+    grid-template-columns: minmax(48px, 1fr) auto minmax(260px, 1fr);
+    align-items: center;
+    gap: var(--odstep-4);
+}
+
+.zakladki-toolbar-lewa {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: var(--odstep-4);
-    flex-wrap: wrap;
+}
+
+.zakladki-toolbar-srodek {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.zakladki-toolbar .zakladki-akcje-gorne {
+    justify-content: flex-end;
+    margin-left: 0;
 }
 
 .zakladki-szukaj-mini {
@@ -122,14 +138,14 @@
 }
 
 .tab-kategorii:hover {
-    background: rgba(255, 255, 255, .7);
+    background: rgba(255, 255, 255, .38);
 }
 
 .tab-kategorii.jest-aktywna {
-    background: rgba(255, 255, 255, .95);
-    border-color: var(--kolor-obramowania);
+    background: transparent;
+    border-color: transparent;
     color: var(--kolor-akcent);
-    box-shadow: var(--cien-maly);
+    box-shadow: none;
 }
 
 .tab-kategorii.tab-dodaj {
@@ -207,13 +223,13 @@
     border: none;
     border-radius: var(--promien-pelny);
     background: transparent;
-    color: var(--kolor-tekst-2);
+    color: var(--kolor-tekstu-grupy, #0f172a);
     cursor: pointer;
     transition: var(--przejscie-szybkie);
 }
 
 .przycisk-menu-grupy:hover {
-    background: rgba(0, 0, 0, .05);
+    background: rgba(255, 255, 255, .22);
 }
 
 /* ===================================
@@ -257,37 +273,12 @@
     text-transform: uppercase;
 }
 
-.kolor-picker-grupy-widget {
-    width: 24px;
-    height: 24px;
-    flex: 0 0 24px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--kolor-wybrany, #d8b50030);
-    cursor: pointer;
-}
-
-.kolor-picker-grupy-widget .pcr-button,
-.pcr-button.kolor-picker-grupy-widget {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 999px !important;
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .14);
-}
-
 .pcr-app[data-theme='monolith'] {
     z-index: 9999;
 }
 
 .pcr-app[data-theme='monolith'] .pcr-interaction input {
     font-family: inherit;
-}
-
-.menu-kropki {
-    display: flex;
-    gap: var(--odstep-3);
-    margin-bottom: var(--odstep-3);
-    padding-left: 2px;
 }
 
 
@@ -497,10 +488,6 @@
         max-width: none;
     }
 
-    .zakladki-toolbar {
-        align-items: stretch;
-    }
-
     .zakladki-akcje-gorne {
         margin-left: 0;
     }
@@ -547,25 +534,18 @@
    =================================== */
 .zakladki-szukaj-mini,
 .przycisk-panelowy,
-.tab-kategorii.jest-aktywna,
 .kolumna-grupy-kompakt {
     border-color: rgba(217, 226, 239, .86);
 }
 
 .zakladki-szukaj-mini,
-.przycisk-panelowy,
-.tab-kategorii.jest-aktywna {
+.przycisk-panelowy {
     background: rgba(255, 255, 255, .94);
 }
 
 .kolumna-grupy-kompakt {
     background: transparent;
     box-shadow: none;
-}
-
-.naglowek-grupy-kompakt {
-    background: color-mix(in srgb, var(--kolor-grupy) 18%, white);
-    border-bottom-color: transparent;
 }
 
 .element-linku {
@@ -586,60 +566,6 @@
 
 .karta-dodaj-grupe:hover {
     background: rgba(255, 255, 255, .42);
-}
-
-/* ===================================
-   WYBOR KOLORU NAGLOWKA GRUPY
-   =================================== */
-
-.menu-kropki {
-    align-items: center;
-}
-
-.przycisk-koloru-grupy {
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    border: 0;
-    border-radius: var(--promien-pelny);
-    background: var(--kolor-opcji);
-    cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .08);
-    transition: transform .14s ease, box-shadow .14s ease;
-}
-
-.przycisk-koloru-grupy:hover,
-.przycisk-koloru-grupy:focus-visible {
-    transform: translateY(-1px) scale(1.08);
-    box-shadow: 0 6px 14px rgba(15, 23, 42, .16), inset 0 0 0 1px rgba(15, 23, 42, .12);
-    outline: none;
-}
-
-.przycisk-koloru-wlasny {
-    background: conic-gradient(#4dabf7, #51cf66, #ffd43b, #ff6b6b, #4dabf7);
-}
-
-.kolor-picker-grupy {
-    margin: 2px 0 var(--odstep-3);
-    padding: var(--odstep-3) 0 var(--odstep-2);
-    border-top: 1px solid rgba(15, 23, 42, .08);
-    border-bottom: 1px solid rgba(15, 23, 42, .08);
-}
-
-.kolor-picker-grupy.ukryte {
-    display: none;
-}
-
-.kolor-picker-grupy-widget {
-    display: flex;
-    justify-content: center;
-}
-
-.kolor-picker-grupy-info {
-    margin-top: var(--odstep-2);
-    color: var(--kolor-tekst-3);
-    font-size: .72rem;
-    text-align: center;
 }
 
 /* DRAG&DROP - PRZENOSZENIE GRUPY NA KATEGORIE */
@@ -889,96 +815,6 @@ body.uklad-panel .puste-grupy {
     color: var(--kolor-akcent);
 }
 
-.tab-kategorii,
-.tab-kategorii.jest-aktywna {
-    border-color: transparent;
-    background: transparent;
-    box-shadow: none;
-}
-
-.tab-kategorii:hover {
-    background: rgba(255, 255, 255, .38);
-}
-
-.tab-kategorii.jest-aktywna {
-    color: var(--kolor-akcent);
-}
-
-/* ===================================
-   ZAKLADKI: pelny kolor naglowka grupy + czytelny tekst
-   =================================== */
-.naglowek-grupy-kompakt {
-    background: var(--kolor-grupy);
-}
-
-.tytul-grupy-kompakt h4,
-.przycisk-menu-grupy {
-    color: var(--kolor-tekstu-grupy, #0f172a);
-}
-
-.przycisk-menu-grupy:hover {
-    background: rgba(255, 255, 255, .22);
-}
-
-/* Pickr: wlasna ikona i delikatnie szerszy popup Monolith. */
-.kolor-picker-grupy-widget,
-.kolor-picker-grupy-widget .pcr-button,
-.pcr-button.kolor-picker-grupy-widget {
-    width: 24px !important;
-    height: 24px !important;
-    flex: 0 0 24px;
-    border-radius: 4px !important;
-    border: 1px solid rgba(15, 23, 42, .16) !important;
-    background-color: transparent !important;
-    background-image: url('../img/kolorki.png') !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-size: contain !important;
-    box-shadow: none !important;
-}
-
-.kolor-picker-grupy-widget .pcr-button::before,
-.kolor-picker-grupy-widget .pcr-button::after,
-.pcr-button.kolor-picker-grupy-widget::before,
-.pcr-button.kolor-picker-grupy-widget::after {
-    display: none !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy {
-    width: 250px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 5px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches > button {
-    width: 18px !important;
-    height: 18px !important;
-    flex: 0 0 18px !important;
-    margin: 0 !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction {
-    display: flex !important;
-    align-items: center !important;
-    flex-wrap: nowrap !important;
-    gap: 5px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction input {
-    min-width: 0 !important;
-    flex: 1 1 auto !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-save,
-.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-clear {
-    flex: 0 0 auto !important;
-    margin: 0 !important;
-}
-
 /* TABIK FINAL: ikona kolorki i wezszy popup Pickr */
 .kolor-picker-grupy-widget,
 .menu-kolor-wiersz .pcr-button,
@@ -1046,78 +882,6 @@ body.uklad-panel .puste-grupy {
     font-size: .72rem !important;
 }
 
-/* TABIK: toolbar zakladek z wyborem tla po lewej, wyszukiwarka na srodku, import/eksport po prawej */
-.zakladki-toolbar {
-    display: grid;
-    grid-template-columns: minmax(48px, 1fr) auto minmax(260px, 1fr);
-    align-items: center;
-    gap: var(--odstep-4);
-}
-
-.zakladki-toolbar-lewa {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.zakladki-toolbar-srodek {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.zakladki-toolbar .zakladki-akcje-gorne {
-    justify-content: flex-end;
-    margin-left: 0;
-}
-
-.przycisk-tla-modulu {
-    width: 42px;
-    height: 42px;
-    display: inline-grid;
-    place-items: center;
-    border: 0;
-    border-radius: 12px;
-    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
-    cursor: pointer;
-    box-shadow: none;
-    transition: transform var(--przejscie-szybkie), opacity var(--przejscie-szybkie);
-}
-
-.przycisk-tla-modulu:hover {
-    transform: translateY(-1px);
-    opacity: .86;
-}
-
-.przycisk-tla-modulu .pcr-button,
-.pcr-button.przycisk-tla-modulu {
-    width: 42px !important;
-    height: 42px !important;
-    border: 0 !important;
-    border-radius: 12px !important;
-    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
-    box-shadow: none !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-tlo {
-    width: 260px !important;
-    max-width: 260px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-swatches {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 6px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction {
-    gap: 6px !important;
-}
-
-.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction input {
-    min-width: 0 !important;
-}
-
 @media (max-width: 800px) {
     .zakladki-toolbar {
         grid-template-columns: auto 1fr;
@@ -1137,28 +901,4 @@ body.uklad-panel .puste-grupy {
         grid-column: 1 / -1;
         justify-content: flex-start;
     }
-}
-
-/* TABIK FIX: Pickr nie moze zaslaniac ikony kolorki.png podgladem koloru/szachownica */
-.przycisk-tla-modulu.pcr-button,
-.pcr-button.przycisk-tla-modulu,
-.przycisk-tla-modulu .pcr-button {
-    background-color: transparent !important;
-    background-image: url('../img/kolorki.png') !important;
-    background-position: center !important;
-    background-size: 32px 32px !important;
-    background-repeat: no-repeat !important;
-    color: transparent !important;
-}
-
-.przycisk-tla-modulu.pcr-button::before,
-.przycisk-tla-modulu.pcr-button::after,
-.pcr-button.przycisk-tla-modulu::before,
-.pcr-button.przycisk-tla-modulu::after,
-.przycisk-tla-modulu .pcr-button::before,
-.przycisk-tla-modulu .pcr-button::after {
-    display: none !important;
-    content: none !important;
-    background: none !important;
-    box-shadow: none !important;
 }

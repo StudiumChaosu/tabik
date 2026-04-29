@@ -23,83 +23,8 @@
 }
 
 /* ===================================
-   LAYOUT APLIKACJI
+   NAWIGACJA I AVATAR
    =================================== */
-
-.powloka-aplikacji {
-    --aktualna-szerokosc-sidebar: var(--szerokosc-sidebar);
-    --aktualna-szerokosc-panel-prawy: var(--szerokosc-panel-prawy);
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: var(--aktualna-szerokosc-sidebar) minmax(0, 1fr) var(--aktualna-szerokosc-panel-prawy);
-    gap: 0;
-    transition: grid-template-columns var(--przejscie-szybkie);
-}
-
-.powloka-aplikacji.panel-lewy-zwiniety {
-    --aktualna-szerokosc-sidebar: 92px;
-}
-
-.powloka-aplikacji.panel-prawy-ukryty {
-    --aktualna-szerokosc-panel-prawy: 0px;
-}
-
-.obszar-aplikacji {
-    min-width: 0;
-    display: grid;
-    grid-template-rows: auto 1fr;
-}
-
-.obszar-glowny {
-    padding: var(--odstep-6);
-    min-width: 0;
-}
-
-/* ===================================
-   PANEL BOCZNY
-   =================================== */
-
-.panel-boczny {
-    padding: var(--odstep-6) var(--odstep-5);
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    background: var(--kolor-panel-glass);
-    backdrop-filter: blur(12px);
-    border-right: 1px solid var(--kolor-border-glass);
-}
-
-.sekcja-marki {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--odstep-4);
-    margin-bottom: 28px;
-}
-
-.sekcja-marki .przycisk-zwin {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.marka {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--odstep-3);
-    min-width: 0;
-}
-
-.panel-boczny .logo-marki {
-    width: 70px;
-    height: 70px;
-    border-radius: 0;
-    box-shadow: none;
-    background: transparent;
-}
 
 .opis-marki {
     display: grid;
@@ -142,17 +67,6 @@
     font-weight: 700;
 }
 
-.profil-boczny {
-    margin-top: auto;
-    padding: var(--odstep-4);
-    border-radius: var(--promien-duzy);
-    background: rgba(255, 255, 255, .9);
-    border: 1px solid var(--kolor-obramowania);
-    display: flex;
-    align-items: center;
-    gap: var(--odstep-4);
-}
-
 .avatar-profilu {
     width: 46px;
     height: 46px;
@@ -164,18 +78,6 @@
     font-weight: 800;
     box-shadow: 0 14px 22px rgba(37, 99, 235, .18);
     flex-shrink: 0;
-}
-
-.profil-boczny small {
-    display: block;
-    color: var(--kolor-tekst-2);
-    margin-top: 2px;
-    overflow-wrap: anywhere;
-}
-
-.link-wyloguj {
-    margin-top: var(--odstep-4);
-    color: var(--kolor-blad);
 }
 
 /* ===================================
@@ -258,19 +160,6 @@
     line-height: 1.7;
 }
 
-.lista-danych-konta dt {
-    color: var(--kolor-tekst-2);
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    font-size: .72rem;
-}
-
-.akcje-gorne {
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--odstep-3);
-    align-items: center;
-}
 
 /* ===================================
    SEKCJE I KARTY PANELU
@@ -315,87 +204,9 @@
    PROFIL
    =================================== */
 
-.siatka-profilu-dwie-kolumny {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--odstep-5);
-}
-
-.karta-profilu {
-    background: var(--kolor-powierzchni);
-    border: 1px solid var(--kolor-obramowania);
-    border-radius: var(--promien-duzy);
-    padding: var(--odstep-6);
-    box-shadow: var(--cien-sredni);
-}
-
-.naglowek-sekcji-profilu {
-    margin-bottom: var(--odstep-5);
-}
-
-.naglowek-sekcji-profilu h3 {
-    margin: 0 0 6px;
-    font-size: 1.1rem;
-}
-
-.naglowek-sekcji-profilu p {
-    margin: 0;
-    color: var(--kolor-tekst-2);
-    line-height: 1.6;
-}
-
-.lista-danych-konta {
-    margin: 0;
-    display: grid;
-    gap: var(--odstep-4);
-}
-
-.lista-danych-konta > div {
-    padding: var(--odstep-4);
-    border-radius: var(--promien-duzy);
-    border: 1px solid var(--kolor-obramowania);
-    background: rgba(248, 250, 252, .9);
-}
-
-.lista-danych-konta dt {
-    margin: 0 0 6px;
-    font-size: .82rem;
-}
-
-.lista-danych-konta dd {
-    margin: 0;
-    font-weight: 600;
-    color: var(--kolor-tekst);
-    overflow-wrap: anywhere;
-}
-
 /* ===================================
    STANY PANELI
    =================================== */
-
-.panel-boczny.jest-zwiniety {
-    width: 92px;
-    padding-inline: var(--odstep-3);
-}
-
-.panel-boczny.jest-zwiniety .opis-marki,
-.panel-boczny.jest-zwiniety .link-boczny span,
-.panel-boczny.jest-zwiniety .profil-boczny > div,
-.panel-boczny.jest-zwiniety .przycisk-glowny span,
-.panel-boczny.jest-zwiniety .link-wyloguj span {
-    display: none;
-}
-
-.panel-boczny.jest-zwiniety .link-boczny,
-.panel-boczny.jest-zwiniety .przycisk-glowny,
-.panel-boczny.jest-zwiniety .link-wyloguj {
-    justify-content: center;
-}
-
-.panel-boczny.jest-zwiniety .profil-boczny {
-    justify-content: center;
-    padding: var(--odstep-3);
-}
 
 .panel-kontekstowy.jest-ukryty {
     display: none;
@@ -420,17 +231,8 @@
 */
 
 @media (max-width: 1300px) {
-    .powloka-aplikacji {
-        --aktualna-szerokosc-sidebar: 260px;
-        --aktualna-szerokosc-panel-prawy: 0px;
-        grid-template-columns: var(--aktualna-szerokosc-sidebar) minmax(0, 1fr);
-    }
 
-    .powloka-aplikacji.panel-lewy-zwiniety {
-        --aktualna-szerokosc-sidebar: 92px;
-    }
-
-    .panel-kontekstowy {
+.panel-kontekstowy {
         display: none;
     }
 
@@ -459,26 +261,6 @@
     }
 }
 
-@media (max-width: 980px) {
-    .powloka-aplikacji,
-    .powloka-aplikacji.panel-lewy-zwiniety,
-    .powloka-aplikacji.panel-prawy-ukryty {
-        --aktualna-szerokosc-sidebar: 1fr;
-        --aktualna-szerokosc-panel-prawy: 0px;
-        grid-template-columns: 1fr;
-    }
-
-    .panel-boczny {
-        position: static;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--kolor-border-glass);
-    }
-
-    .akcje-gorne {
-        justify-content: flex-start;
-    }
-}
 
 @media (max-width: 700px) {
     .obszar-glowny {
@@ -560,13 +342,6 @@
         var(--kolor-tla);
 }
 
-.panel-boczny {
-    background: linear-gradient(180deg, rgba(255, 255, 255, .86), rgba(248, 251, 255, .72));
-    border-right: 0;
-    display: flex;
-    flex-direction: column;
-}
-
 .link-boczny {
     border: 0;
     border-radius: var(--promien-sredni);
@@ -583,21 +358,8 @@
     border-color: transparent;
 }
 
-.profil-boczny {
-    margin-top: auto;
-    padding: var(--odstep-3) 0 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-}
-
 .avatar-profilu {
     border-radius: var(--promien-sredni);
-}
-
-.link-wyloguj {
-    margin-top: var(--odstep-3);
 }
 
 .panel-kontekstowy {
@@ -607,9 +369,7 @@
 
 .przycisk-zwin-prawy,
 .sekcja-kontekstowa,
-.sekcja-panelowa,
-.karta-profilu,
-.lista-danych-konta > div {
+.sekcja-panelowa {
     border-color: rgba(217, 226, 239, .82);
     border-radius: var(--promien-duzy);
 }
@@ -618,34 +378,9 @@
     background: rgba(255, 255, 255, .9);
 }
 
-@media (max-width: 980px) {
-    .panel-boczny {
-        border-bottom: 0;
-    }
-}
-
 /* ===================================
-   PRZYCISKI ZWIJANIA PANELI NA DOLE
-   Lewy przycisk nie zaslania logo, prawy zachowuje symetrie.
+   PRZYCISK ZWIJANIA PRAWEGO PANELU
    =================================== */
-.sekcja-marki .przycisk-zwin {
-    position: fixed;
-    top: auto;
-    right: auto;
-    bottom: var(--odstep-6);
-    left: calc(var(--szerokosc-sidebar) - 70px);
-    transform: none;
-    z-index: 1100;
-}
-
-.panel-boczny.jest-zwiniety .sekcja-marki .przycisk-zwin {
-    left: 23px;
-}
-
-.panel-boczny.jest-zwiniety .link-wyloguj {
-    margin-bottom: calc(46px + var(--odstep-4));
-}
-
 .panel-kontekstowy .panel-kontekstowy-naglowek .przycisk-zwin,
 .przycisk-zwin-prawy,
 .przycisk-zwin-prawy.jest-widoczny {
@@ -678,19 +413,6 @@
     }
 }
 
-@media (max-width: 980px) {
-    .sekcja-marki .przycisk-zwin,
-    .panel-boczny.jest-zwiniety .sekcja-marki .przycisk-zwin {
-        left: var(--odstep-4);
-        bottom: var(--odstep-4);
-    }
-
-    .panel-boczny .link-wyloguj,
-    .panel-boczny.jest-zwiniety .link-wyloguj {
-        margin-bottom: calc(46px + var(--odstep-4));
-    }
-}
-
 /* ===================================
    UKLAD Z GORNA BELKA
    Zastepuje staly lewy panel boczny.
@@ -703,10 +425,6 @@
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: auto minmax(0, 1fr) auto;
     transition: none;
-}
-
-.powloka-aplikacji.panel-lewy-zwiniety {
-    --aktualna-szerokosc-sidebar: 0px;
 }
 
 .powloka-aplikacji.panel-prawy-ukryty {
@@ -901,7 +619,6 @@
 
 @media (max-width: 1300px) {
     .powloka-aplikacji,
-    .powloka-aplikacji.panel-lewy-zwiniety,
     .powloka-aplikacji.panel-prawy-ukryty {
         grid-template-columns: minmax(0, 1fr);
     }
@@ -1105,7 +822,6 @@ body.uklad-panel .przycisk-zwin-prawy.jest-widoczny {
 }
 
 /* ===================================
-/* ===================================
    PROFIL - WIDOK KARTOWY
    Uklad z referencji, stylistyka dopasowana do Tabik.
    =================================== */
@@ -1176,40 +892,12 @@ body.modul-profil .obszar-glowny {
     pointer-events: none;
 }
 
-.profil-etykieta {
-    display: inline-block;
-    margin-bottom: 10px;
-    color: var(--kolor-tekst-3);
-    font-size: .72rem;
-    font-weight: 800;
-    letter-spacing: .12em;
-    line-height: 1;
-    text-transform: uppercase;
-}
-
-.profil-tytul {
-    margin: 0;
-    color: var(--kolor-tekst);
-    font-family: var(--font-glowny);
-    font-size: clamp(1.35rem, 1.6vw, 1.65rem);
-    font-weight: 800;
-    letter-spacing: -.02em;
-    line-height: 1.15;
-}
-
 .profil-konto-gora {
     position: relative;
     z-index: 1;
     padding-bottom: var(--odstep-5);
     margin-bottom: var(--odstep-5);
     border-bottom: 1px solid var(--kolor-obramowania);
-}
-
-.profil-tozsamosc {
-    display: flex;
-    align-items: center;
-    gap: var(--odstep-4);
-    margin-top: var(--odstep-5);
 }
 
 .profil-avatar-duzy {
@@ -1255,37 +943,6 @@ body.modul-profil .obszar-glowny {
     display: grid;
     gap: var(--odstep-3);
     margin: 0;
-}
-
-.profil-lista-meta > div {
-    padding: 14px 16px;
-    border: 1px solid var(--kolor-obramowania);
-    border-radius: var(--promien-duzy);
-    background: rgba(248, 250, 252, .88);
-    box-shadow: var(--cien-maly);
-}
-
-.profil-lista-meta dt {
-    margin: 0 0 7px;
-    color: var(--kolor-tekst-3);
-    font-size: .72rem;
-    font-weight: 800;
-    letter-spacing: .10em;
-    text-transform: uppercase;
-}
-
-.profil-lista-meta dd {
-    margin: 0;
-    color: var(--kolor-tekst);
-    font-size: .9rem;
-    font-weight: 700;
-    overflow-wrap: anywhere;
-}
-
-.profil-naglowek-preferencji {
-    margin-bottom: var(--odstep-6);
-    padding-bottom: var(--odstep-5);
-    border-bottom: 1px solid var(--kolor-obramowania);
 }
 
 .profil-formularz {
@@ -1394,7 +1051,6 @@ body.modul-profil .obszar-glowny {
         padding: var(--odstep-5);
     }
 
-    .profil-tozsamosc,
     .profil-akcje {
         flex-direction: column;
         align-items: stretch;
@@ -1544,40 +1200,7 @@ body.modul-profil .obszar-glowny {
     width: 100%;
 }
 
-.profil-kolory-tla {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--odstep-4);
-}
-
-.profil-przycisk-koloru {
-    min-height: 52px;
-    width: 100%;
-    border: 1px solid var(--kolor-obramowania);
-    border-radius: 14px;
-    background: var(--profil-kolor, #f5f7fb);
-    cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35);
-}
-
-.profil-przycisk-koloru .pcr-button,
-.pcr-button.profil-przycisk-koloru {
-    width: 100% !important;
-    min-height: 52px !important;
-    border-radius: 14px !important;
-}
-
-.profil-gorny .avatar-profilu,
-.profil-gorny .avatar-profilu-img {
-    border-radius: var(--promien-pelny) !important;
-    object-fit: cover;
-}
-
 @media (max-width: 700px) {
-    .profil-kolory-tla {
-        grid-template-columns: 1fr;
-    }
-
     .profil-konto-gora {
         align-items: flex-start;
     }

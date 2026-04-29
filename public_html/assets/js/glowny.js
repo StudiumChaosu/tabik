@@ -1,36 +1,116 @@
 (() => {
     const html = document.documentElement;
-    const tokenCsrf = html.dataset.tokenCsrf || '';
-    const bazowyUrl = (html.dataset.bazowyUrl || '').replace(/\/$/, '');
+    const tabik = window.tabik = window.tabik || {};
+    const domyslnaPaleta = [
+        'rgba(244, 67, 54, 1)',
+        'rgba(233, 30, 99, 0.95)',
+        'rgba(156, 39, 176, 0.9)',
+        'rgba(103, 58, 183, 0.85)',
+        'rgba(63, 81, 181, 0.8)',
+        'rgba(33, 150, 243, 0.75)',
+        'rgba(3, 169, 244, 0.7)',
+        'rgba(0, 188, 212, 0.7)'
+    ];
+
+    const config = tabik.config = {
+        bazowyUrl: html.dataset.bazowyUrl || '',
+        tokenCsrf: html.dataset.tokenCsrf || '',
+        routes: {},
+        swatches: domyslnaPaleta,
+        koloryUzytkownika: {},
+        ...(tabik.config || {}),
+    };
+
+    if (!Array.isArray(config.swatches) || config.swatches.length === 0) {
+        config.swatches = domyslnaPaleta;
+    }
+
+    if (!config.koloryUzytkownika || typeof config.koloryUzytkownika !== 'object') {
+        config.koloryUzytkownika = {};
+    }
+
+    const tokenCsrf = config.tokenCsrf || html.dataset.tokenCsrf || '';
+    const bazowyUrl = String(config.bazowyUrl || html.dataset.bazowyUrl || '').replace(/\/+$/, '');
 
     const zbudujAdres = (sciezka = '') => {
         const czysta = String(sciezka || '').trim();
 
         if (!czysta || czysta === '/') {
-            return bazowyUrl || '';
+            return bazowyUrl || '/';
         }
 
         if (/^https?:\/\//i.test(czysta)) {
             return czysta;
         }
 
-        const bezPoczatku = czysta.replace(/^\/+/, '');
-        return `${bazowyUrl}/${bezPoczatku}`.replace(/\/+/g, '/').replace(/^\/?(https?:)\//, '$1//');
+        if (czysta.startsWith('/')) {
+            return czysta;
+        }
+
+        return `${bazowyUrl}/${czysta}`.replace(/\/+/g, '/');
+    };
+
+    const podstawParametryTrasy = (sciezka, params = {}) => {
+        const uzyte = new Set();
+        let wynik = String(sciezka || '').replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, (caly, klucz) => {
+            if (!Object.prototype.hasOwnProperty.call(params, klucz)) {
+                throw new Error(`Brak parametru trasy: ${klucz}`);
+            }
+
+            uzyte.add(klucz);
+            return encodeURIComponent(String(params[klucz]));
+        });
+
+        const query = new URLSearchParams();
+        Object.entries(params || {}).forEach(([klucz, wartosc]) => {
+            if (uzyte.has(klucz) || wartosc === null || wartosc === undefined || wartosc === '') return;
+            query.set(klucz, String(wartosc));
+        });
+
+        const queryString = query.toString();
+        if (queryString) wynik += `${wynik.includes('?') ? '&' : '?'}${queryString}`;
+        return wynik;
+    };
+
+    const url = (nazwa, params = {}) => {
+        const mapa = config.routes || {};
+        const sciezka = mapa[nazwa] || nazwa;
+        return zbudujAdres(podstawParametryTrasy(sciezka, params));
     };
 
     const kandydaciAdresu = (sciezka = '') => {
         const wynik = [];
-        const glowny = zbudujAdres(sciezka);
+        const glowny = url(sciezka);
         if (glowny) wynik.push(glowny);
 
-        const czysta = String(sciezka || '').trim().replace(/^\/+/, '');
-        if (czysta) {
-            wynik.push(`./${czysta}`);
-            wynik.push(czysta);
-            wynik.push(`/${czysta}`);
+        const czysta = String(sciezka || '').trim();
+        const czyAlias = Boolean((config.routes || {})[czysta]);
+        if (!czyAlias && czysta && !czysta.startsWith('/') && !/^https?:\/\//i.test(czysta)) {
+            const bezPoczatku = czysta.replace(/^\/+/, '');
+            wynik.push(`./${bezPoczatku}`);
+            wynik.push(bezPoczatku);
         }
 
         return [...new Set(wynik.filter(Boolean))];
+    };
+
+    const normalizujHex = (kolor, opcje = {}) => {
+        const {
+            domyslny = '#f5f7fb',
+            dopuszczajAlfe = false,
+            dopiszAlfe = '',
+        } = opcje;
+        const wartosc = String(kolor || '').trim().toLowerCase();
+
+        if (/^#[0-9a-f]{6}$/.test(wartosc)) {
+            return dopiszAlfe ? `${wartosc}${dopiszAlfe}` : wartosc;
+        }
+
+        if (/^#[0-9a-f]{8}$/.test(wartosc)) {
+            return dopuszczajAlfe ? wartosc : wartosc.slice(0, 7);
+        }
+
+        return domyslny;
     };
 
     const pokazPowiadomienie = (typ, tekst) => {
@@ -67,9 +147,9 @@
 
         let ostatniBlad = null;
 
-        for (const url of kandydaciAdresu(sciezka)) {
+        for (const adres of kandydaciAdresu(sciezka)) {
             try {
-                const odpowiedz = await fetch(url, ustawieniaBazowe);
+                const odpowiedz = await fetch(adres, ustawieniaBazowe);
                 const tekst = await odpowiedz.text();
                 let dane = null;
 
@@ -83,7 +163,7 @@
                     ostatniBlad = Object.assign(new Error(dane.komunikat || `Blad HTTP ${odpowiedz.status}`), {
                         dane,
                         status: odpowiedz.status,
-                        url,
+                        url: adres,
                     });
                     continue;
                 }
@@ -97,6 +177,110 @@
         throw ostatniBlad || new Error('Nie udalo sie polaczyc z serwerem.');
     };
 
+    const zapiszKolorUzytkownika = async (colorHex, obszar) => {
+        const dozwolone = ['idkolor_zak', 'idkolor_gru', 'idkolor_prom'];
+        if (!dozwolone.includes(obszar)) {
+            throw new Error('Nieprawidlowy obszar koloru.');
+        }
+
+        const kolor = normalizujHex(colorHex, { domyslny: config.koloryUzytkownika[obszar] || '#f5f7fb' });
+        const dane = await pobierzJson('api.ustawienia_kolorow', {
+            method: 'POST',
+            body: JSON.stringify({ obszar, kolor }),
+        });
+
+        if (!dane.sukces) {
+            throw new Error(dane.komunikat || 'Nie udalo sie zapisac koloru.');
+        }
+
+        config.koloryUzytkownika[obszar] = dane.kolor || kolor;
+        return dane;
+    };
+
+    const utworzPickrKoloruUzytkownika = (przycisk, opcje = {}) => {
+        if (!window.Pickr || !przycisk || przycisk.dataset.pickrGotowy === '1') return null;
+
+        const obszar = opcje.obszar || przycisk.dataset.kolorUzytkownikaObszar || '';
+        const cssVar = opcje.cssVar || przycisk.dataset.kolorUzytkownikaCss || '';
+        const domyslny = normalizujHex(opcje.domyslny || przycisk.dataset.kolorUzytkownikaDomyslny || '#f5f7fb');
+        const kolorZKonfiguracji = config.koloryUzytkownika[obszar] || '';
+        const kolorStartowy = normalizujHex(
+            przycisk.style.getPropertyValue('--kolor-tla-modulu') || kolorZKonfiguracji || domyslny,
+            { domyslny }
+        );
+
+        if (!obszar || !cssVar) return null;
+
+        przycisk.style.setProperty('--kolor-tla-modulu', kolorStartowy);
+        document.body?.style.setProperty(cssVar, kolorStartowy);
+        przycisk.dataset.pickrGotowy = '1';
+
+        const zapiszKolor = async (kolor) => {
+            const hex = normalizujHex(kolor, { domyslny });
+            przycisk.style.setProperty('--kolor-tla-modulu', hex);
+            document.body?.style.setProperty(cssVar, hex);
+
+            try {
+                const dane = await zapiszKolorUzytkownika(hex, obszar);
+                pokazPowiadomienie('sukces', dane.komunikat || opcje.komunikatSukces || 'Kolor zostal zapisany.');
+            } catch (blad) {
+                pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru.');
+            }
+        };
+
+        const picker = window.Pickr.create({
+            el: przycisk,
+            theme: 'monolith',
+            appClass: opcje.appClass || 'tabik-pickr-tlo',
+            useAsButton: true,
+            default: kolorStartowy,
+            defaultRepresentation: 'HEX',
+            lockOpacity: true,
+            comparison: true,
+            closeOnScroll: true,
+            autoReposition: true,
+            swatches: config.swatches,
+            components: {
+                palette: true,
+                preview: true,
+                opacity: false,
+                hue: true,
+                interaction: {
+                    hex: false,
+                    rgba: false,
+                    hsla: false,
+                    hsva: false,
+                    cmyk: false,
+                    input: true,
+                    clear: true,
+                    save: true
+                }
+            },
+            i18n: {
+                'btn:toggle': 'Wybierz kolor',
+                'btn:save': 'Zapisz',
+                'btn:clear': 'Wyczysc'
+            }
+        });
+
+        picker
+            .on('change', (kolor) => {
+                const hex = normalizujHex(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, { domyslny });
+                przycisk.style.setProperty('--kolor-tla-modulu', hex);
+                document.body?.style.setProperty(cssVar, hex);
+            })
+            .on('save', (kolor) => {
+                const hex = normalizujHex(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, { domyslny });
+                zapiszKolor(hex);
+                picker.hide();
+            })
+            .on('clear', () => {
+                zapiszKolor(domyslny);
+            });
+
+        return picker;
+    };
+
     const initZegar = () => {
         const pole = document.querySelector('[data-zegar]');
         if (!pole) return;
@@ -106,23 +290,6 @@
         odswiez();
         window.setInterval(odswiez, 1000);
     };
-
-    const initPanelBoczny = () => {
-        const panel = document.querySelector('[data-panel-boczny]');
-        const przycisk = document.querySelector('[data-przelacz-panel-boczny]');
-        const powloka = document.querySelector('.powloka-aplikacji');
-        if (!panel || !przycisk) return;
-        const klucz = 'pulpit_zakladek_panel_boczny_zwiniety';
-        const ustawStan = (czyZwiniety) => {
-            panel.classList.toggle('jest-zwiniety', czyZwiniety);
-            if (powloka) powloka.classList.toggle('panel-lewy-zwiniety', czyZwiniety);
-            localStorage.setItem(klucz, czyZwiniety ? '1' : '0');
-        };
-        ustawStan(localStorage.getItem(klucz) === '1');
-        przycisk.addEventListener('click', () => ustawStan(!panel.classList.contains('jest-zwiniety')));
-    };
-
-
 
     const initPanelPrawy = () => {
         const panel = document.querySelector('[data-panel-kontekstowy]');
@@ -163,12 +330,6 @@
 
     const initModale = () => {
         document.addEventListener('click', (zdarzenie) => {
-            const otworz = zdarzenie.target.closest('[data-otworz-modal]');
-            if (otworz) {
-                const selektor = otworz.getAttribute('data-otworz-modal');
-                const modal = document.querySelector(selektor);
-                if (modal) modal.classList.remove('ukryta');
-            }
             const zamknij = zdarzenie.target.closest('[data-zamknij-modal]');
             if (zamknij) {
                 const selektor = zamknij.getAttribute('data-zamknij-modal');
@@ -234,7 +395,6 @@
 
             const dzisiaj = new Date();
             pole.innerHTML = '';
-            pole.classList.add('kalendarz-panelu-air');
             pole.dataset.datepickerGotowy = '1';
 
             new window.AirDatepicker('#kalendarz-panelu', {
@@ -270,203 +430,41 @@
         zaladujSkrypt();
     };
 
-    const initProfilPickr = () => {
-        if (!window.Pickr) return;
-        const normalizujKolorProfilu = (kolor, domyslny = '#f5f7fb') => {
-            const wartosc = String(kolor || '').trim().toLowerCase();
-            if (/^#[0-9a-f]{6}$/.test(wartosc)) return wartosc;
-            if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
-            return domyslny;
-        };
-        const swatches = [
-        'rgba(244, 67, 54, 1)',
-        'rgba(233, 30, 99, 0.95)',
-        'rgba(156, 39, 176, 0.9)',
-        'rgba(103, 58, 183, 0.85)',
-        'rgba(63, 81, 181, 0.8)',
-        'rgba(33, 150, 243, 0.75)',
-        'rgba(3, 169, 244, 0.7)',
-        'rgba(0, 188, 212, 0.7)'
-    ];
-
-        document.querySelectorAll('[data-profil-pickr]').forEach((przycisk) => {
-            if (przycisk.dataset.pickrGotowy === '1') return;
-            const pole = przycisk.parentElement?.querySelector('[data-profil-pole-koloru]');
-            if (!pole) return;
-
-            const kolorStartowy = normalizujKolorProfilu(pole.value || '#f5f7fb');
-            pole.value = kolorStartowy;
-            przycisk.style.setProperty('--profil-kolor', kolorStartowy);
-            przycisk.dataset.pickrGotowy = '1';
-
-            const picker = window.Pickr.create({
-                el: przycisk,
-                theme: 'monolith',
-                appClass: 'tabik-pickr-tlo',
-                default: kolorStartowy,
-                defaultRepresentation: 'HEXA',
-                lockOpacity: false,
-                comparison: true,
-                closeOnScroll: true,
-                autoReposition: true,
-                swatches,
-                components: {
-                    palette: true,
-                    preview: true,
-                    opacity: true,
-                    hue: true,
-                    interaction: {
-                        hex: false,
-                        rgba: false,
-                        hsla: false,
-                        hsva: false,
-                        cmyk: false,
-                        input: true,
-                        clear: true,
-                        save: true
-                    }
-                },
-                i18n: {
-                    'btn:toggle': 'Wybierz kolor',
-                    'btn:save': 'Zapisz',
-                    'btn:clear': 'Wyczysc'
-                }
-            });
-
-            picker
-                .on('change', (kolor) => {
-                    const hex = normalizujKolorProfilu(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy);
-                    pole.value = hex;
-                    przycisk.style.setProperty('--profil-kolor', hex);
-                })
-                .on('save', (kolor) => {
-                    const hex = normalizujKolorProfilu(kolor?.toHEXA ? kolor.toHEXA().toString() : pole.value);
-                    pole.value = hex;
-                    przycisk.style.setProperty('--profil-kolor', hex);
-                    picker.hide();
-                })
-                .on('clear', () => {
-                    pole.value = '#f5f7fb';
-                    przycisk.style.setProperty('--profil-kolor', '#f5f7fb');
-                });
+    const initKoloryUzytkownika = () => {
+        document.querySelectorAll('[data-kolor-uzytkownika-pickr]').forEach((przycisk) => {
+            utworzPickrKoloruUzytkownika(przycisk);
         });
     };
 
-    const initTloModuluPickr = () => {
-        if (!window.Pickr) return;
-        const normalizujKolorTla = (kolor, domyslny = '#f5f7fb') => {
-            const wartosc = String(kolor || '').trim().toLowerCase();
-            if (/^#[0-9a-f]{6}$/.test(wartosc)) return wartosc;
-            if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
-            return domyslny;
-        };
-        const swatches = [
-            'rgba(244, 67, 54, 1)',
-            'rgba(233, 30, 99, 0.95)',
-            'rgba(156, 39, 176, 0.9)',
-            'rgba(103, 58, 183, 0.85)',
-            'rgba(63, 81, 181, 0.8)',
-            'rgba(33, 150, 243, 0.75)',
-            'rgba(3, 169, 244, 0.7)',
-            'rgba(0, 188, 212, 0.7)'
-        ];
+    Object.assign(tabik, {
+        url,
+        normalizujHex,
+        zapiszKolorUzytkownika,
+        utworzPickrKoloruUzytkownika,
+    });
 
-        document.querySelectorAll('[data-tlo-modulu-pickr]').forEach((przycisk) => {
-            if (przycisk.dataset.pickrGotowy === '1') return;
-            const pole = przycisk.dataset.tloModuluPole || '';
-            const cssVar = przycisk.dataset.tloModuluCss || '';
-            const domyslny = normalizujKolorTla(przycisk.dataset.tloModuluDomyslny || '#f5f7fb');
-            const kolorStartowy = normalizujKolorTla(przycisk.style.getPropertyValue('--kolor-tla-modulu') || domyslny, domyslny);
-            if (!pole || !cssVar) return;
-
-            przycisk.style.setProperty('--kolor-tla-modulu', kolorStartowy);
-            przycisk.dataset.pickrGotowy = '1';
-
-            const zapiszKolor = async (kolor) => {
-                const hex = normalizujKolorTla(kolor, domyslny);
-                przycisk.style.setProperty('--kolor-tla-modulu', hex);
-                document.body.style.setProperty(cssVar, hex);
-
-                try {
-                    const dane = await pobierzJson('api/uzytkownicy.php?akcja=kolor_tla', {
-                        method: 'POST',
-                        body: JSON.stringify({ pole, kolor: hex, token_csrf: tokenCsrf }),
-                    });
-                    if (!dane.sukces) throw new Error(dane.komunikat || 'Nie udalo sie zapisac koloru tla.');
-                    pokazPowiadomienie('sukces', dane.komunikat || 'Kolor tla zostal zapisany.');
-                } catch (blad) {
-                    pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru tla.');
-                }
-            };
-
-            const picker = window.Pickr.create({
-                el: przycisk,
-                theme: 'monolith',
-                appClass: 'tabik-pickr-tlo',
-                useAsButton: true,
-                default: kolorStartowy,
-                defaultRepresentation: 'HEXA',
-                lockOpacity: false,
-                comparison: true,
-                closeOnScroll: true,
-                autoReposition: true,
-                swatches,
-                components: {
-                    palette: true,
-                    preview: true,
-                    opacity: true,
-                    hue: true,
-                    interaction: {
-                        hex: false,
-                        rgba: false,
-                        hsla: false,
-                        hsva: false,
-                        cmyk: false,
-                        input: true,
-                        clear: true,
-                        save: true
-                    }
-                },
-                i18n: {
-                    'btn:toggle': 'Wybierz kolor',
-                    'btn:save': 'Zapisz',
-                    'btn:clear': 'Wyczysc'
-                }
-            });
-
-            picker
-                .on('change', (kolor) => {
-                    const hex = normalizujKolorTla(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, domyslny);
-                    przycisk.style.setProperty('--kolor-tla-modulu', hex);
-                    document.body.style.setProperty(cssVar, hex);
-                })
-                .on('save', (kolor) => {
-                    const hex = normalizujKolorTla(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, domyslny);
-                    zapiszKolor(hex);
-                    picker.hide();
-                })
-                .on('clear', () => {
-                    zapiszKolor(domyslny);
-                });
-        });
+    window.aplikacja = {
+        config,
+        tokenCsrf,
+        bazowyUrl,
+        adres: zbudujAdres,
+        url,
+        pokazPowiadomienie,
+        pobierzJson,
+        paletaKolorow: config.swatches,
+        normalizujHex,
+        zapiszKolorUzytkownika,
+        utworzPickrKoloruUzytkownika,
     };
+
     document.addEventListener('DOMContentLoaded', () => {
         initZegar();
         initPanelPrawy();
         initModale();
         initDatepicker();
-        initProfilPickr();
-        initTloModuluPickr();
+        initKoloryUzytkownika();
         document.querySelectorAll('#stos-powiadomien .powiadomienie').forEach((element) => {
             window.setTimeout(() => element.remove(), 4200);
         });
     });
-
-    window.aplikacja = {
-        tokenCsrf,
-        bazowyUrl,
-        adres: zbudujAdres,
-        pokazPowiadomienie,
-        pobierzJson,
-    };
 })();

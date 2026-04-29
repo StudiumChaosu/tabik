@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/wspolne.php';
-$dane = dane_wejscia_api();
-sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($dane['token_csrf'] ?? null));
+$dane = dane_wejscia_api_z_csrf();
 $tytul = trim((string) ($dane['tytul'] ?? ''));
 $adres = uporzadkuj_url((string) ($dane['adres_url'] ?? ''));
 if ($tytul === '' || $adres === '') { odpowiedz_json(['sukces' => false, 'komunikat' => 'Uzupelnij tytul i adres URL.'], 422); }

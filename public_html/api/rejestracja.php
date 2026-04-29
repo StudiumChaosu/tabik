@@ -28,6 +28,9 @@ if ($stmt->fetch()) {
     odpowiedz_json(['sukces' => false, 'komunikat' => 'Konto o tym adresie email juz istnieje.'], 409);
 }
 
+ensure_uzytkownicy_domyslny_modul_column();
+ensure_uzytkownicy_profil_columns();
+
 $kolumny = ['email', 'haslo_hash'];
 $placeholders = [':email', ':haslo_hash'];
 $wartosci = [
@@ -55,12 +58,25 @@ if (czy_kolumna_istnieje('uzytkownicy', 'domyslna_kategoria')) {
     $placeholders[] = ':domyslna_kategoria';
     $wartosci['domyslna_kategoria'] = 'pierwsza';
 }
-ensure_uzytkownicy_domyslny_modul_column();
 if (czy_kolumna_istnieje('uzytkownicy', 'domyslny_modul')) {
     $kolumny[] = 'domyslny_modul';
     $placeholders[] = ':domyslny_modul';
     $wartosci['domyslny_modul'] = 'zakladki';
 }
+
+$domyslneKolory = [
+    'idkolor_zak' => '#f5f7fb',
+    'idkolor_gru' => '#d8b500',
+    'idkolor_prom' => '#f5f7fb',
+];
+foreach ($domyslneKolory as $kolumna => $kolor) {
+    if (czy_kolumna_istnieje('uzytkownicy', $kolumna)) {
+        $kolumny[] = $kolumna;
+        $placeholders[] = ':' . $kolumna;
+        $wartosci[$kolumna] = $kolor;
+    }
+}
+
 if (czy_kolumna_istnieje('uzytkownicy', 'data_utworzenia')) {
     $kolumny[] = 'data_utworzenia';
     $placeholders[] = 'NOW()';
@@ -76,5 +92,5 @@ baza()->prepare($sql)->execute($wartosci);
 odpowiedz_json([
     'sukces' => true,
     'komunikat' => 'Konto zostalo utworzone. Mozesz sie teraz zalogowac.',
-    'przekierowanie' => 'index.php'
+    'przekierowanie' => url('logowanie'),
 ]);
