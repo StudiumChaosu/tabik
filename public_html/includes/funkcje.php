@@ -250,11 +250,16 @@ function grupy_maja_kolor(): bool
 function upewnij_kolumne_koloru_grupy(): bool
 {
     if (grupy_maja_kolor()) {
+        try {
+            baza()->exec("ALTER TABLE grupy_zakladek MODIFY COLUMN kolor VARCHAR(9) NULL DEFAULT NULL");
+        } catch (Throwable $e) {
+            // Jesli MODIFY nie jest dostepne, nie przerywamy pracy aplikacji.
+        }
         return true;
     }
 
     try {
-        baza()->exec("ALTER TABLE grupy_zakladek ADD COLUMN kolor VARCHAR(7) NULL DEFAULT NULL AFTER czy_zwinieta");
+        baza()->exec("ALTER TABLE grupy_zakladek ADD COLUMN kolor VARCHAR(9) NULL DEFAULT NULL AFTER czy_zwinieta");
         return true;
     } catch (Throwable $e) {
         return grupy_maja_kolor();
@@ -341,7 +346,7 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
             'kolejnosc' => (int) $grupa['kolejnosc'],
             'czy_zwinieta' => (int) ($grupa['czy_zwinieta'] ?? 0),
             'id_kategorii' => $idKategoriiGrupy,
-            'kolor' => preg_match('/^#[0-9a-fA-F]{6}$/', (string) ($grupa['kolor'] ?? '')) ? (string) $grupa['kolor'] : '#d7e3ff',
+            'kolor' => preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', (string) ($grupa['kolor'] ?? '')) ? (string) $grupa['kolor'] : '#d7e3ff',
             'licznik' => 0,
             'zakladki' => [],
         ];
@@ -463,6 +468,76 @@ function pobierz_zakladki_do_eksportu(int $idUzytkownika): array
 }
 
 
+
+/* DANE - PROFIL UZYTKOWNIKA */
+function ensure_uzytkownicy_profil_columns(): void
+{
+    ensure_uzytkownicy_domyslny_modul_column();
+    $kolumny = [
+        'avatar' => "ALTER TABLE uzytkownicy ADD COLUMN avatar VARCHAR(255) NULL DEFAULT NULL AFTER email",
+        'kolor_tla_zakladki' => "ALTER TABLE uzytkownicy ADD COLUMN kolor_tla_zakladki VARCHAR(9) NULL DEFAULT NULL AFTER domyslny_modul",
+        'kolor_tla_widok2' => "ALTER TABLE uzytkownicy ADD COLUMN kolor_tla_widok2 VARCHAR(9) NULL DEFAULT NULL AFTER kolor_tla_zakladki",
+    ];
+
+    foreach ($kolumny as $kolumna => $sql) {
+        if (czy_kolumna_istnieje('uzytkownicy', $kolumna)) {
+            continue;
+        }
+
+        try {
+            baza()->exec($sql);
+        } catch (Throwable $e) {
+            // Kolumna mogla zostac dodana rownolegle albo baza nie pozwala na ALTER.
+        }
+    }
+
+    foreach (["kolor_tla_zakladki", "kolor_tla_widok2"] as $kolumnaKoloru) {
+        try {
+            baza()->exec("ALTER TABLE uzytkownicy MODIFY COLUMN {$kolumnaKoloru} VARCHAR(9) NULL DEFAULT NULL");
+        } catch (Throwable $e) {
+            // Starsze instalacje moga nie pozwalac na MODIFY; zapis HEX bez alfa nadal dziala.
+        }
+    }
+}
+
+function kolor_hex_lub_domyslny(mixed $kolor, string $domyslny): string
+{
+    $wartosc = strtolower(trim((string) $kolor));
+    return preg_match('/^#[0-9a-f]{6}([0-9a-f]{2})?$/', $wartosc) ? $wartosc : $domyslny;
+}
+
+function nazwa_wyswietlana_uzytkownika(array $uzytkownik): string
+{
+    $nazwa = trim((string) ($uzytkownik['imie'] ?? ''));
+    if ($nazwa !== '') {
+        return $nazwa;
+    }
+
+    $email = trim((string) ($uzytkownik['email'] ?? ''));
+    return $email !== '' ? $email : 'Uzytkownik';
+}
+
+function inicjaly_uzytkownika(array $uzytkownik): string
+{
+    $zrodlo = nazwa_wyswietlana_uzytkownika($uzytkownik);
+    if (function_exists('mb_substr')) {
+        $inicjaly = mb_strtoupper(mb_substr($zrodlo, 0, 2, 'UTF-8'), 'UTF-8');
+    } else {
+        $inicjaly = strtoupper(substr($zrodlo, 0, 2));
+    }
+
+    return trim($inicjaly) !== '' ? $inicjaly : 'TY';
+}
+
+function sciezka_awatara(?string $avatar): string
+{
+    $avatar = trim((string) $avatar);
+    if ($avatar === '' || str_contains($avatar, '..') || str_starts_with($avatar, '/') || preg_match('~^[a-z][a-z0-9+.-]*://~i', $avatar)) {
+        return '';
+    }
+
+    return $avatar;
+}
 function ensure_uzytkownicy_domyslny_modul_column(): void
 {
     if (czy_kolumna_istnieje('uzytkownicy', 'domyslny_modul')) {

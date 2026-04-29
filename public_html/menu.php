@@ -5,7 +5,9 @@ wymagaj_logowania();
 
 $u = uzytkownik();
 $modul = $aktywny_modul ?? 'zakladki';
-$inicjal = strtoupper(substr((string) ($u['imie'] ?? 'T'), 0, 1));
+$nazwaGorna = nazwa_wyswietlana_uzytkownika($u);
+$inicjal = function_exists('mb_substr') ? mb_strtoupper(mb_substr($nazwaGorna, 0, 1, 'UTF-8'), 'UTF-8') : strtoupper(substr($nazwaGorna, 0, 1));
+$avatarGorny = sciezka_awatara($u['avatar'] ?? '');
 ?>
 <header class="gorna-belka" data-gorna-belka>
     <div class="gorna-belka-glowna">
@@ -29,10 +31,13 @@ $inicjal = strtoupper(substr((string) ($u['imie'] ?? 'T'), 0, 1));
         </nav>
 
         <div class="profil-gorny">
-            <div class="avatar-profilu" aria-hidden="true"><?= esc($inicjal) ?></div>
+            <?php if ($avatarGorny !== ''): ?>
+                <img src="<?= esc($avatarGorny) ?>" alt="Avatar" class="avatar-profilu avatar-profilu-img">
+            <?php else: ?>
+                <div class="avatar-profilu" aria-hidden="true"><?= esc($inicjal) ?></div>
+            <?php endif; ?>
             <div class="dane-profilu-gorne">
-                <strong><?= esc($u['imie'] ?? 'Uzytkownik') ?></strong>
-                <small><?= esc($u['email'] ?? '') ?></small>
+                <strong><?= esc($nazwaGorna) ?></strong>
             </div>
             <a class="link-boczny link-profil-gorny <?= $modul === 'profil' ? 'jest-aktywny' : '' ?>" href="panel.php?modul=profil">
                 <i class="fa-solid fa-user"></i>

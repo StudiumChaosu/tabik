@@ -7,14 +7,14 @@ sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($dane['token_csrf'] ?? null));
 $id = (int) ($dane['id'] ?? 0);
 $kolor = trim((string) ($dane['kolor'] ?? ''));
 
-if ($id <= 0 || !preg_match('/^#[0-9a-fA-F]{6}$/', $kolor)) {
+if ($id <= 0 || !preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', $kolor)) {
     odpowiedz_json(['sukces' => false, 'komunikat' => 'Nieprawidlowy kolor grupy.'], 422);
 }
 
 if (!upewnij_kolumne_koloru_grupy()) {
     odpowiedz_json([
         'sukces' => false,
-        'komunikat' => 'Brak kolumny kolor w tabeli grupy_zakladek. Uruchom migracje SQL dodajaca kolumne kolor VARCHAR(7).',
+        'komunikat' => 'Brak kolumny kolor w tabeli grupy_zakladek. Uruchom migracje SQL dodajaca kolumne kolor VARCHAR(9).',
     ], 500);
 }
 

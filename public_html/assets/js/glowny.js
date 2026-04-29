@@ -185,6 +185,62 @@
         });
     };
 
+    const initPickrProfilu = () => {
+        if (!window.Pickr) return;
+
+        document.querySelectorAll('[data-pickr-profil]').forEach((przycisk) => {
+            const pole = przycisk.parentElement?.querySelector('[data-pickr-wartosc]');
+            if (!pole || przycisk.dataset.pickrGotowy === '1') return;
+
+            const kolorStartowy = /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(pole.value || '') ? pole.value : '#f5f7fb';
+            przycisk.style.setProperty('--profil-kolor', kolorStartowy);
+            przycisk.dataset.pickrGotowy = '1';
+
+            const picker = window.Pickr.create({
+                el: przycisk,
+                useAsButton: true,
+                theme: 'monolith',
+                default: kolorStartowy,
+                defaultRepresentation: 'HEX',
+                lockOpacity: false,
+                comparison: false,
+                swatches: null,
+                components: {
+                    preview: false,
+                    opacity: true,
+                    hue: true,
+                    interaction: {
+                        hex: false,
+                        rgba: false,
+                        hsla: false,
+                        hsva: false,
+                        cmyk: false,
+                        input: true,
+                        clear: false,
+                        save: false,
+                    },
+                },
+                i18n: {
+                    'btn:save': 'Zapisz',
+                    'ui:dialog': 'wybor koloru',
+                    'btn:toggle': 'wybierz kolor',
+                },
+            });
+
+            const ustaw = (kolor) => {
+                const hex = kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy;
+                pole.value = hex.toLowerCase();
+                przycisk.style.setProperty('--profil-kolor', hex);
+            };
+
+            picker.on('change', ustaw);
+            picker.on('save', (kolor, instancja) => {
+                ustaw(kolor);
+                instancja.hide();
+            });
+        });
+    };
+
     const initDatepicker = () => {
         const pole = document.getElementById('kalendarz-panelu');
         if (!pole || pole.dataset.datepickerGotowy === '1') return;
@@ -273,6 +329,7 @@
         initZegar();
         initPanelPrawy();
         initModale();
+        initPickrProfilu();
         initDatepicker();
         document.querySelectorAll('#stos-powiadomien .powiadomienie').forEach((element) => {
             window.setTimeout(() => element.remove(), 4200);

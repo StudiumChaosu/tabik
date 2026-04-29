@@ -159,9 +159,9 @@
 }
 
 .kolumna-grupy-kompakt {
-    border: 1px solid var(--kolor-obramowania);
-    background: var(--kolor-panel-glass-mocny);
-    box-shadow: var(--cien-sredni);
+    border: 0;
+    background: transparent;
+    box-shadow: none;
     overflow: visible;
 }
 
@@ -171,9 +171,9 @@
     justify-content: space-between;
     gap: var(--odstep-3);
     padding: var(--odstep-3) var(--odstep-4);
-    background: color-mix(in srgb, var(--kolor-grupy) 24%, white);
-    border-bottom: 1px solid rgba(15, 23, 42, .06);
-    border-radius: var(--promien-duzy) var(--promien-duzy) 0 0;
+    background: var(--kolor-grupy);
+    border-bottom: 0;
+    border-radius: var(--promien-duzy);
     position: relative;
 }
 
@@ -183,7 +183,7 @@
 
 .tytul-grupy-kompakt h4 {
     margin: 0;
-    color: color-mix(in srgb, var(--kolor-grupy) 78%, #2b3550);
+    color: var(--kolor-tekstu-grupy, #0f172a);
     font-size: .96rem;
     line-height: 1.2;
     letter-spacing: .02em;
@@ -287,7 +287,7 @@
     padding: var(--odstep-2) var(--odstep-3);
     border-radius: var(--promien-sredni);
     border: 1px solid transparent;
-    background: rgba(255, 255, 255, .78);
+    background: transparent;
     overflow: hidden;
     cursor: grab;
     transition: var(--przejscie-szybkie);
@@ -302,9 +302,9 @@
 .element-linku:hover,
 .element-linku:focus-within {
     padding-right: 72px;
-    background: rgba(77, 137, 245, .07);
+    background: transparent;
     border-color: rgba(77, 137, 245, .14);
-    box-shadow: var(--cien-maly);
+    box-shadow: none;
 }
 
 .element-linku.sortable-ghost {
@@ -513,23 +513,23 @@
 }
 
 .kolumna-grupy-kompakt {
-    background: var(--kolor-panel-glass-mocny);
-    box-shadow: var(--cien-sredni);
+    background: transparent;
+    box-shadow: none;
 }
 
 .naglowek-grupy-kompakt {
     background: color-mix(in srgb, var(--kolor-grupy) 18%, white);
-    border-bottom-color: rgba(217, 226, 239, .7);
+    border-bottom-color: transparent;
 }
 
 .element-linku {
     border-radius: var(--promien-maly);
-    background: rgba(255, 255, 255, .74);
+    background: transparent;
 }
 
 .element-linku:hover,
 .element-linku:focus-within {
-    background: rgba(37, 99, 235, .055);
+    background: transparent;
     border-color: rgba(37, 99, 235, .12);
 }
 
@@ -813,4 +813,244 @@ body.uklad-panel .puste-grupy {
         width: 100%;
         max-width: none;
     }
+}
+
+/* ===================================
+   ZAKLADKI: lekkie akcje bez tla-kapsulek
+   =================================== */
+.zakladki-akcje-gorne .przycisk-panelowy,
+.zakladki-akcje-gorne .przycisk-panelowy.niebieski {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: var(--kolor-tekst);
+}
+
+.zakladki-akcje-gorne .przycisk-panelowy:hover,
+.zakladki-akcje-gorne .przycisk-panelowy.niebieski:hover {
+    background: rgba(255, 255, 255, .38);
+    border-color: transparent;
+    box-shadow: none;
+    transform: none;
+}
+
+.zakladki-akcje-gorne .przycisk-panelowy.niebieski i,
+.zakladki-akcje-gorne .przycisk-panelowy.niebieski span {
+    color: var(--kolor-akcent);
+}
+
+.tab-kategorii,
+.tab-kategorii.jest-aktywna {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+}
+
+.tab-kategorii:hover {
+    background: rgba(255, 255, 255, .38);
+}
+
+.tab-kategorii.jest-aktywna {
+    color: var(--kolor-akcent);
+}
+
+/* ===================================
+   ZAKLADKI: pelny kolor naglowka grupy + czytelny tekst
+   =================================== */
+.naglowek-grupy-kompakt {
+    background: var(--kolor-grupy);
+}
+
+.tytul-grupy-kompakt h4,
+.przycisk-menu-grupy {
+    color: var(--kolor-tekstu-grupy, #0f172a);
+}
+
+.przycisk-menu-grupy:hover {
+    background: rgba(255, 255, 255, .22);
+}
+
+/* Pickr Monolith w menu grupy */
+.kolor-picker-grupy-widget {
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.kolor-picker-grupy-widget .pickr-punkt-grupy,
+.kolor-picker-grupy-widget .pcr-button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(15, 23, 42, .14);
+    border-radius: 10px;
+    background: var(--kolor-wybrany, #d7e3ff) !important;
+    box-shadow: none;
+}
+
+.kolor-picker-grupy-widget .pickr {
+    height: 0;
+    overflow: hidden;
+}
+
+.kolor-picker-grupy-widget .pcr-app {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+    border: 0;
+    background: transparent;
+}
+
+.kolor-picker-grupy-widget .pcr-app[data-theme='monolith'] {
+    padding: 0;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-selection .pcr-color-preview {
+    margin-inline-end: 8px;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-interaction input {
+    min-width: 0;
+    font-size: .78rem;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
+    margin-top: 8px;
+}
+
+body.uklad-panel .menu-grupy {
+    width: 330px;
+}
+
+/* Pickr z suwakiem przezroczystosci - bez podgladu i palety szybkich kwadratow */
+.kolor-picker-grupy-widget .pcr-app .pcr-color-preview,
+.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
+    display: none !important;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-selection .pcr-picker {
+    width: 18px;
+    height: 18px;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-interaction {
+    margin-top: 8px;
+}
+
+
+/* Poprawka Pickr: menu male po zamknieciu, duze przy otwartym probniku */
+.menu-grupy {
+    width: 190px;
+    padding: 10px 12px;
+}
+
+.menu-grupy.menu-grupy--picker {
+    width: 390px;
+    max-width: min(390px, calc(100vw - 32px));
+    padding: 12px;
+}
+
+body.uklad-panel .menu-grupy {
+    width: 165px;
+    padding: 9px 10px;
+}
+
+body.uklad-panel .menu-grupy.menu-grupy--picker {
+    width: 390px;
+    max-width: min(390px, calc(100vw - 32px));
+    padding: 12px;
+}
+
+.menu-kropki {
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.menu-kropki-etykieta {
+    margin-right: auto;
+    color: var(--kolor-tekst-3);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.przycisk-koloru-wlasny {
+    margin-left: auto;
+}
+
+.menu-grupy .przycisk-menu-opcja {
+    min-height: 32px;
+    padding: 7px 6px;
+    font-size: .82rem;
+}
+
+.menu-grupy.menu-grupy--picker .przycisk-menu-opcja {
+    min-height: 42px;
+    padding: 10px 8px;
+    font-size: .94rem;
+}
+
+.kolor-picker-grupy {
+    margin: 8px 0 10px;
+    padding: 10px 0 8px;
+}
+
+.kolor-picker-grupy-widget {
+    display: block;
+    width: 100%;
+}
+
+.kolor-picker-grupy-widget .pickr {
+    height: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.kolor-picker-grupy-widget .pickr-punkt-grupy,
+.kolor-picker-grupy-widget .pcr-button {
+    width: 0 !important;
+    height: 0 !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.kolor-picker-grupy-widget .pcr-app {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-selection {
+    grid-template-columns: 1fr !important;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-color-preview,
+.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
+    display: none !important;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-interaction {
+    margin-top: 8px;
+}
+
+.kolor-picker-grupy-widget .pcr-app .pcr-interaction input {
+    min-width: 0;
+    width: 100%;
+    font-size: .78rem;
 }

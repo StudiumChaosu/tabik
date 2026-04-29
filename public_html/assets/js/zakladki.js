@@ -61,9 +61,22 @@
     const pokazModal = (m) => m?.classList.remove('ukryta');
     const ukryjModal = (m) => m?.classList.add('ukryta');
 
-    const normalizujKolor = (kolor) => /^#[0-9a-fA-F]{6}$/.test(String(kolor || '').trim()) ? String(kolor).trim().toLowerCase() : '#d7e3ff';
-    const kolorGrupy = (grupa) => normalizujKolor(grupa.kolor || '#d7e3ff');
-    const paletaGrupy = ['#ff6b6b', '#ffd166', '#f4a261'];
+    const DOMYSLNY_KOLOR_GRUPY = '#d8b50030';
+    const normalizujKolor = (kolor) => /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(String(kolor || '').trim()) ? String(kolor).trim().toLowerCase() : DOMYSLNY_KOLOR_GRUPY;
+    const kolorTekstuDlaTla = (kolor) => {
+        const hex = normalizujKolor(kolor).slice(1);
+        const r = parseInt(hex.slice(0, 2), 16);
+        const g = parseInt(hex.slice(2, 4), 16);
+        const b = parseInt(hex.slice(4, 6), 16);
+        const a = hex.length >= 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
+        const rr = Math.round((r * a) + (245 * (1 - a)));
+        const gg = Math.round((g * a) + (245 * (1 - a)));
+        const bb = Math.round((b * a) + (245 * (1 - a)));
+        const jasnosc = ((rr * 299) + (gg * 587) + (bb * 114)) / 1000;
+        return jasnosc >= 150 ? '#0f172a' : '#ffffff';
+    };
+    const kolorGrupy = (grupa) => normalizujKolor(grupa?.kolor || DOMYSLNY_KOLOR_GRUPY);
+    const paletaGrupy = [];
     const liczba = (v) => Number(v || 0);
 
     const faviconFallbacki = (adresUrl, favIconUrl = '') => {
@@ -117,7 +130,15 @@
 
     const zamknijMenu = () => {
         stan.aktywneMenu = null;
-        document.querySelectorAll('.menu-grupy').forEach((el) => el.classList.add('ukryte'));
+        document.querySelectorAll('.menu-grupy').forEach((el) => {
+            el.classList.add('ukryte');
+            el.classList.remove('menu-grupy--picker');
+        });
+        document.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
+        if (stan.kolorPicker?.picker) {
+            try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
+        }
+        stan.kolorPicker = null;
     };
 
     window.obsluzBladFavikony = (img) => {
@@ -170,7 +191,7 @@
             const kolor = kolorGrupy(grupa);
             const maId = Number(grupa.id) > 0;
             return `
-                <article class="kolumna-grupy-kompakt ${maId ? '' : 'kolumna-bez-grupy'}" data-id-grupy="${Number(grupa.id || 0)}" style="--kolor-grupy:${esc(kolor)};">
+                <article class="kolumna-grupy-kompakt ${maId ? '' : 'kolumna-bez-grupy'}" data-id-grupy="${Number(grupa.id || 0)}" style="--kolor-grupy:${esc(kolor)};--kolor-tekstu-grupy:${esc(kolorTekstuDlaTla(kolor))};">
                     <header class="naglowek-grupy-kompakt" data-edytuj-grupe-prawym="1">
                         <div class="tytul-grupy-kompakt">
                             <h4 class="nazwa-grupy-kompakt" title="Kliknij prawym, aby zmienic nazwe">${esc(grupa.nazwa || 'Bez grupy')}</h4>
@@ -182,14 +203,15 @@
                                 </button>
                                 <div class="menu-grupy ukryte" id="menu-grupy-${Number(grupa.id)}">
                                     <div class="menu-kropki" aria-label="Kolor naglowka grupy">
-                                        ${paletaGrupy.map((kolorPalety) => `
+                                        <span class="menu-kropki-etykieta">Kolor</span>
+                                        ${(paletaGrupy || []).map((kolorPalety) => `
                                             <button type="button" class="przycisk-koloru-grupy" data-akcja="ustaw-kolor-grupy" data-id-grupy="${Number(grupa.id)}" data-kolor="${kolorPalety}" style="--kolor-opcji:${kolorPalety};" title="Ustaw kolor ${kolorPalety}"></button>
                                         `).join('')}
                                         <button type="button" class="przycisk-koloru-grupy przycisk-koloru-wlasny" data-akcja="pokaz-picker-koloru-grupy" data-id-grupy="${Number(grupa.id)}" title="Wybierz wlasny kolor"></button>
                                     </div>
                                     <div class="kolor-picker-grupy ukryte" id="kolor-picker-grupy-${Number(grupa.id)}">
-                                        <div class="kolor-picker-grupy-widget" data-iro-picker></div>
-                                        <div class="kolor-picker-grupy-info">Przesun, aby zmienic kolor naglowka</div>
+                                        <div class="kolor-picker-grupy-widget" data-pickr-picker></div>
+                                        <div class="kolor-picker-grupy-info">Wybierz kolor naglowka</div>
                                     </div>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-zakladke-do-grupy" data-id-grupy="${Number(grupa.id)}">+ Zakladke</button>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="otworz-wszystkie" data-id-grupy="${Number(grupa.id)}">Otworz wszystkie</button>
@@ -528,7 +550,10 @@
         if (grupa) grupa.kolor = kolorHex;
 
         const kolumna = document.querySelector(`.kolumna-grupy-kompakt[data-id-grupy="${Number(idGrupy)}"]`);
-        if (kolumna) kolumna.style.setProperty('--kolor-grupy', kolorHex);
+        if (kolumna) {
+            kolumna.style.setProperty('--kolor-grupy', kolorHex);
+            kolumna.style.setProperty('--kolor-tekstu-grupy', kolorTekstuDlaTla(kolorHex));
+        }
     };
 
     const zapiszKolorGrupy = async (idGrupy, kolor, czyCicho = false) => {
@@ -550,41 +575,99 @@
     };
 
     const pokazPickerKoloruGrupy = (idGrupy) => {
-        const panel = document.getElementById(`kolor-picker-grupy-${Number(idGrupy)}`);
-        if (!panel) return;
+        const id = Number(idGrupy);
+        const panel = document.getElementById(`kolor-picker-grupy-${id}`);
+        const menu = panel?.closest('.menu-grupy');
+        if (!panel || !menu) return;
 
-        const toSamo = stan.kolorPicker?.idGrupy === Number(idGrupy) && !panel.classList.contains('ukryte');
+        const toSamo = stan.kolorPicker?.idGrupy === id && !panel.classList.contains('ukryte');
+
         document.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
-        if (toSamo) return;
+        document.querySelectorAll('.menu-grupy').forEach((el) => el.classList.remove('menu-grupy--picker'));
 
-        panel.classList.remove('ukryte');
-        const kontener = panel.querySelector('[data-iro-picker]');
-        const kolor = kolorGrupy(znajdzGrupe(idGrupy));
-
-        if (!window.iro || !kontener) {
-            api.pokazPowiadomienie('blad', 'Nie zaladowano biblioteki wyboru koloru iro.js.');
+        if (toSamo) {
+            if (stan.kolorPicker?.picker) {
+                try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
+            }
+            stan.kolorPicker = null;
             return;
         }
 
+        if (!window.Pickr) {
+            api.pokazPowiadomienie('blad', 'Nie zaladowano biblioteki wyboru koloru Pickr.');
+            return;
+        }
+
+        const kontener = panel.querySelector('[data-pickr-picker]');
+        if (!kontener) return;
+
+        if (stan.kolorPicker?.picker) {
+            try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
+            stan.kolorPicker = null;
+        }
+
+        panel.classList.remove('ukryte');
+        menu.classList.add('menu-grupy--picker');
+
+        const kolor = kolorGrupy(znajdzGrupe(id));
         kontener.innerHTML = '';
-        const picker = new window.iro.ColorPicker(kontener, {
-            width: 168,
-            color: kolor,
-            borderWidth: 1,
-            borderColor: '#d9e2ef',
-            layout: [
-                { component: window.iro.ui.Wheel },
-                { component: window.iro.ui.Slider },
-            ],
+        const punkt = document.createElement('button');
+        punkt.type = 'button';
+        punkt.className = 'pickr-punkt-grupy';
+        punkt.style.setProperty('--kolor-wybrany', kolor);
+        kontener.appendChild(punkt);
+
+        let picker;
+        try {
+            picker = window.Pickr.create({
+                el: punkt,
+                useAsButton: true,
+                container: kontener,
+                theme: 'monolith',
+                inline: true,
+                showAlways: true,
+                default: kolor,
+                defaultRepresentation: 'HEX',
+                lockOpacity: false,
+                comparison: false,
+                swatches: null,
+                position: 'bottom-end',
+                components: {
+                    preview: false,
+                    opacity: true,
+                    hue: true,
+                    interaction: {
+                        hex: false,
+                        rgba: false,
+                        hsla: false,
+                        hsva: false,
+                        cmyk: false,
+                        input: true,
+                        clear: false,
+                        save: false,
+                    },
+                },
+                i18n: {
+                    'ui:dialog': 'wybor koloru',
+                    'btn:toggle': 'wybierz kolor',
+                },
+            });
+        } catch (blad) {
+            console.error('Blad inicjalizacji Pickr:', blad);
+            api.pokazPowiadomienie('blad', 'Nie udalo sie uruchomic probnika koloru.');
+            panel.classList.add('ukryte');
+            menu.classList.remove('menu-grupy--picker');
+            return;
+        }
+
+        picker.on('change', (wybranyKolor) => {
+            const kolorCss = normalizujKolor(wybranyKolor.toHEXA().toString());
+            punkt.style.setProperty('--kolor-wybrany', kolorCss);
+            zastosujKolorGrupyLokalnie(id, kolorCss);
+            zapiszKolorGrupyZDebounce(id, kolorCss);
         });
 
-        picker.on('color:change', (wybranyKolor) => {
-            const kolorHex = normalizujKolor(wybranyKolor.hexString);
-            zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
-            zapiszKolorGrupyZDebounce(idGrupy, kolorHex);
-        });
-
-        stan.kolorPicker = { idGrupy: Number(idGrupy), picker };
+        stan.kolorPicker = { idGrupy: id, picker };
     };
 
     const usunGrupe = async (idGrupy) => {
@@ -815,6 +898,8 @@
                     zamknijMenu();
                     if (!toSamo && menu) {
                         menu.classList.remove('ukryte');
+                        menu.classList.remove('menu-grupy--picker');
+                        menu.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
                         stan.aktywneMenu = idGrupy;
                     }
                     break;

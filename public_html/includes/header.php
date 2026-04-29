@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/funkcje.php';
 $cfg = require __DIR__ . '/../../config/baza.php';
+ensure_uzytkownicy_profil_columns();
 $u = uzytkownik();
+$kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f5f7fb');
+$kolorTlaWidok2 = kolor_hex_lub_domyslny($u['kolor_tla_widok2'] ?? null, '#f5f7fb');
 $bazowy_url = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? ''))), '/');
 $bazowy_url = $bazowy_url === '.' ? '' : $bazowy_url;
 $pliki_assetow = [
@@ -24,21 +27,22 @@ $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (i
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css">
     <link rel="stylesheet" href="assets/css/tokens.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/glowny.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/panel.css?v=<?= esc($wersja_assetow) ?>">
     <?php if (($strona_css ?? '') === 'zakladki'): ?>
         <link rel="stylesheet" href="assets/css/zakladki.css?v=<?= esc($wersja_assetow) ?>">
     <?php endif; ?>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
     <script defer src="assets/js/glowny.js?v=<?= esc($wersja_assetow) ?>"></script>
     <script defer src="assets/js/formularze.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php if (($strona_js ?? '') === 'zakladki'): ?>
         <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
         <script defer src="assets/js/zakladki.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php endif; ?>
 </head>
-<body class="uklad-panel uklad-panelu modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>">
+<body class="uklad-panel uklad-panelu modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>" style="--kolor-tla-zakladki: <?= esc($kolorTlaZakladki) ?>; --kolor-tla-widok2: <?= esc($kolorTlaWidok2) ?>;">
 <div id="stos-powiadomien">
     <?php foreach (['sukces', 'blad'] as $typ): $tekst = pobierz_flash($typ); if ($tekst !== ''): ?>
         <div class="powiadomienie <?= $typ === 'blad' ? 'blad' : 'sukces' ?>"><?= esc($tekst) ?></div>

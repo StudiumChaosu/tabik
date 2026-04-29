@@ -1103,3 +1103,530 @@ body.uklad-panel .przycisk-zwin-prawy.jest-widoczny {
         height: 40px;
     }
 }
+
+/* ===================================
+/* ===================================
+   PROFIL - WIDOK KARTOWY
+   Uklad z referencji, stylistyka dopasowana do Tabik.
+   =================================== */
+body.modul-profil .uklad-roboczy,
+body.modul-profil .powloka-aplikacji.panel-prawy-ukryty .uklad-roboczy {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.modul-profil .panel-kontekstowy,
+body.modul-profil .przycisk-zwin-prawy {
+    display: none !important;
+}
+
+body.modul-profil .obszar-glowny {
+    min-height: calc(100vh - 79px);
+    padding: 0;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(37, 99, 235, .08), transparent 28%),
+        radial-gradient(circle at 88% 82%, rgba(14, 165, 233, .06), transparent 32%),
+        var(--kolor-tla);
+}
+
+.profil-nowy {
+    min-height: calc(100vh - 79px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(34px, 7vh, 82px) var(--odstep-6);
+    color: var(--kolor-tekst);
+    font-family: var(--font-glowny);
+}
+
+.profil-nowy-powloka {
+    width: min(100%, 920px);
+}
+
+.profil-nowy-siatka {
+    display: grid;
+    grid-template-columns: minmax(280px, 320px) minmax(460px, 1fr);
+    gap: var(--odstep-5);
+    align-items: stretch;
+}
+
+.profil-karta {
+    position: relative;
+    overflow: hidden;
+    background: var(--kolor-panel-glass-mocny);
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: 20px;
+    box-shadow: var(--cien-duzy);
+    backdrop-filter: blur(12px);
+}
+
+.profil-karta-konto,
+.profil-karta-preferencje {
+    padding: var(--odstep-6);
+}
+
+.profil-karta-konto::after {
+    content: "";
+    position: absolute;
+    top: -48px;
+    right: -48px;
+    width: 150px;
+    height: 150px;
+    border-radius: var(--promien-pelny);
+    background: radial-gradient(circle, rgba(37, 99, 235, .10), transparent 68%);
+    pointer-events: none;
+}
+
+.profil-etykieta {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: var(--kolor-tekst-3);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.profil-tytul {
+    margin: 0;
+    color: var(--kolor-tekst);
+    font-family: var(--font-glowny);
+    font-size: clamp(1.35rem, 1.6vw, 1.65rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.15;
+}
+
+.profil-konto-gora {
+    position: relative;
+    z-index: 1;
+    padding-bottom: var(--odstep-5);
+    margin-bottom: var(--odstep-5);
+    border-bottom: 1px solid var(--kolor-obramowania);
+}
+
+.profil-tozsamosc {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+    margin-top: var(--odstep-5);
+}
+
+.profil-avatar-duzy {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-info));
+    border: 1px solid rgba(37, 99, 235, .16);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, .18);
+    color: #fff;
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.profil-meta-uzytkownika {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.profil-meta-uzytkownika strong {
+    color: var(--kolor-tekst);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.profil-meta-uzytkownika small {
+    color: var(--kolor-tekst-2);
+    font-size: .82rem;
+    overflow-wrap: anywhere;
+}
+
+.profil-lista-meta {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--odstep-3);
+    margin: 0;
+}
+
+.profil-lista-meta > div {
+    padding: 14px 16px;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    background: rgba(248, 250, 252, .88);
+    box-shadow: var(--cien-maly);
+}
+
+.profil-lista-meta dt {
+    margin: 0 0 7px;
+    color: var(--kolor-tekst-3);
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .10em;
+    text-transform: uppercase;
+}
+
+.profil-lista-meta dd {
+    margin: 0;
+    color: var(--kolor-tekst);
+    font-size: .9rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.profil-naglowek-preferencji {
+    margin-bottom: var(--odstep-6);
+    padding-bottom: var(--odstep-5);
+    border-bottom: 1px solid var(--kolor-obramowania);
+}
+
+.profil-formularz {
+    display: grid;
+    gap: var(--odstep-5);
+}
+
+.profil-pole {
+    gap: 9px;
+}
+
+.profil-pole span {
+    color: var(--kolor-tekst-2);
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.profil-pole select {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    background: rgba(255, 255, 255, .94);
+    color: var(--kolor-tekst);
+    padding: 0 16px;
+    font: inherit;
+    font-weight: 500;
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+    transition: border-color var(--przejscie-szybkie), box-shadow var(--przejscie-szybkie), background var(--przejscie-szybkie);
+}
+
+.profil-pole select:hover {
+    border-color: var(--kolor-obramowanie-szary-ciemny);
+    background: #fff;
+}
+
+.profil-pole select:focus {
+    border-color: rgba(37, 99, 235, .56);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+}
+
+.profil-akcje {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--odstep-3);
+    padding-top: var(--odstep-2);
+}
+
+.profil-przycisk-anuluj,
+.profil-przycisk-zapisz {
+    min-height: 46px;
+    border-radius: var(--promien-duzy);
+    padding-inline: 22px;
+    font-weight: 800;
+}
+
+.profil-przycisk-anuluj {
+    background: #fff;
+    color: var(--kolor-tekst-2);
+    border-color: var(--kolor-obramowania);
+}
+
+.profil-przycisk-anuluj:hover {
+    color: var(--kolor-tekst);
+    border-color: var(--kolor-obramowanie-szary-ciemny);
+}
+
+.profil-przycisk-zapisz {
+    background: var(--kolor-akcent);
+    border-color: var(--kolor-akcent);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(37, 99, 235, .18);
+}
+
+.profil-przycisk-zapisz:hover {
+    background: var(--kolor-akcent-ciemny);
+    border-color: var(--kolor-akcent-ciemny);
+}
+
+@media (max-width: 980px) {
+    .profil-nowy-powloka {
+        width: min(100%, 680px);
+    }
+
+    .profil-nowy-siatka {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    body.modul-profil .obszar-glowny,
+    .profil-nowy {
+        min-height: calc(100vh - 124px);
+    }
+
+    .profil-nowy {
+        align-items: start;
+        padding: var(--odstep-5) var(--odstep-4);
+    }
+
+    .profil-karta-konto,
+    .profil-karta-preferencje {
+        padding: var(--odstep-5);
+    }
+
+    .profil-tozsamosc,
+    .profil-akcje {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profil-avatar-duzy {
+        width: 56px;
+        height: 56px;
+    }
+
+    .profil-przycisk-anuluj,
+    .profil-przycisk-zapisz {
+        width: 100%;
+    }
+}
+
+/* ===================================
+   PROFIL - uproszczony widok i preferencje uzytkownika
+   =================================== */
+body.modul-zakladki .obszar-glowny {
+    background: var(--kolor-tla-zakladki, var(--kolor-tla));
+}
+
+body.modul-widok2 .obszar-glowny {
+    min-height: calc(100vh - 79px);
+    background: var(--kolor-tla-widok2, var(--kolor-tla));
+}
+
+body.modul-profil .obszar-glowny {
+    background:
+        radial-gradient(circle at 12% 8%, rgba(37, 99, 235, .06), transparent 28%),
+        radial-gradient(circle at 88% 82%, rgba(14, 165, 233, .05), transparent 32%),
+        var(--kolor-tla);
+}
+
+.profil-nowy-powloka {
+    display: block;
+}
+
+.profil-nowy-siatka {
+    grid-template-columns: minmax(280px, 320px) minmax(520px, 1fr);
+}
+
+.profil-konto-gora {
+    display: flex;
+    align-items: center;
+    gap: var(--odstep-4);
+    padding-bottom: var(--odstep-5);
+    margin-bottom: var(--odstep-5);
+}
+
+.profil-avatar-upload {
+    position: relative;
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+    cursor: pointer;
+}
+
+.profil-avatar-duzy,
+.profil-avatar-obraz {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--promien-pelny);
+    display: grid;
+    place-items: center;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.profil-avatar-duzy {
+    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-info));
+    border: 1px solid rgba(37, 99, 235, .16);
+    box-shadow: 0 14px 24px rgba(37, 99, 235, .16);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.profil-avatar-obraz {
+    border: 1px solid var(--kolor-obramowania);
+    box-shadow: var(--cien-maly);
+}
+
+.profil-avatar-podpowiedz {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--promien-pelny);
+    background: var(--kolor-tekst);
+    color: #fff;
+    font-size: .75rem;
+    border: 2px solid #fff;
+}
+
+.profil-meta-uzytkownika strong {
+    font-size: 1.2rem;
+}
+
+.profil-lista-meta {
+    gap: var(--odstep-3);
+}
+
+.profil-pole input,
+.profil-pole select {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: var(--promien-duzy);
+    background: rgba(255, 255, 255, .94);
+    color: var(--kolor-tekst);
+    padding: 0 16px;
+    font: inherit;
+    font-weight: 500;
+    outline: none;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+    transition: border-color var(--przejscie-szybkie), box-shadow var(--przejscie-szybkie), background var(--przejscie-szybkie);
+}
+
+.profil-pole input[readonly] {
+    color: var(--kolor-tekst-2);
+    background: rgba(248, 250, 252, .78);
+}
+
+.profil-pole input:hover,
+.profil-pole select:hover {
+    border-color: var(--kolor-obramowanie-szary-ciemny);
+    background: #fff;
+}
+
+.profil-pole input:focus,
+.profil-pole select:focus {
+    border-color: rgba(37, 99, 235, .56);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+}
+
+.profil-karta-preferencje {
+    display: flex;
+    align-items: stretch;
+}
+
+.profil-karta-preferencje .profil-formularz {
+    width: 100%;
+}
+
+.profil-kolory-tla {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--odstep-4);
+}
+
+
+.profil-gorny .avatar-profilu,
+.profil-gorny .avatar-profilu-img {
+    border-radius: var(--promien-pelny) !important;
+    object-fit: cover;
+}
+
+@media (max-width: 700px) {
+    .profil-kolory-tla {
+        grid-template-columns: 1fr;
+    }
+
+    .profil-konto-gora {
+        align-items: flex-start;
+    }
+}
+
+/* ===================================
+   TLO MODULOW: kolor preferencji na calej stronie
+   =================================== */
+body.uklad-panel.modul-zakladki {
+    background: var(--kolor-tla-zakladki, var(--kolor-tla));
+}
+
+body.uklad-panel.modul-widok2 {
+    background: var(--kolor-tla-widok2, var(--kolor-tla));
+}
+
+body.uklad-panel.modul-zakladki .powloka-aplikacji,
+body.uklad-panel.modul-zakladki .uklad-roboczy,
+body.uklad-panel.modul-zakladki .obszar-aplikacji,
+body.uklad-panel.modul-zakladki .obszar-glowny {
+    background: var(--kolor-tla-zakladki, var(--kolor-tla));
+}
+
+body.uklad-panel.modul-widok2 .powloka-aplikacji,
+body.uklad-panel.modul-widok2 .uklad-roboczy,
+body.uklad-panel.modul-widok2 .obszar-aplikacji,
+body.uklad-panel.modul-widok2 .obszar-glowny {
+    background: var(--kolor-tla-widok2, var(--kolor-tla));
+}
+
+body.uklad-panel.modul-zakladki .uklad-roboczy,
+body.uklad-panel.modul-zakladki .obszar-aplikacji,
+body.uklad-panel.modul-zakladki .obszar-glowny,
+body.uklad-panel.modul-widok2 .uklad-roboczy,
+body.uklad-panel.modul-widok2 .obszar-aplikacji,
+body.uklad-panel.modul-widok2 .obszar-glowny {
+    min-height: calc(100vh - 65px);
+}
+
+/* Pickr Monolith w profilu */
+.profil-pickr-przycisk {
+    width: 100%;
+    min-height: 52px;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: 12px;
+    background: var(--profil-kolor, #f5f7fb);
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55);
+    transition: border-color var(--przejscie-szybkie), box-shadow var(--przejscie-szybkie), transform var(--przejscie-szybkie);
+}
+
+.profil-pickr-przycisk:hover,
+.profil-pickr-przycisk:focus-visible {
+    border-color: var(--kolor-akcent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12), inset 0 0 0 1px rgba(255, 255, 255, .55);
+    outline: none;
+}
+
+.profil-pickr-przycisk + .pcr-app,
+.pcr-app[data-theme='monolith'] {
+    z-index: 80;
+}
+
+/* Pickr w profilu z obsluga przezroczystosci - bez podgladu i palety szybkich kwadratow */
+.pcr-app[data-theme='monolith'] .pcr-color-preview,
+.pcr-app[data-theme='monolith'] .pcr-swatches {
+    display: none !important;
+}
