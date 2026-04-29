@@ -62,7 +62,13 @@
     const ukryjModal = (m) => m?.classList.add('ukryta');
 
     const DOMYSLNY_KOLOR_GRUPY = '#d8b50030';
-    const normalizujKolor = (kolor) => /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(String(kolor || '').trim()) ? String(kolor).trim().toLowerCase() : DOMYSLNY_KOLOR_GRUPY;
+    const DOMYSLNA_ALFA_GRUPY = '30';
+    const normalizujKolor = (kolor, domyslny = DOMYSLNY_KOLOR_GRUPY) => {
+        const wartosc = String(kolor || '').trim().toLowerCase();
+        if (/^#[0-9a-f]{6}$/.test(wartosc)) return `${wartosc}${DOMYSLNA_ALFA_GRUPY}`;
+        if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
+        return domyslny;
+    };
     const kolorTekstuDlaTla = (kolor) => {
         const hex = normalizujKolor(kolor).slice(1);
         const r = parseInt(hex.slice(0, 2), 16);
@@ -71,12 +77,21 @@
         const a = hex.length >= 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
         const rr = Math.round((r * a) + (245 * (1 - a)));
         const gg = Math.round((g * a) + (245 * (1 - a)));
-        const bb = Math.round((b * a) + (245 * (1 - a)));
+        const bb = Math.round((b * a) + (235 * (1 - a)));
         const jasnosc = ((rr * 299) + (gg * 587) + (bb * 114)) / 1000;
         return jasnosc >= 150 ? '#0f172a' : '#ffffff';
     };
     const kolorGrupy = (grupa) => normalizujKolor(grupa?.kolor || DOMYSLNY_KOLOR_GRUPY);
-    const paletaGrupy = [];
+    const paletaPickrGrupy = [
+        'rgba(244, 67, 54, 1)',
+        'rgba(233, 30, 99, 0.95)',
+        'rgba(156, 39, 176, 0.9)',
+        'rgba(103, 58, 183, 0.85)',
+        'rgba(63, 81, 181, 0.8)',
+        'rgba(33, 150, 243, 0.75)',
+        'rgba(3, 169, 244, 0.7)',
+        'rgba(0, 188, 212, 0.7)'
+    ];
     const liczba = (v) => Number(v || 0);
 
     const faviconFallbacki = (adresUrl, favIconUrl = '') => {
@@ -128,17 +143,21 @@
 
     const znajdzGrupe = (id) => (stan.dane.grupy || []).find((g) => Number(g.id) === Number(id)) || null;
 
+    const zniszczPickerKoloruGrupy = () => {
+        if (!stan.kolorPicker?.picker) return;
+        try {
+            stan.kolorPicker.picker.destroyAndRemove?.();
+        } catch (e) {
+            try { stan.kolorPicker.picker.destroy?.(); } catch (ignore) {}
+        }
+        document.querySelectorAll('.menu-grupy.ma-picker-otwarty').forEach((el) => el.classList.remove('ma-picker-otwarty'));
+        stan.kolorPicker = null;
+    };
+
     const zamknijMenu = () => {
         stan.aktywneMenu = null;
-        document.querySelectorAll('.menu-grupy').forEach((el) => {
-            el.classList.add('ukryte');
-            el.classList.remove('menu-grupy--picker');
-        });
-        document.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
-        if (stan.kolorPicker?.picker) {
-            try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
-        }
-        stan.kolorPicker = null;
+        zniszczPickerKoloruGrupy();
+        document.querySelectorAll('.menu-grupy').forEach((el) => el.classList.add('ukryte'));
     };
 
     window.obsluzBladFavikony = (img) => {
@@ -202,16 +221,9 @@
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
                                 <div class="menu-grupy ukryte" id="menu-grupy-${Number(grupa.id)}">
-                                    <div class="menu-kropki" aria-label="Kolor naglowka grupy">
-                                        <span class="menu-kropki-etykieta">Kolor</span>
-                                        ${(paletaGrupy || []).map((kolorPalety) => `
-                                            <button type="button" class="przycisk-koloru-grupy" data-akcja="ustaw-kolor-grupy" data-id-grupy="${Number(grupa.id)}" data-kolor="${kolorPalety}" style="--kolor-opcji:${kolorPalety};" title="Ustaw kolor ${kolorPalety}"></button>
-                                        `).join('')}
-                                        <button type="button" class="przycisk-koloru-grupy przycisk-koloru-wlasny" data-akcja="pokaz-picker-koloru-grupy" data-id-grupy="${Number(grupa.id)}" title="Wybierz wlasny kolor"></button>
-                                    </div>
-                                    <div class="kolor-picker-grupy ukryte" id="kolor-picker-grupy-${Number(grupa.id)}">
-                                        <div class="kolor-picker-grupy-widget" data-pickr-picker></div>
-                                        <div class="kolor-picker-grupy-info">Wybierz kolor naglowka</div>
+                                    <div class="menu-kolor-wiersz" aria-label="Kolor naglowka grupy">
+                                        <span>Kolor</span>
+                                        <button type="button" class="kolor-picker-grupy-widget" data-pickr-kolor-grupy data-id-grupy="${Number(grupa.id)}" title="Wybierz kolor naglowka"></button>
                                     </div>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="dodaj-zakladke-do-grupy" data-id-grupy="${Number(grupa.id)}">+ Zakladke</button>
                                     <button type="button" class="przycisk-menu-opcja" data-akcja="otworz-wszystkie" data-id-grupy="${Number(grupa.id)}">Otworz wszystkie</button>
@@ -574,100 +586,87 @@
         }, 220);
     };
 
-    const pokazPickerKoloruGrupy = (idGrupy) => {
-        const id = Number(idGrupy);
-        const panel = document.getElementById(`kolor-picker-grupy-${id}`);
-        const menu = panel?.closest('.menu-grupy');
-        if (!panel || !menu) return;
+    const przygotujPickerKoloruGrupy = (idGrupy) => {
+        const menu = document.getElementById(`menu-grupy-${Number(idGrupy)}`);
+        const przycisk = menu?.querySelector('[data-pickr-kolor-grupy]');
+        if (!menu || !przycisk) return;
 
-        const toSamo = stan.kolorPicker?.idGrupy === id && !panel.classList.contains('ukryte');
-
-        document.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
-        document.querySelectorAll('.menu-grupy').forEach((el) => el.classList.remove('menu-grupy--picker'));
-
-        if (toSamo) {
-            if (stan.kolorPicker?.picker) {
-                try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
-            }
-            stan.kolorPicker = null;
-            return;
-        }
+        zniszczPickerKoloruGrupy();
 
         if (!window.Pickr) {
             api.pokazPowiadomienie('blad', 'Nie zaladowano biblioteki wyboru koloru Pickr.');
             return;
         }
 
-        const kontener = panel.querySelector('[data-pickr-picker]');
-        if (!kontener) return;
+        const kolor = kolorGrupy(znajdzGrupe(idGrupy));
+        przycisk.style.setProperty('--kolor-wybrany', kolor);
 
-        if (stan.kolorPicker?.picker) {
-            try { stan.kolorPicker.picker.destroyAndRemove(); } catch (e) {}
-            stan.kolorPicker = null;
-        }
-
-        panel.classList.remove('ukryte');
-        menu.classList.add('menu-grupy--picker');
-
-        const kolor = kolorGrupy(znajdzGrupe(id));
-        kontener.innerHTML = '';
-        const punkt = document.createElement('button');
-        punkt.type = 'button';
-        punkt.className = 'pickr-punkt-grupy';
-        punkt.style.setProperty('--kolor-wybrany', kolor);
-        kontener.appendChild(punkt);
-
-        let picker;
-        try {
-            picker = window.Pickr.create({
-                el: punkt,
-                useAsButton: true,
-                container: kontener,
-                theme: 'monolith',
-                inline: true,
-                showAlways: true,
-                default: kolor,
-                defaultRepresentation: 'HEX',
-                lockOpacity: false,
-                comparison: false,
-                swatches: null,
-                position: 'bottom-end',
-                components: {
-                    preview: false,
-                    opacity: true,
-                    hue: true,
-                    interaction: {
-                        hex: false,
-                        rgba: false,
-                        hsla: false,
-                        hsva: false,
-                        cmyk: false,
-                        input: true,
-                        clear: false,
-                        save: false,
-                    },
-                },
-                i18n: {
-                    'ui:dialog': 'wybor koloru',
-                    'btn:toggle': 'wybierz kolor',
-                },
-            });
-        } catch (blad) {
-            console.error('Blad inicjalizacji Pickr:', blad);
-            api.pokazPowiadomienie('blad', 'Nie udalo sie uruchomic probnika koloru.');
-            panel.classList.add('ukryte');
-            menu.classList.remove('menu-grupy--picker');
-            return;
-        }
-
-        picker.on('change', (wybranyKolor) => {
-            const kolorCss = normalizujKolor(wybranyKolor.toHEXA().toString());
-            punkt.style.setProperty('--kolor-wybrany', kolorCss);
-            zastosujKolorGrupyLokalnie(id, kolorCss);
-            zapiszKolorGrupyZDebounce(id, kolorCss);
+        const picker = window.Pickr.create({
+            el: przycisk,
+            theme: 'monolith',
+            appClass: 'tabik-pickr-grupy',
+            useAsButton: true,
+            default: kolor,
+            defaultRepresentation: 'HEXA',
+            lockOpacity: false,
+            comparison: true,
+            closeOnScroll: true,
+            autoReposition: true,
+            swatches: paletaPickrGrupy,
+            components: {
+                palette: true,
+                preview: true,
+                opacity: true,
+                hue: true,
+                interaction: {
+                    hex: false,
+                    rgba: false,
+                    hsla: false,
+                    hsva: false,
+                    cmyk: false,
+                    input: true,
+                    clear: true,
+                    save: true
+                }
+            },
+            i18n: {
+                'ui:dialog': 'Wybor koloru',
+                'btn:toggle': 'Wybierz kolor naglowka',
+                'btn:swatch': 'Probka koloru',
+                'btn:last-color': 'Ostatni kolor',
+                'btn:save': 'Zapisz',
+                'btn:cancel': 'Anuluj',
+                'btn:clear': 'Wyczysc'
+            }
         });
 
-        stan.kolorPicker = { idGrupy: id, picker };
+        picker
+            .on('show', () => menu.classList.add('ma-picker-otwarty'))
+            .on('hide', () => menu.classList.remove('ma-picker-otwarty'))
+            .on('change', (wybranyKolor) => {
+                const kolorCss = normalizujKolor(wybranyKolor.toHEXA().toString());
+                przycisk.style.setProperty('--kolor-wybrany', kolorCss);
+                zastosujKolorGrupyLokalnie(idGrupy, kolorCss);
+                zapiszKolorGrupyZDebounce(idGrupy, kolorCss);
+            })
+            .on('save', (wybranyKolor) => {
+                const kolorCss = wybranyKolor ? normalizujKolor(wybranyKolor.toHEXA().toString()) : DOMYSLNY_KOLOR_GRUPY;
+                przycisk.style.setProperty('--kolor-wybrany', kolorCss);
+                zastosujKolorGrupyLokalnie(idGrupy, kolorCss);
+                zapiszKolorGrupy(idGrupy, kolorCss, true).catch((blad) => {
+                    api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
+                });
+                picker.hide();
+            })
+            .on('clear', () => {
+                przycisk.style.setProperty('--kolor-wybrany', DOMYSLNY_KOLOR_GRUPY);
+                zastosujKolorGrupyLokalnie(idGrupy, DOMYSLNY_KOLOR_GRUPY);
+                zapiszKolorGrupy(idGrupy, DOMYSLNY_KOLOR_GRUPY, true).catch((blad) => {
+                    api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
+                });
+            });
+
+        stan.kolorPicker = { idGrupy: Number(idGrupy), picker };
     };
 
     const usunGrupe = async (idGrupy) => {
@@ -898,18 +897,11 @@
                     zamknijMenu();
                     if (!toSamo && menu) {
                         menu.classList.remove('ukryte');
-                        menu.classList.remove('menu-grupy--picker');
-                        menu.querySelectorAll('.kolor-picker-grupy').forEach((el) => el.classList.add('ukryte'));
                         stan.aktywneMenu = idGrupy;
+                        przygotujPickerKoloruGrupy(Number(idGrupy));
                     }
                     break;
                 }
-                case 'ustaw-kolor-grupy':
-                    await zapiszKolorGrupy(Number(przycisk.dataset.idGrupy), przycisk.dataset.kolor);
-                    break;
-                case 'pokaz-picker-koloru-grupy':
-                    pokazPickerKoloruGrupy(Number(przycisk.dataset.idGrupy));
-                    break;
                 case 'otworz-wszystkie':
                     otworzWszystkie(Number(przycisk.dataset.idGrupy));
                     zamknijMenu();
@@ -971,7 +963,7 @@
     };
 
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.akcje-grupy-kompakt')) zamknijMenu();
+        if (!e.target.closest('.akcje-grupy-kompakt, .pcr-app')) zamknijMenu();
     });
 
     els.obszarKolumn?.addEventListener('contextmenu', obsluzPrawyKlikNaglowkaGrupy);

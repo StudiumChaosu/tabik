@@ -237,6 +237,52 @@
     display: none;
 }
 
+.menu-grupy.ma-picker-otwarty {
+    width: 225px;
+}
+
+.menu-kolor-wiersz {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 30px;
+    margin-bottom: 6px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(148, 163, 184, .22);
+    color: #94a3b8;
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.kolor-picker-grupy-widget {
+    width: 24px;
+    height: 24px;
+    flex: 0 0 24px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--kolor-wybrany, #d8b50030);
+    cursor: pointer;
+}
+
+.kolor-picker-grupy-widget .pcr-button,
+.pcr-button.kolor-picker-grupy-widget {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 999px !important;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, .14);
+}
+
+.pcr-app[data-theme='monolith'] {
+    z-index: 9999;
+}
+
+.pcr-app[data-theme='monolith'] .pcr-interaction input {
+    font-family: inherit;
+}
+
 .menu-kropki {
     display: flex;
     gap: var(--odstep-3);
@@ -772,8 +818,12 @@ body.uklad-panel .przycisk-linku-akcji {
 
 body.uklad-panel .menu-grupy {
     top: calc(100% + 8px);
-    width: 165px;
+    width: 205px;
     padding: 9px;
+}
+
+body.uklad-panel .menu-grupy.ma-picker-otwarty {
+    width: 235px;
 }
 
 body.uklad-panel .przycisk-menu-opcja {
@@ -870,187 +920,245 @@ body.uklad-panel .puste-grupy {
     background: rgba(255, 255, 255, .22);
 }
 
-/* Pickr Monolith w menu grupy */
-.kolor-picker-grupy-widget {
-    width: 100%;
-    justify-content: flex-start;
-}
-
-.kolor-picker-grupy-widget .pickr-punkt-grupy,
-.kolor-picker-grupy-widget .pcr-button {
-    width: 28px;
-    height: 28px;
-    border: 1px solid rgba(15, 23, 42, .14);
-    border-radius: 10px;
-    background: var(--kolor-wybrany, #d7e3ff) !important;
-    box-shadow: none;
-}
-
-.kolor-picker-grupy-widget .pickr {
-    height: 0;
-    overflow: hidden;
-}
-
-.kolor-picker-grupy-widget .pcr-app {
-    position: static !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0;
-    max-width: 100%;
-    margin: 0;
-    box-shadow: none;
-    border: 0;
-    background: transparent;
-}
-
-.kolor-picker-grupy-widget .pcr-app[data-theme='monolith'] {
-    padding: 0;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-selection .pcr-color-preview {
-    margin-inline-end: 8px;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-interaction input {
-    min-width: 0;
-    font-size: .78rem;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
-    margin-top: 8px;
-}
-
-body.uklad-panel .menu-grupy {
-    width: 330px;
-}
-
-/* Pickr z suwakiem przezroczystosci - bez podgladu i palety szybkich kwadratow */
-.kolor-picker-grupy-widget .pcr-app .pcr-color-preview,
-.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
-    display: none !important;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-selection .pcr-picker {
-    width: 18px;
-    height: 18px;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-interaction {
-    margin-top: 8px;
-}
-
-
-/* Poprawka Pickr: menu male po zamknieciu, duze przy otwartym probniku */
-.menu-grupy {
-    width: 190px;
-    padding: 10px 12px;
-}
-
-.menu-grupy.menu-grupy--picker {
-    width: 390px;
-    max-width: min(390px, calc(100vw - 32px));
-    padding: 12px;
-}
-
-body.uklad-panel .menu-grupy {
-    width: 165px;
-    padding: 9px 10px;
-}
-
-body.uklad-panel .menu-grupy.menu-grupy--picker {
-    width: 390px;
-    max-width: min(390px, calc(100vw - 32px));
-    padding: 12px;
-}
-
-.menu-kropki {
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.menu-kropki-etykieta {
-    margin-right: auto;
-    color: var(--kolor-tekst-3);
-    font-size: .72rem;
-    font-weight: 700;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-}
-
-.przycisk-koloru-wlasny {
-    margin-left: auto;
-}
-
-.menu-grupy .przycisk-menu-opcja {
-    min-height: 32px;
-    padding: 7px 6px;
-    font-size: .82rem;
-}
-
-.menu-grupy.menu-grupy--picker .przycisk-menu-opcja {
-    min-height: 42px;
-    padding: 10px 8px;
-    font-size: .94rem;
-}
-
-.kolor-picker-grupy {
-    margin: 8px 0 10px;
-    padding: 10px 0 8px;
-}
-
-.kolor-picker-grupy-widget {
-    display: block;
-    width: 100%;
-}
-
-.kolor-picker-grupy-widget .pickr {
-    height: 0;
-    min-height: 0;
-    overflow: hidden;
-}
-
-.kolor-picker-grupy-widget .pickr-punkt-grupy,
-.kolor-picker-grupy-widget .pcr-button {
-    width: 0 !important;
-    height: 0 !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.kolor-picker-grupy-widget .pcr-app {
-    position: static !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
+/* Pickr: wlasna ikona i delikatnie szerszy popup Monolith. */
+.kolor-picker-grupy-widget,
+.kolor-picker-grupy-widget .pcr-button,
+.pcr-button.kolor-picker-grupy-widget {
+    width: 24px !important;
+    height: 24px !important;
+    flex: 0 0 24px;
+    border-radius: 4px !important;
+    border: 1px solid rgba(15, 23, 42, .16) !important;
+    background-color: transparent !important;
+    background-image: url('../img/kolorki.png') !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    background-size: contain !important;
     box-shadow: none !important;
-    background: transparent !important;
 }
 
-.kolor-picker-grupy-widget .pcr-app .pcr-selection {
-    grid-template-columns: 1fr !important;
-}
-
-.kolor-picker-grupy-widget .pcr-app .pcr-color-preview,
-.kolor-picker-grupy-widget .pcr-app .pcr-swatches {
+.kolor-picker-grupy-widget .pcr-button::before,
+.kolor-picker-grupy-widget .pcr-button::after,
+.pcr-button.kolor-picker-grupy-widget::before,
+.pcr-button.kolor-picker-grupy-widget::after {
     display: none !important;
 }
 
-.kolor-picker-grupy-widget .pcr-app .pcr-interaction {
-    margin-top: 8px;
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy {
+    width: 250px !important;
 }
 
-.kolor-picker-grupy-widget .pcr-app .pcr-interaction input {
-    min-width: 0;
-    width: 100%;
-    font-size: .78rem;
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches > button {
+    width: 18px !important;
+    height: 18px !important;
+    flex: 0 0 18px !important;
+    margin: 0 !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 5px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction input {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-save,
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-clear {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+}
+
+/* TABIK FINAL: ikona kolorki i wezszy popup Pickr */
+.kolor-picker-grupy-widget,
+.menu-kolor-wiersz .pcr-button,
+.kolor-picker-grupy-widget .pcr-button,
+.pcr-button.kolor-picker-grupy-widget {
+    width: 24px !important;
+    height: 24px !important;
+    flex: 0 0 24px !important;
+    padding: 0 !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(15, 23, 42, .16) !important;
+    background: transparent url('../img/kolorki.png') center / contain no-repeat !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+}
+
+.kolor-picker-grupy-widget::before,
+.kolor-picker-grupy-widget::after,
+.menu-kolor-wiersz .pcr-button::before,
+.menu-kolor-wiersz .pcr-button::after,
+.kolor-picker-grupy-widget .pcr-button::before,
+.kolor-picker-grupy-widget .pcr-button::after,
+.pcr-button.kolor-picker-grupy-widget::before,
+.pcr-button.kolor-picker-grupy-widget::after {
+    display: none !important;
+    opacity: 0 !important;
+    background: none !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy {
+    width: 232px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-swatches > button {
+    width: 16px !important;
+    height: 16px !important;
+    flex: 0 0 16px !important;
+    margin: 0 !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 4px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction input {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    font-size: .78rem !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-save,
+.pcr-app[data-theme='monolith'].tabik-pickr-grupy .pcr-interaction .pcr-clear {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: .38em .45em !important;
+    font-size: .72rem !important;
+}
+
+/* TABIK: toolbar zakladek z wyborem tla po lewej, wyszukiwarka na srodku, import/eksport po prawej */
+.zakladki-toolbar {
+    display: grid;
+    grid-template-columns: minmax(48px, 1fr) auto minmax(260px, 1fr);
+    align-items: center;
+    gap: var(--odstep-4);
+}
+
+.zakladki-toolbar-lewa {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.zakladki-toolbar-srodek {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.zakladki-toolbar .zakladki-akcje-gorne {
+    justify-content: flex-end;
+    margin-left: 0;
+}
+
+.przycisk-tla-modulu {
+    width: 42px;
+    height: 42px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 12px;
+    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform var(--przejscie-szybkie), opacity var(--przejscie-szybkie);
+}
+
+.przycisk-tla-modulu:hover {
+    transform: translateY(-1px);
+    opacity: .86;
+}
+
+.przycisk-tla-modulu .pcr-button,
+.pcr-button.przycisk-tla-modulu {
+    width: 42px !important;
+    height: 42px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
+    box-shadow: none !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo {
+    width: 260px !important;
+    max-width: 260px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-swatches {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction {
+    gap: 6px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction input {
+    min-width: 0 !important;
+}
+
+@media (max-width: 800px) {
+    .zakladki-toolbar {
+        grid-template-columns: auto 1fr;
+    }
+
+    .zakladki-toolbar-srodek {
+        justify-content: stretch;
+    }
+
+    .zakladki-szukaj-mini {
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+    }
+
+    .zakladki-toolbar .zakladki-akcje-gorne {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+}
+
+/* TABIK FIX: Pickr nie moze zaslaniac ikony kolorki.png podgladem koloru/szachownica */
+.przycisk-tla-modulu.pcr-button,
+.pcr-button.przycisk-tla-modulu,
+.przycisk-tla-modulu .pcr-button {
+    background-color: transparent !important;
+    background-image: url('../img/kolorki.png') !important;
+    background-position: center !important;
+    background-size: 32px 32px !important;
+    background-repeat: no-repeat !important;
+    color: transparent !important;
+}
+
+.przycisk-tla-modulu.pcr-button::before,
+.przycisk-tla-modulu.pcr-button::after,
+.pcr-button.przycisk-tla-modulu::before,
+.pcr-button.przycisk-tla-modulu::after,
+.przycisk-tla-modulu .pcr-button::before,
+.przycisk-tla-modulu .pcr-button::after {
+    display: none !important;
+    content: none !important;
+    background: none !important;
+    box-shadow: none !important;
 }

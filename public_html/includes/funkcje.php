@@ -253,7 +253,7 @@ function upewnij_kolumne_koloru_grupy(): bool
         try {
             baza()->exec("ALTER TABLE grupy_zakladek MODIFY COLUMN kolor VARCHAR(9) NULL DEFAULT NULL");
         } catch (Throwable $e) {
-            // Jesli MODIFY nie jest dostepne, nie przerywamy pracy aplikacji.
+            // Starsze lub ograniczone bazy moga nie pozwalac na MODIFY; aplikacja nadal dziala dla istniejacej kolumny.
         }
         return true;
     }
@@ -346,7 +346,7 @@ function pobierz_dane_zakladek(int $idUzytkownika, array $wejscie, array $uzytko
             'kolejnosc' => (int) $grupa['kolejnosc'],
             'czy_zwinieta' => (int) ($grupa['czy_zwinieta'] ?? 0),
             'id_kategorii' => $idKategoriiGrupy,
-            'kolor' => preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', (string) ($grupa['kolor'] ?? '')) ? (string) $grupa['kolor'] : '#d7e3ff',
+            'kolor' => preg_match('/^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/', (string) ($grupa['kolor'] ?? '')) ? strtolower((string) $grupa['kolor']) : '#d8b50030',
             'licznik' => 0,
             'zakladki' => [],
         ];
@@ -491,11 +491,11 @@ function ensure_uzytkownicy_profil_columns(): void
         }
     }
 
-    foreach (["kolor_tla_zakladki", "kolor_tla_widok2"] as $kolumnaKoloru) {
+    foreach (['kolor_tla_zakladki', 'kolor_tla_widok2'] as $kolumnaKoloru) {
         try {
             baza()->exec("ALTER TABLE uzytkownicy MODIFY COLUMN {$kolumnaKoloru} VARCHAR(9) NULL DEFAULT NULL");
         } catch (Throwable $e) {
-            // Starsze instalacje moga nie pozwalac na MODIFY; zapis HEX bez alfa nadal dziala.
+            // Brak MODIFY nie powinien przerywac dzialania aplikacji.
         }
     }
 }

@@ -1550,6 +1550,22 @@ body.modul-profil .obszar-glowny {
     gap: var(--odstep-4);
 }
 
+.profil-przycisk-koloru {
+    min-height: 52px;
+    width: 100%;
+    border: 1px solid var(--kolor-obramowania);
+    border-radius: 14px;
+    background: var(--profil-kolor, #f5f7fb);
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35);
+}
+
+.profil-przycisk-koloru .pcr-button,
+.pcr-button.profil-przycisk-koloru {
+    width: 100% !important;
+    min-height: 52px !important;
+    border-radius: 14px !important;
+}
 
 .profil-gorny .avatar-profilu,
 .profil-gorny .avatar-profilu-img {
@@ -1601,32 +1617,86 @@ body.uklad-panel.modul-widok2 .obszar-glowny {
     min-height: calc(100vh - 65px);
 }
 
-/* Pickr Monolith w profilu */
-.profil-pickr-przycisk {
-    width: 100%;
-    min-height: 52px;
-    border: 1px solid var(--kolor-obramowania);
+/* TABIK: wybor tla w module Widok 2 */
+.widok2-shell {
+    display: grid;
+    gap: var(--odstep-5);
+}
+
+.widok2-toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* TABIK: wspolny przycisk wyboru tla modulu */
+.przycisk-tla-modulu {
+    width: 42px;
+    height: 42px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
     border-radius: 12px;
-    background: var(--profil-kolor, #f5f7fb);
+    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
     cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55);
-    transition: border-color var(--przejscie-szybkie), box-shadow var(--przejscie-szybkie), transform var(--przejscie-szybkie);
+    box-shadow: none;
+    transition: transform var(--przejscie-szybkie), opacity var(--przejscie-szybkie);
 }
 
-.profil-pickr-przycisk:hover,
-.profil-pickr-przycisk:focus-visible {
-    border-color: var(--kolor-akcent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12), inset 0 0 0 1px rgba(255, 255, 255, .55);
-    outline: none;
+.przycisk-tla-modulu:hover {
+    transform: translateY(-1px);
+    opacity: .86;
 }
 
-.profil-pickr-przycisk + .pcr-app,
-.pcr-app[data-theme='monolith'] {
-    z-index: 80;
+.przycisk-tla-modulu .pcr-button,
+.pcr-button.przycisk-tla-modulu {
+    width: 42px !important;
+    height: 42px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: transparent url('../img/kolorki.png') center / 32px 32px no-repeat !important;
+    box-shadow: none !important;
 }
 
-/* Pickr w profilu z obsluga przezroczystosci - bez podgladu i palety szybkich kwadratow */
-.pcr-app[data-theme='monolith'] .pcr-color-preview,
-.pcr-app[data-theme='monolith'] .pcr-swatches {
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo {
+    width: 260px !important;
+    max-width: 260px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-swatches {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction {
+    gap: 6px !important;
+}
+
+.pcr-app[data-theme='monolith'].tabik-pickr-tlo .pcr-interaction input {
+    min-width: 0 !important;
+}
+
+/* TABIK FIX: Pickr nie moze zaslaniac ikony kolorki.png podgladem koloru/szachownica */
+.przycisk-tla-modulu.pcr-button,
+.pcr-button.przycisk-tla-modulu,
+.przycisk-tla-modulu .pcr-button {
+    background-color: transparent !important;
+    background-image: url('../img/kolorki.png') !important;
+    background-position: center !important;
+    background-size: 32px 32px !important;
+    background-repeat: no-repeat !important;
+    color: transparent !important;
+}
+
+.przycisk-tla-modulu.pcr-button::before,
+.przycisk-tla-modulu.pcr-button::after,
+.pcr-button.przycisk-tla-modulu::before,
+.pcr-button.przycisk-tla-modulu::after,
+.przycisk-tla-modulu .pcr-button::before,
+.przycisk-tla-modulu .pcr-button::after {
     display: none !important;
+    content: none !important;
+    background: none !important;
+    box-shadow: none !important;
 }

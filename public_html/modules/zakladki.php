@@ -7,13 +7,22 @@ $stanPoczatkowy = [
     'liczniki' => $dane_startowe['liczniki'],
 ];
 ?>
+<?php
+$u = uzytkownik();
+$kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f5f7fb');
+?>
 <section class="zakladki-shell zakladki-shell--panel" data-zakladki-app>
     <script type="application/json" id="zakladki-dane-startowe"><?= json_encode($stanPoczatkowy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>
     <div class="zakladki-toolbar">
-        <label class="zakladki-szukaj-mini" for="pole-szukania-zakladek">
-            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-            <input type="search" id="pole-szukania-zakladek" placeholder="Wyszukaj zakładkę" autocomplete="off">
-        </label>
+        <div class="zakladki-toolbar-lewa">
+            <button type="button" class="przycisk-tla-modulu" data-tlo-modulu-pickr data-tlo-modulu-pole="kolor_tla_zakladki" data-tlo-modulu-css="--kolor-tla-zakladki" data-tlo-modulu-domyslny="#f5f7fb" style="--kolor-tla-modulu: <?= esc($kolorTlaZakladki) ?>" aria-label="Zmien tlo zakladek" title="Zmien tlo zakladek"></button>
+        </div>
+        <div class="zakladki-toolbar-srodek">
+            <label class="zakladki-szukaj-mini" for="pole-szukania-zakladek">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input type="search" id="pole-szukania-zakladek" placeholder="Wyszukaj zakładkę" autocomplete="off">
+            </label>
+        </div>
         <div class="zakladki-akcje-gorne">
             <button type="button" class="przycisk-panelowy" id="przycisk-importu-zakladek" data-akcja="import-json">
                 <i class="fa-solid fa-file-import" aria-hidden="true"></i>

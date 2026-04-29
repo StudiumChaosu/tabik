@@ -27,16 +27,16 @@ $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (i
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" referrerpolicy="no-referrer">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/monolith.min.css">
     <link rel="stylesheet" href="assets/css/tokens.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/glowny.css?v=<?= esc($wersja_assetow) ?>">
     <link rel="stylesheet" href="assets/css/panel.css?v=<?= esc($wersja_assetow) ?>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/themes/monolith.min.css">
     <?php if (($strona_css ?? '') === 'zakladki'): ?>
         <link rel="stylesheet" href="assets/css/zakladki.css?v=<?= esc($wersja_assetow) ?>">
     <?php endif; ?>
-    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
     <script defer src="assets/js/glowny.js?v=<?= esc($wersja_assetow) ?>"></script>
     <script defer src="assets/js/formularze.js?v=<?= esc($wersja_assetow) ?>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr@1.9.1/dist/pickr.min.js"></script>
     <?php if (($strona_js ?? '') === 'zakladki'): ?>
         <script defer src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
         <script defer src="assets/js/zakladki.js?v=<?= esc($wersja_assetow) ?>"></script>

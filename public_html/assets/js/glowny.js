@@ -185,62 +185,6 @@
         });
     };
 
-    const initPickrProfilu = () => {
-        if (!window.Pickr) return;
-
-        document.querySelectorAll('[data-pickr-profil]').forEach((przycisk) => {
-            const pole = przycisk.parentElement?.querySelector('[data-pickr-wartosc]');
-            if (!pole || przycisk.dataset.pickrGotowy === '1') return;
-
-            const kolorStartowy = /^#[0-9a-fA-F]{6}([0-9a-fA-F]{2})?$/.test(pole.value || '') ? pole.value : '#f5f7fb';
-            przycisk.style.setProperty('--profil-kolor', kolorStartowy);
-            przycisk.dataset.pickrGotowy = '1';
-
-            const picker = window.Pickr.create({
-                el: przycisk,
-                useAsButton: true,
-                theme: 'monolith',
-                default: kolorStartowy,
-                defaultRepresentation: 'HEX',
-                lockOpacity: false,
-                comparison: false,
-                swatches: null,
-                components: {
-                    preview: false,
-                    opacity: true,
-                    hue: true,
-                    interaction: {
-                        hex: false,
-                        rgba: false,
-                        hsla: false,
-                        hsva: false,
-                        cmyk: false,
-                        input: true,
-                        clear: false,
-                        save: false,
-                    },
-                },
-                i18n: {
-                    'btn:save': 'Zapisz',
-                    'ui:dialog': 'wybor koloru',
-                    'btn:toggle': 'wybierz kolor',
-                },
-            });
-
-            const ustaw = (kolor) => {
-                const hex = kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy;
-                pole.value = hex.toLowerCase();
-                przycisk.style.setProperty('--profil-kolor', hex);
-            };
-
-            picker.on('change', ustaw);
-            picker.on('save', (kolor, instancja) => {
-                ustaw(kolor);
-                instancja.hide();
-            });
-        });
-    };
-
     const initDatepicker = () => {
         const pole = document.getElementById('kalendarz-panelu');
         if (!pole || pole.dataset.datepickerGotowy === '1') return;
@@ -325,12 +269,194 @@
         zaladujCss();
         zaladujSkrypt();
     };
+
+    const initProfilPickr = () => {
+        if (!window.Pickr) return;
+        const normalizujKolorProfilu = (kolor, domyslny = '#f5f7fb') => {
+            const wartosc = String(kolor || '').trim().toLowerCase();
+            if (/^#[0-9a-f]{6}$/.test(wartosc)) return wartosc;
+            if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
+            return domyslny;
+        };
+        const swatches = [
+        'rgba(244, 67, 54, 1)',
+        'rgba(233, 30, 99, 0.95)',
+        'rgba(156, 39, 176, 0.9)',
+        'rgba(103, 58, 183, 0.85)',
+        'rgba(63, 81, 181, 0.8)',
+        'rgba(33, 150, 243, 0.75)',
+        'rgba(3, 169, 244, 0.7)',
+        'rgba(0, 188, 212, 0.7)'
+    ];
+
+        document.querySelectorAll('[data-profil-pickr]').forEach((przycisk) => {
+            if (przycisk.dataset.pickrGotowy === '1') return;
+            const pole = przycisk.parentElement?.querySelector('[data-profil-pole-koloru]');
+            if (!pole) return;
+
+            const kolorStartowy = normalizujKolorProfilu(pole.value || '#f5f7fb');
+            pole.value = kolorStartowy;
+            przycisk.style.setProperty('--profil-kolor', kolorStartowy);
+            przycisk.dataset.pickrGotowy = '1';
+
+            const picker = window.Pickr.create({
+                el: przycisk,
+                theme: 'monolith',
+                appClass: 'tabik-pickr-tlo',
+                default: kolorStartowy,
+                defaultRepresentation: 'HEXA',
+                lockOpacity: false,
+                comparison: true,
+                closeOnScroll: true,
+                autoReposition: true,
+                swatches,
+                components: {
+                    palette: true,
+                    preview: true,
+                    opacity: true,
+                    hue: true,
+                    interaction: {
+                        hex: false,
+                        rgba: false,
+                        hsla: false,
+                        hsva: false,
+                        cmyk: false,
+                        input: true,
+                        clear: true,
+                        save: true
+                    }
+                },
+                i18n: {
+                    'btn:toggle': 'Wybierz kolor',
+                    'btn:save': 'Zapisz',
+                    'btn:clear': 'Wyczysc'
+                }
+            });
+
+            picker
+                .on('change', (kolor) => {
+                    const hex = normalizujKolorProfilu(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy);
+                    pole.value = hex;
+                    przycisk.style.setProperty('--profil-kolor', hex);
+                })
+                .on('save', (kolor) => {
+                    const hex = normalizujKolorProfilu(kolor?.toHEXA ? kolor.toHEXA().toString() : pole.value);
+                    pole.value = hex;
+                    przycisk.style.setProperty('--profil-kolor', hex);
+                    picker.hide();
+                })
+                .on('clear', () => {
+                    pole.value = '#f5f7fb';
+                    przycisk.style.setProperty('--profil-kolor', '#f5f7fb');
+                });
+        });
+    };
+
+    const initTloModuluPickr = () => {
+        if (!window.Pickr) return;
+        const normalizujKolorTla = (kolor, domyslny = '#f5f7fb') => {
+            const wartosc = String(kolor || '').trim().toLowerCase();
+            if (/^#[0-9a-f]{6}$/.test(wartosc)) return wartosc;
+            if (/^#[0-9a-f]{8}$/.test(wartosc)) return wartosc;
+            return domyslny;
+        };
+        const swatches = [
+            'rgba(244, 67, 54, 1)',
+            'rgba(233, 30, 99, 0.95)',
+            'rgba(156, 39, 176, 0.9)',
+            'rgba(103, 58, 183, 0.85)',
+            'rgba(63, 81, 181, 0.8)',
+            'rgba(33, 150, 243, 0.75)',
+            'rgba(3, 169, 244, 0.7)',
+            'rgba(0, 188, 212, 0.7)'
+        ];
+
+        document.querySelectorAll('[data-tlo-modulu-pickr]').forEach((przycisk) => {
+            if (przycisk.dataset.pickrGotowy === '1') return;
+            const pole = przycisk.dataset.tloModuluPole || '';
+            const cssVar = przycisk.dataset.tloModuluCss || '';
+            const domyslny = normalizujKolorTla(przycisk.dataset.tloModuluDomyslny || '#f5f7fb');
+            const kolorStartowy = normalizujKolorTla(przycisk.style.getPropertyValue('--kolor-tla-modulu') || domyslny, domyslny);
+            if (!pole || !cssVar) return;
+
+            przycisk.style.setProperty('--kolor-tla-modulu', kolorStartowy);
+            przycisk.dataset.pickrGotowy = '1';
+
+            const zapiszKolor = async (kolor) => {
+                const hex = normalizujKolorTla(kolor, domyslny);
+                przycisk.style.setProperty('--kolor-tla-modulu', hex);
+                document.body.style.setProperty(cssVar, hex);
+
+                try {
+                    const dane = await pobierzJson('api/uzytkownicy.php?akcja=kolor_tla', {
+                        method: 'POST',
+                        body: JSON.stringify({ pole, kolor: hex, token_csrf: tokenCsrf }),
+                    });
+                    if (!dane.sukces) throw new Error(dane.komunikat || 'Nie udalo sie zapisac koloru tla.');
+                    pokazPowiadomienie('sukces', dane.komunikat || 'Kolor tla zostal zapisany.');
+                } catch (blad) {
+                    pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru tla.');
+                }
+            };
+
+            const picker = window.Pickr.create({
+                el: przycisk,
+                theme: 'monolith',
+                appClass: 'tabik-pickr-tlo',
+                useAsButton: true,
+                default: kolorStartowy,
+                defaultRepresentation: 'HEXA',
+                lockOpacity: false,
+                comparison: true,
+                closeOnScroll: true,
+                autoReposition: true,
+                swatches,
+                components: {
+                    palette: true,
+                    preview: true,
+                    opacity: true,
+                    hue: true,
+                    interaction: {
+                        hex: false,
+                        rgba: false,
+                        hsla: false,
+                        hsva: false,
+                        cmyk: false,
+                        input: true,
+                        clear: true,
+                        save: true
+                    }
+                },
+                i18n: {
+                    'btn:toggle': 'Wybierz kolor',
+                    'btn:save': 'Zapisz',
+                    'btn:clear': 'Wyczysc'
+                }
+            });
+
+            picker
+                .on('change', (kolor) => {
+                    const hex = normalizujKolorTla(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, domyslny);
+                    przycisk.style.setProperty('--kolor-tla-modulu', hex);
+                    document.body.style.setProperty(cssVar, hex);
+                })
+                .on('save', (kolor) => {
+                    const hex = normalizujKolorTla(kolor?.toHEXA ? kolor.toHEXA().toString() : kolorStartowy, domyslny);
+                    zapiszKolor(hex);
+                    picker.hide();
+                })
+                .on('clear', () => {
+                    zapiszKolor(domyslny);
+                });
+        });
+    };
     document.addEventListener('DOMContentLoaded', () => {
         initZegar();
         initPanelPrawy();
         initModale();
-        initPickrProfilu();
         initDatepicker();
+        initProfilPickr();
+        initTloModuluPickr();
         document.querySelectorAll('#stos-powiadomien .powiadomienie').forEach((element) => {
             window.setTimeout(() => element.remove(), 4200);
         });

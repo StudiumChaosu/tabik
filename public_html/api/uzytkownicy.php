@@ -3,6 +3,27 @@ require_once __DIR__ . '/baza.php';
 wymagaj_logowania();
 
 $akcja = $_GET['akcja'] ?? '';
+if ($akcja === 'kolor_tla' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $dane = str_contains(strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? '')), 'application/json') ? pobierz_json_wejscia() : $_POST;
+    sprawdz_csrf($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ($dane['token_csrf'] ?? null));
+    ensure_uzytkownicy_profil_columns();
+
+    $pole = (string) ($dane['pole'] ?? '');
+    if (!in_array($pole, ['kolor_tla_zakladki', 'kolor_tla_widok2'], true)) {
+        odpowiedz_json(['sukces' => false, 'komunikat' => 'Nieprawidlowe pole tla.'], 422);
+    }
+
+    $kolor = kolor_hex_lub_domyslny($dane['kolor'] ?? null, '#f5f7fb');
+    $sql = sprintf('UPDATE uzytkownicy SET %s = :kolor, data_aktualizacji = NOW() WHERE id = :id', $pole);
+    baza()->prepare($sql)->execute([
+        'kolor' => $kolor,
+        'id' => id_uzytkownika(),
+    ]);
+
+    odswiez_sesje_uzytkownika(id_uzytkownika());
+    odpowiedz_json(['sukces' => true, 'komunikat' => 'Kolor tla zostal zapisany.', 'kolor' => $kolor, 'pole' => $pole]);
+}
+
 if ($akcja !== 'ustawienia' || $_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ../panel.php?modul=profil');
     exit;
@@ -16,12 +37,13 @@ ensure_uzytkownicy_profil_columns();
 $motyw = in_array($_POST['motyw'] ?? 'jasny', ['jasny', 'kontrast'], true) ? $_POST['motyw'] : 'jasny';
 $domyslna = in_array($_POST['domyslna_kategoria'] ?? 'pierwsza', ['pierwsza', 'ostatnia'], true) ? $_POST['domyslna_kategoria'] : 'pierwsza';
 $domyslnyModul = in_array($_POST['domyslny_modul'] ?? 'zakladki', ['zakladki', 'profil', 'widok2'], true) ? $_POST['domyslny_modul'] : 'zakladki';
+$aktualnyUzytkownik = uzytkownik();
 $nazwaUzytkownika = trim((string) ($_POST['imie'] ?? ''));
 $nazwaUzytkownika = mb_substr($nazwaUzytkownika, 0, 80, 'UTF-8');
-$kolorTlaZakladki = kolor_hex_lub_domyslny($_POST['kolor_tla_zakladki'] ?? null, '#f5f7fb');
-$kolorTlaWidok2 = kolor_hex_lub_domyslny($_POST['kolor_tla_widok2'] ?? null, '#f5f7fb');
+$kolorTlaZakladki = kolor_hex_lub_domyslny($_POST['kolor_tla_zakladki'] ?? ($aktualnyUzytkownik['kolor_tla_zakladki'] ?? null), '#f5f7fb');
+$kolorTlaWidok2 = kolor_hex_lub_domyslny($_POST['kolor_tla_widok2'] ?? ($aktualnyUzytkownik['kolor_tla_widok2'] ?? null), '#f5f7fb');
 
-$avatar = sciezka_awatara(uzytkownik()['avatar'] ?? '');
+$avatar = sciezka_awatara($aktualnyUzytkownik['avatar'] ?? '');
 
 if (!empty($_FILES['avatar']) && is_array($_FILES['avatar']) && (int) ($_FILES['avatar']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
     $plik = $_FILES['avatar'];

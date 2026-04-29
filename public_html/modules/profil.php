@@ -7,8 +7,6 @@ $imie = trim((string) ($u['imie'] ?? ''));
 $nazwa = nazwa_wyswietlana_uzytkownika($u);
 $inicjaly = inicjaly_uzytkownika($u);
 $avatar = sciezka_awatara($u['avatar'] ?? '');
-$kolorTlaZakladki = kolor_hex_lub_domyslny($u['kolor_tla_zakladki'] ?? null, '#f5f7fb');
-$kolorTlaWidok2 = kolor_hex_lub_domyslny($u['kolor_tla_widok2'] ?? null, '#f5f7fb');
 ?>
 <section class="profil-nowy" aria-label="Profil uzytkownika">
     <form method="post" action="api/uzytkownicy.php?akcja=ustawienia" class="profil-nowy-powloka" enctype="multipart/form-data" novalidate>
@@ -71,20 +69,6 @@ $kolorTlaWidok2 = kolor_hex_lub_domyslny($u['kolor_tla_widok2'] ?? null, '#f5f7f
                             <option value="ostatnia" <?= ($u['domyslna_kategoria'] ?? '') === 'ostatnia' ? 'selected' : '' ?>>Ostatnio otwarta</option>
                         </select>
                     </label>
-
-                    <div class="profil-kolory-tla">
-                        <label class="pole-formularza profil-pole profil-pole-kolor">
-                            <span>Tlo zakladek</span>
-                            <input type="hidden" name="kolor_tla_zakladki" value="<?= esc($kolorTlaZakladki) ?>" data-pickr-wartosc>
-                            <button type="button" class="profil-pickr-przycisk" data-pickr-profil aria-label="Wybierz kolor tla zakladek" style="--profil-kolor: <?= esc($kolorTlaZakladki) ?>;"></button>
-                        </label>
-                        <label class="pole-formularza profil-pole profil-pole-kolor">
-                            <span>Tlo Widok 2</span>
-                            <input type="hidden" name="kolor_tla_widok2" value="<?= esc($kolorTlaWidok2) ?>" data-pickr-wartosc>
-                            <button type="button" class="profil-pickr-przycisk" data-pickr-profil aria-label="Wybierz kolor tla Widok 2" style="--profil-kolor: <?= esc($kolorTlaWidok2) ?>;"></button>
-                        </label>
-                    </div>
-
                     <div class="profil-akcje">
                         <button type="reset" class="przycisk-subtelny profil-przycisk-anuluj">Anuluj</button>
                         <button type="submit" class="przycisk-glowny profil-przycisk-zapisz">Zapisz preferencje</button>
