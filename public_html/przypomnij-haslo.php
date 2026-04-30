@@ -28,9 +28,10 @@ $wersjaFormularzy = is_file(__DIR__ . '/assets/js/formularze.js') ? (string) fil
                 <img src="assets/img/logo.png" alt="Logo Tabik" class="logo-glowne-logowania-tabik">
             </div>
 
-            <div id="powiadomienie-resetu" class="powiadomienie" style="display:none"></div>
+            <?php $komunikatResetu = pobierz_flash('komunikat_resetu'); ?>
+            <div id="powiadomienie-resetu" class="powiadomienie<?= $komunikatResetu === '' ? '' : ' sukces' ?>"<?= $komunikatResetu === '' ? ' style="display:none"' : '' ?>><?= esc($komunikatResetu) ?></div>
 
-            <form id="formularz-resetu" class="formularz-logowania-tabik" data-ajax-form data-endpoint="<?= esc(url('api.przypomnij_haslo')) ?>" data-powiadomienie="#powiadomienie-resetu" data-tekst-ladowania="Wysylanie..." method="post" novalidate>
+            <form class="formularz-logowania-tabik" action="<?= esc(url('api.przypomnij_haslo')) ?>" data-ajax-form data-route="api.przypomnij_haslo" data-powiadomienie="#powiadomienie-resetu" data-tekst-ladowania="Wysylanie..." method="post" novalidate>
                 <input type="hidden" name="token_csrf" value="<?= esc(token_csrf()) ?>">
 
                 <label class="pole-formularza pole-formularza-logowanie-tabik">

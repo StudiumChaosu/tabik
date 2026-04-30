@@ -213,11 +213,6 @@ textarea {
     font-weight: 700;
 }
 
-.przycisk-glowny.szeroki,
-.przycisk-glowny.pelny {
-    width: 100%;
-}
-
 .przycisk-subtelny {
     background: var(--kolor-powierzchni);
     border-color: var(--kolor-obramowania);
@@ -235,12 +230,6 @@ textarea {
     color: var(--kolor-tekst);
     display: inline-grid;
     place-items: center;
-}
-
-.przycisk-ikona.maly {
-    width: 34px;
-    height: 34px;
-    border-radius: var(--promien-sredni);
 }
 
 .przycisk-ikona.jest-ulubiona {

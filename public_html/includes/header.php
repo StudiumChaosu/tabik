@@ -3,9 +3,9 @@ require_once __DIR__ . '/funkcje.php';
 $cfg = require __DIR__ . '/../../config/baza.php';
 ensure_uzytkownicy_profil_columns();
 $u = uzytkownik();
-$kolorTlaZakladki = kolor_hex_rgb_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
-$kolorGrupGlowny = kolor_hex_rgb_lub_domyslny($u['idkolor_gru'] ?? null, '#d8b500');
-$kolorTlaWidok2 = kolor_hex_rgb_lub_domyslny($u['idkolor_prom'] ?? null, '#f5f7fb');
+$kolorTlaZakladki = kolor_hex_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
+$kolorGrupGlowny = kolor_hex_lub_domyslny($u['idkolor_gru'] ?? null, '#d8b500');
+$kolorTlaWidok2 = kolor_hex_lub_domyslny($u['idkolor_prom'] ?? null, '#f5f7fb');
 $bazowy_url = bazowy_url_aplikacji();
 $pliki_assetow = [
     __DIR__ . '/../assets/js/glowny.js',
@@ -54,7 +54,7 @@ $wersja_assetow = (string) max(array_map(static fn($plik) => is_file($plik) ? (i
         <script defer src="assets/js/widok2.js?v=<?= esc($wersja_assetow) ?>"></script>
     <?php endif; ?>
 </head>
-<body class="uklad-panel modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>" style="--kolor-tla-zakladki: <?= esc($kolorTlaZakladki) ?>; --kolor-grup-glowny: <?= esc($kolorGrupGlowny) ?>; --kolor-tla-widok2: <?= esc($kolorTlaWidok2) ?>;">
+<body class="uklad-panel modul-<?= esc($aktywny_modul ?? 'panel') ?> motyw-<?= esc($u['motyw'] ?? 'jasny') ?>" style="--kolor-tla-zakladki: <?= esc($kolorTlaZakladki) ?>; --kolor-tla-widok2: <?= esc($kolorTlaWidok2) ?>;">
 <div id="stos-powiadomien">
     <?php foreach (['sukces', 'blad'] as $typ): $tekst = pobierz_flash($typ); if ($tekst !== ''): ?>
         <div class="powiadomienie <?= $typ === 'blad' ? 'blad' : 'sukces' ?>"><?= esc($tekst) ?></div>

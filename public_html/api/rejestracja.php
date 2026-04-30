@@ -1,8 +1,28 @@
 <?php
 require_once __DIR__ . '/baza.php';
 
+function czy_zadanie_ajax(): bool
+{
+    return strtolower((string) ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
+}
+
+function odpowiedz_rejestracja(array $dane, int $status = 200): never
+{
+    if (czy_zadanie_ajax()) {
+        odpowiedz_json($dane, $status);
+    }
+
+    if (!empty($dane['sukces'])) {
+        ustaw_flash('blad_logowania', (string) ($dane['komunikat'] ?? 'Konto zostalo utworzone. Mozesz sie teraz zalogowac.'));
+        przekieruj(url('logowanie'));
+    }
+
+    ustaw_flash('komunikat_rejestracji', (string) ($dane['komunikat'] ?? 'Nie udalo sie utworzyc konta.'));
+    przekieruj(url('rejestracja'));
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    odpowiedz_json(['sukces' => false, 'komunikat' => 'Bledne zadanie.'], 405);
+    odpowiedz_rejestracja(['sukces' => false, 'komunikat' => 'Bledne zadanie.'], 405);
 }
 
 sprawdz_csrf($_POST['token_csrf'] ?? null);
@@ -11,21 +31,21 @@ $haslo = (string) ($_POST['haslo'] ?? '');
 $hasloPowtorz = (string) ($_POST['haslo_powtorz'] ?? '');
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    odpowiedz_json(['sukces' => false, 'komunikat' => 'Podaj poprawny adres email.'], 422);
+    odpowiedz_rejestracja(['sukces' => false, 'komunikat' => 'Podaj poprawny adres email.'], 422);
 }
 
 if (mb_strlen($haslo) < 8) {
-    odpowiedz_json(['sukces' => false, 'komunikat' => 'Haslo musi miec co najmniej 8 znakow.'], 422);
+    odpowiedz_rejestracja(['sukces' => false, 'komunikat' => 'Haslo musi miec co najmniej 8 znakow.'], 422);
 }
 
 if (!hash_equals($haslo, $hasloPowtorz)) {
-    odpowiedz_json(['sukces' => false, 'komunikat' => 'Hasla nie sa identyczne.'], 422);
+    odpowiedz_rejestracja(['sukces' => false, 'komunikat' => 'Hasla nie sa identyczne.'], 422);
 }
 
 $stmt = baza()->prepare('SELECT id FROM uzytkownicy WHERE email = :email LIMIT 1');
 $stmt->execute(['email' => $email]);
 if ($stmt->fetch()) {
-    odpowiedz_json(['sukces' => false, 'komunikat' => 'Konto o tym adresie email juz istnieje.'], 409);
+    odpowiedz_rejestracja(['sukces' => false, 'komunikat' => 'Konto o tym adresie email juz istnieje.'], 409);
 }
 
 ensure_uzytkownicy_domyslny_modul_column();
@@ -89,7 +109,7 @@ if (czy_kolumna_istnieje('uzytkownicy', 'data_aktualizacji')) {
 $sql = 'INSERT INTO uzytkownicy (' . implode(', ', $kolumny) . ') VALUES (' . implode(', ', $placeholders) . ')';
 baza()->prepare($sql)->execute($wartosci);
 
-odpowiedz_json([
+odpowiedz_rejestracja([
     'sukces' => true,
     'komunikat' => 'Konto zostalo utworzone. Mozesz sie teraz zalogowac.',
     'przekierowanie' => url('logowanie'),

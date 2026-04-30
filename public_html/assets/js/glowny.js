@@ -36,7 +36,7 @@
         const czysta = String(sciezka || '').trim();
 
         if (!czysta || czysta === '/') {
-            return bazowyUrl || '/';
+            return bazowyUrl || './';
         }
 
         if (/^https?:\/\//i.test(czysta)) {
@@ -47,7 +47,12 @@
             return czysta;
         }
 
-        return `${bazowyUrl}/${czysta}`.replace(/\/+/g, '/');
+        const bezPoczatku = czysta.replace(/^\/+/, '');
+        if (!bazowyUrl) {
+            return bezPoczatku;
+        }
+
+        return `${bazowyUrl}/${bezPoczatku}`.replace(/\/+/g, '/');
     };
 
     const podstawParametryTrasy = (sciezka, params = {}) => {
@@ -78,21 +83,6 @@
         return zbudujAdres(podstawParametryTrasy(sciezka, params));
     };
 
-    const kandydaciAdresu = (sciezka = '') => {
-        const wynik = [];
-        const glowny = url(sciezka);
-        if (glowny) wynik.push(glowny);
-
-        const czysta = String(sciezka || '').trim();
-        const czyAlias = Boolean((config.routes || {})[czysta]);
-        if (!czyAlias && czysta && !czysta.startsWith('/') && !/^https?:\/\//i.test(czysta)) {
-            const bezPoczatku = czysta.replace(/^\/+/, '');
-            wynik.push(`./${bezPoczatku}`);
-            wynik.push(bezPoczatku);
-        }
-
-        return [...new Set(wynik.filter(Boolean))];
-    };
 
     const normalizujHex = (kolor, opcje = {}) => {
         const {
@@ -127,54 +117,46 @@
     };
 
     const pobierzJson = async (sciezka, opcje = {}) => {
+        const { params = {}, ...opcjeFetch } = opcje || {};
+        const adres = url(sciezka, params);
+        const metoda = (opcjeFetch.method || 'GET').toUpperCase();
         const ustawieniaBazowe = {
-            method: opcje.method || 'GET',
+            method: metoda,
             headers: {
                 'X-CSRF-Token': tokenCsrf,
                 'X-Requested-With': 'XMLHttpRequest',
-                ...(opcje.headers || {}),
+                ...(opcjeFetch.headers || {}),
             },
             credentials: 'same-origin',
-            ...opcje,
+            ...opcjeFetch,
         };
 
-        if (!(ustawieniaBazowe.body instanceof FormData) && ustawieniaBazowe.method !== 'GET') {
+        if (!(ustawieniaBazowe.body instanceof FormData) && metoda !== 'GET') {
             ustawieniaBazowe.headers = {
                 'Content-Type': 'application/json',
                 ...ustawieniaBazowe.headers,
             };
         }
 
-        let ostatniBlad = null;
+        const odpowiedz = await fetch(adres, ustawieniaBazowe);
+        const tekst = await odpowiedz.text();
+        let dane = null;
 
-        for (const adres of kandydaciAdresu(sciezka)) {
-            try {
-                const odpowiedz = await fetch(adres, ustawieniaBazowe);
-                const tekst = await odpowiedz.text();
-                let dane = null;
-
-                try {
-                    dane = tekst ? JSON.parse(tekst) : {};
-                } catch (e) {
-                    dane = { sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.', surowa_odpowiedz: tekst };
-                }
-
-                if (!odpowiedz.ok) {
-                    ostatniBlad = Object.assign(new Error(dane.komunikat || `Blad HTTP ${odpowiedz.status}`), {
-                        dane,
-                        status: odpowiedz.status,
-                        url: adres,
-                    });
-                    continue;
-                }
-
-                return dane;
-            } catch (blad) {
-                ostatniBlad = blad;
-            }
+        try {
+            dane = tekst ? JSON.parse(tekst) : {};
+        } catch (e) {
+            dane = { sukces: false, komunikat: 'Niepoprawna odpowiedz serwera.', surowa_odpowiedz: tekst };
         }
 
-        throw ostatniBlad || new Error('Nie udalo sie polaczyc z serwerem.');
+        if (!odpowiedz.ok) {
+            throw Object.assign(new Error(dane.komunikat || `Blad HTTP ${odpowiedz.status}`), {
+                dane,
+                status: odpowiedz.status,
+                url: adres,
+            });
+        }
+
+        return dane;
     };
 
     const zapiszKolorUzytkownika = async (colorHex, obszar) => {
@@ -451,7 +433,6 @@
         url,
         pokazPowiadomienie,
         pobierzJson,
-        paletaKolorow: config.swatches,
         normalizujHex,
         zapiszKolorUzytkownika,
         utworzPickrKoloruUzytkownika,

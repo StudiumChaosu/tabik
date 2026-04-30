@@ -1,13 +1,72 @@
 (() => {
-    const znajdzAdres = (formularz) => {
-        const endpoint = formularz.dataset.endpoint || '';
-        const route = formularz.dataset.route || '';
+    const config = window.tabik?.config || {};
 
-        if (route && window.tabik?.url) {
-            return window.tabik.url(route);
+    const zbudujAdres = (sciezka = '') => {
+        const bazowyUrl = String(config.bazowyUrl || '').replace(/\/+$/, '');
+        const czysta = String(sciezka || '').trim();
+
+        if (!czysta || czysta === '/') {
+            return bazowyUrl || './';
         }
 
-        return endpoint || formularz.getAttribute('action') || '';
+        if (/^https?:\/\//i.test(czysta) || czysta.startsWith('/')) {
+            return czysta;
+        }
+
+        const bezPoczatku = czysta.replace(/^\/+/, '');
+        if (!bazowyUrl) {
+            return bezPoczatku;
+        }
+
+        return `${bazowyUrl}/${bezPoczatku}`.replace(/\/{2,}/g, '/');
+    };
+
+    const podstawParametryTrasy = (sciezka, params = {}) => {
+        const uzyte = new Set();
+        let wynik = String(sciezka || '').replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, (caly, klucz) => {
+            if (!Object.prototype.hasOwnProperty.call(params, klucz)) {
+                throw new Error(`Brak parametru trasy: ${klucz}`);
+            }
+
+            uzyte.add(klucz);
+            return encodeURIComponent(String(params[klucz]));
+        });
+
+        const query = new URLSearchParams();
+        Object.entries(params || {}).forEach(([klucz, wartosc]) => {
+            if (uzyte.has(klucz) || wartosc === null || wartosc === undefined || wartosc === '') return;
+            query.set(klucz, String(wartosc));
+        });
+
+        const queryString = query.toString();
+        if (queryString) wynik += `${wynik.includes('?') ? '&' : '?'}${queryString}`;
+        return wynik;
+    };
+
+    const url = (nazwa, params = {}) => {
+        if (window.tabik?.url) {
+            return window.tabik.url(nazwa, params);
+        }
+
+        const mapa = config.routes || {};
+        const sciezka = mapa[nazwa] || nazwa;
+        return zbudujAdres(podstawParametryTrasy(sciezka, params));
+    };
+
+    const znajdzAdres = (formularz) => {
+        const route = formularz.dataset.route || '';
+        const action = formularz.getAttribute('action') || '';
+        const mapa = config.routes || {};
+
+        if (route && Object.prototype.hasOwnProperty.call(mapa, route)) {
+            return url(route);
+        }
+
+        if (action) {
+            return action;
+        }
+
+        return route ? url(route) : '';
     };
 
     const pokazKomunikat = (selektor, dane, fallback = 'Wystapil blad.') => {
@@ -45,9 +104,12 @@
 
     const obsluzFormularzAjax = async (formularz) => {
         const endpoint = znajdzAdres(formularz);
-        if (!endpoint) return;
-
         const selektorPowiadomienia = formularz.dataset.powiadomienie || '';
+        if (!endpoint) {
+            pokazKomunikat(selektorPowiadomienia, { sukces: false, komunikat: 'Brak skonfigurowanej trasy formularza.' });
+            return;
+        }
+
         const tekstLadowania = formularz.dataset.tekstLadowania || 'Wysylanie...';
         const redirectDomyslny = formularz.dataset.redirectDefault || '';
         const opoznienieRedirectu = Number(formularz.dataset.redirectDelay || 0);

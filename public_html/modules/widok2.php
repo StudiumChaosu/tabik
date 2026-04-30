@@ -1,6 +1,6 @@
 <?php
 $u = uzytkownik();
-$kolorTlaWidok2 = kolor_hex_rgb_lub_domyslny($u['idkolor_prom'] ?? null, '#f5f7fb');
+$kolorTlaWidok2 = kolor_hex_lub_domyslny($u['idkolor_prom'] ?? null, '#f5f7fb');
 ?>
 <section class="sekcja-panelowa widok2-shell">
     <div class="widok2-toolbar">

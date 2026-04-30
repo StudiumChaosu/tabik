@@ -7,7 +7,7 @@ $stanPoczatkowy = [
     'liczniki' => $dane_startowe['liczniki'],
 ];
 $u = uzytkownik();
-$kolorTlaZakladki = kolor_hex_rgb_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
+$kolorTlaZakladki = kolor_hex_lub_domyslny($u['idkolor_zak'] ?? null, '#f5f7fb');
 ?>
 <section class="zakladki-shell zakladki-shell--panel" data-zakladki-app>
     <script type="application/json" id="zakladki-dane-startowe"><?= json_encode($stanPoczatkowy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?></script>

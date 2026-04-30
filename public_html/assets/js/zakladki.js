@@ -201,7 +201,7 @@
                 <article class="kolumna-grupy-kompakt ${maId ? '' : 'kolumna-bez-grupy'}" data-id-grupy="${Number(grupa.id || 0)}" style="--kolor-grupy:${esc(kolor)};--kolor-tekstu-grupy:${esc(kolorTekstuDlaTla(kolor))};">
                     <header class="naglowek-grupy-kompakt" data-edytuj-grupe-prawym="1">
                         <div class="tytul-grupy-kompakt">
-                            <h4 class="nazwa-grupy-kompakt" title="Kliknij prawym, aby zmienic nazwe">${esc(grupa.nazwa || 'Bez grupy')}</h4>
+                            <h4 title="Kliknij prawym, aby zmienic nazwe">${esc(grupa.nazwa || 'Bez grupy')}</h4>
                         </div>
                         ${maId ? `
                             <div class="akcje-grupy-kompakt">
@@ -270,7 +270,7 @@
         Object.entries(aktywne).forEach(([klucz, wartosc]) => {
             if (wartosc !== null && wartosc !== undefined && wartosc !== '') params.set(klucz, String(wartosc));
         });
-        const odpowiedz = await api.pobierzJson(api.url('api.zakladki.lista', Object.fromEntries(params)));
+        const odpowiedz = await api.pobierzJson('api.zakladki.lista', { params: Object.fromEntries(params) });
         stan.dane = odpowiedz.dane || {};
         renderuj();
     };
@@ -556,20 +556,31 @@
         }
     };
 
-    const zapiszKolorGrupy = async (idGrupy, kolor) => {
+    const zapiszKolorKonkretnejGrupy = async (idGrupy, kolor) => {
         const kolorHex = normalizujKolor(kolor);
         zastosujKolorGrupyLokalnie(idGrupy, kolorHex);
         await api.pobierzJson('api.zakladki.grupy.kolor', {
             method: 'POST',
             body: JSON.stringify({ id: Number(idGrupy), kolor: kolorHex }),
         });
-        await api.zapiszKolorUzytkownika?.(kolorHex.slice(0, 7), 'idkolor_gru');
+        return kolorHex;
+    };
+
+    const zapiszDomyslnyKolorGrup = async (kolor) => {
+        const kolorHex = normalizujKolor(kolor).slice(0, 7);
+        await api.zapiszKolorUzytkownika?.(kolorHex, 'idkolor_gru');
+        return kolorHex;
+    };
+
+    const zapiszKolorGrupyIOstatniWybor = async (idGrupy, kolor) => {
+        const kolorHex = await zapiszKolorKonkretnejGrupy(idGrupy, kolor);
+        await zapiszDomyslnyKolorGrup(kolorHex);
     };
 
     const zapiszKolorGrupyZDebounce = (idGrupy, kolor) => {
         window.clearTimeout(stan.timerKoloru);
         stan.timerKoloru = window.setTimeout(() => {
-            zapiszKolorGrupy(idGrupy, kolor).catch((blad) => {
+            zapiszKolorGrupyIOstatniWybor(idGrupy, kolor).catch((blad) => {
                 api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
             });
         }, 220);
@@ -601,7 +612,7 @@
             comparison: true,
             closeOnScroll: true,
             autoReposition: true,
-            swatches: api.paletaKolorow || [],
+            swatches: api.config?.swatches || [],
             components: {
                 palette: true,
                 preview: true,
@@ -642,7 +653,7 @@
                 const kolorCss = wybranyKolor ? normalizujKolor(wybranyKolor.toHEXA().toString()) : DOMYSLNY_KOLOR_GRUPY;
                 przycisk.style.setProperty('--kolor-wybrany', kolorCss);
                 zastosujKolorGrupyLokalnie(idGrupy, kolorCss);
-                zapiszKolorGrupy(idGrupy, kolorCss).catch((blad) => {
+                zapiszKolorGrupyIOstatniWybor(idGrupy, kolorCss).catch((blad) => {
                     api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
                 });
                 picker.hide();
@@ -650,7 +661,7 @@
             .on('clear', () => {
                 przycisk.style.setProperty('--kolor-wybrany', DOMYSLNY_KOLOR_GRUPY);
                 zastosujKolorGrupyLokalnie(idGrupy, DOMYSLNY_KOLOR_GRUPY);
-                zapiszKolorGrupy(idGrupy, DOMYSLNY_KOLOR_GRUPY).catch((blad) => {
+                zapiszKolorGrupyIOstatniWybor(idGrupy, DOMYSLNY_KOLOR_GRUPY).catch((blad) => {
                     api.pokazPowiadomienie('blad', blad.message || 'Nie udalo sie zapisac koloru grupy.');
                 });
             });
