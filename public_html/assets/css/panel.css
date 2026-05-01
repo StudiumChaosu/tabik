@@ -65,16 +65,14 @@
 }
 
 .avatar-profilu {
-    width: 46px;
-    height: 46px;
-    border-radius: 15px;
-    background: linear-gradient(135deg, var(--kolor-akcent), var(--kolor-info));
-    color: var(--kolor-powierzchni);
+    width: 50px;
+    height: 50px;
+    border-radius: 999px;
     display: grid;
     place-items: center;
-    font-weight: 800;
-    box-shadow: 0 14px 22px rgba(37, 99, 235, .18);
     flex-shrink: 0;
+    overflow: hidden;
+    object-fit: cover;
 }
 
 /* ===================================
@@ -487,9 +485,9 @@
 }
 
 .profil-gorny .avatar-profilu {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--promien-sredni);
+    width: 50px;
+    height: 50px;
+    border-radius: 999px;
 }
 
 .dane-profilu-gorne {
@@ -682,8 +680,9 @@ body.uklad-panel .profil-gorny {
 }
 
 body.uklad-panel .profil-gorny .avatar-profilu {
-    width: 33px;
-    height: 33px;
+    width: 50px;
+    height: 50px;
+    border-radius: 999px;
 }
 
 body.uklad-panel .dane-profilu-gorne strong {
